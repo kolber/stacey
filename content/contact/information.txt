@@ -1,0 +1,12 @@
+page_title: Anthony Kolber's Graphic Design Portfolio
+
+page_description: A collection of Anthony Kolber's graphic design work
+
+title: Contact details
+
+content: My address is Level 5, Vesta House, 1 Carson Place, Melbourne, 3000.
+I can be contacted at: ae@aestheticallyloyal.com.
+
+contentz: TEXT TEXT
+
+photographer: 

@@ -1,0 +1,8 @@
+To do:
+* OOP PHP
+* Clean up HTML Output
+
+* Orderable Navigation loop?
+* Add support for navigation partial?
+* Ability to select images by number (for use in template)
+* Add support for template selection (from /content/pagename.templatename.txt?)

@@ -1,0 +1,13 @@
+page_title: Anthony Kolber's Graphic Design Portfolio
+
+page_description: A collection of Anthony Kolber's graphic design work
+
+title: About John
+
+content: Ante is a graphic designer from Melbourne, Australia. He graduated from Swinburne University in 2006 with a Bachelor of Design - Honours. This was where he first discovered the writings of Bob Gill, Alan Fletcher and the work of the conceptual artists such as Joseph Kosuth and _Hans Haacke_. Their *ideologies*: had a considerable effect on his approach to graphic design. He now works professionally as a senior designer.
+He loves it.
+Really.
+
+contentz: Text _goes_ here.
+
+photographer: John Ngo
