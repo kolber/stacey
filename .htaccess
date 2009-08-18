@@ -5,6 +5,11 @@ ErrorDocument 404 /404.html
 
 RewriteBase /
 
+# Rewrite any searches for index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !app/(.*)$
+RewriteRule ^(.*)/index.html$ $1/ [R=301,L]
+
 # Add a trailing slash to directories
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} !app/(.*)$
