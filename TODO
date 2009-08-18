@@ -1,8 +1,6 @@
 To do:
-* Orderable Navigation loop?
-	* Allow projects to have a numbered prefix
-* Add Caching back in
 * Clean up HTML Output
 
-* Ability to select images by number (for use in template)
-* Add support for template selection (from /content/pagename.templatename.txt?)
+? Ability to select images by number (for use in template)
+? Add support for template selection (from /content/pagename.templatename.txt?)
+? Add support for '/section/page/information.txt

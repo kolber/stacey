@@ -137,7 +137,7 @@ class Page {
 	}
 	
 	function get_content_file() {
-		if($this->page_name_unclean && file_exists("../content/$this->page_name_unclean/information.txt")) return "../content/$this->page_name_unclean/information.txt";
+		if($this->page_name_unclean && file_exists("../content/$this->page_name_unclean/content.txt")) return "../content/$this->page_name_unclean/content.txt";
 		elseif($this->page_name_unclean && file_exists("../content/".$this->page_name_unclean)) return "../content/".$this->page_name_unclean;
 		else return false;
 	}
@@ -170,7 +170,7 @@ class Project extends Page {
 	}
 	
 	function get_content_file() {
-		if($this->page_name_unclean && file_exists("../content/".$this->projects_folder_unclean."/$this->page_name_unclean/information.txt")) return "../content/".$this->projects_folder_unclean."/$this->page_name_unclean/information.txt";
+		if($this->page_name_unclean && file_exists("../content/".$this->projects_folder_unclean."/$this->page_name_unclean/content.txt")) return "../content/".$this->projects_folder_unclean."/$this->page_name_unclean/content.txt";
 		else return false;
 	}
 	
@@ -386,9 +386,9 @@ class ProjectsPartial extends Partial {
 		if(is_dir($this->dir)) {
 		 	if($dh = opendir($this->dir)) {
 		 		while (($file = readdir($dh)) !== false) {
-		 			if(!is_dir($file) && file_exists($this->dir."/".$file."/information.txt")) {
+		 			if(!is_dir($file) && file_exists($this->dir."/".$file."/content.txt")) {
 						$files[] = $file;
-						preg_match("/project_title:(.+)/", file_get_contents($this->dir."/".$file."/information.txt"), $matches);
+						preg_match("/project_title:(.+)/", file_get_contents($this->dir."/".$file."/content.txt"), $matches);
 						$file_vars[] = array(
 							"/@project_title/" => $matches[1],
 							"/@url/" => preg_replace('/^\d+?\./', '', $file),
