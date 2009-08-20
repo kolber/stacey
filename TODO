@@ -1,6 +1,8 @@
 To do:
+* Add support for _header.txt style inline content
+* Test all different image file types (and suffix in ALL CAPS)
 * Clean up HTML Output
 
-? Ability to select images by number (for use in template)
+? Ability to select images by number (for use within template)
 ? Add support for template selection (from /content/pagename.templatename.txt?)
 ? Add support for '/section/page/information.txt

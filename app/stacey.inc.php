@@ -31,7 +31,7 @@ class Renderer {
 				$c = new ContentParser;
 				ob_start();
 					echo $t->parse($this->page, $c->parse($this->page->content_file));
-					$cache->write_cache();
+					if(is_writable('./cache')) $cache->write_cache();
 				ob_end_flush();
 			} else {
 				include($cache->cachefile);
