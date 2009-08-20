@@ -1,4 +1,5 @@
 To do:
+* Test running Stacey from a subdirectory
 * Add support for _header.txt style inline content
 * Test all different image file types (and suffix in ALL CAPS)
 * Clean up HTML Output
