@@ -1,8 +1,8 @@
 To do:
-* Projects needs access to all project variables
+* Projects partial needs access to all project variables
 * Test all different image file types (and suffix in ALL CAPS)
-* Test running Stacey from a subdirectory
-* Clean up HTML Output
+* allow Stacey to run from a subdirectory
+* Clean up HTML Output (mainly trailing newlines on key/var replacements)
 
 ? Ability to select images by number (for use within template)
 ? Add support for template selection (from /content/pagename.templatename.txt?)
