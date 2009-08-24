@@ -1,7 +1,7 @@
 To do:
-* Test running Stacey from a subdirectory
-* Add support for _header.txt style inline content
+* Projects needs access to all project variables
 * Test all different image file types (and suffix in ALL CAPS)
+* Test running Stacey from a subdirectory
 * Clean up HTML Output
 
 ? Ability to select images by number (for use within template)

@@ -55,21 +55,44 @@ class Cache {
 		if(!file_exists($this->cachefile)) return true;
 		elseif(filemtime($this->page->content_file) > filemtime($this->cachefile)) return true;
 		elseif(filemtime($this->page->template_file) > filemtime($this->cachefile)) return true;
-		elseif($this->hash_images(preg_replace('/\/[^\/]+$/', '', $this->page->content_file)) !== $this->get_cached_images_hash($this->cachefile)) return true;
 		elseif(filemtime('./templates/partials/images.html') > filemtime($this->cachefile)) return true;
 		elseif(filemtime('./templates/partials/projects.html') > filemtime($this->cachefile)) return true;
 		elseif(filemtime('./templates/partials/navigation.html') > filemtime($this->cachefile)) return true;
+		elseif($this->create_hash() !== $this->get_current_hash()) return true;
 		else return false;
 	}
 	
 	function write_cache() {
-		echo "\n<!-- Cache: ".$this->hash_images(preg_replace('/\/[^\/]+$/', '', $this->page->content_file))." -->";
+		echo "\n<!-- Cache: ".$this->create_hash(preg_replace('/\/[^\/]+$/', '', $this->page->content_file))." -->";
 		$fp = fopen($this->cachefile, 'w');
 		fwrite($fp, ob_get_contents());
 		fclose($fp);
 	}
+
+	function create_hash() {
+		$images = $this->collate_images(preg_replace('/\/[^\/]+$/', '', $this->page->content_file));
+		$content = $this->collate_files('../content/');
+		$projects = $this->collate_files('../content/'.$this->page->projects_folder_unclean);
+		return md5($images.$projects.$content);
+	}
 	
-	function hash_images($dir) {
+	function collate_files($dir) {
+		$files_modified = "";
+		if(is_dir($dir)) {
+			if($dh = opendir($dir)) {
+				while (($file = readdir($dh)) !== false) {
+					if(!is_dir($file)) {
+						if(!is_dir($file)) {
+							$files_modified .= $file.":".filemtime($dir."/".$file);
+						} 
+					}
+				}
+			}
+		}
+		return $files_modified;
+	}
+	
+	function collate_images($dir) {
 		$images_modified = "";
 		if(is_dir($dir)) {
 			if($dh = opendir($dir)) {
@@ -82,10 +105,10 @@ class Cache {
 				}
 			}
 		}
-		return md5($images_modified);
+		return $images_modified;
 	}
 	
-	function get_cached_images_hash() {
+	function get_current_hash() {
 		preg_match('/Cache: (.+?)\s/', file_get_contents($this->cachefile), $matches);
 		return $matches[1];
 	}
