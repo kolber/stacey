@@ -248,7 +248,8 @@ class ContentParser {
 	
 	function parse($content_file) {
 		$text = file_get_contents($content_file);
-		$parsed_text = $this->preparse("\n\n".$text."\n\n");
+		$shared = (file_exists('../content/_shared.txt')) ? file_get_contents('../content/_shared.txt') : "";
+		$parsed_text = $this->preparse("\n\n".$text."\n\n".$shared."\n\n");
 		return $this->create_replacement_rules($parsed_text);
 	}
 }
@@ -316,7 +317,7 @@ class NavigationPartial extends Partial {
 		
 		if($dh = opendir($this->dir)) {
 			while (($file = readdir($dh)) !== false) {
-				if(!is_dir($file) && $file != ".DS_Store" && !preg_match('/index/', $file)) {
+				if(!is_dir($file) && $file != ".DS_Store" && !preg_match('/index/', $file) && !preg_match('/^_/', $file)) {
 					$files[] = $file;
 					$file_name_clean = preg_replace(array('/^\d+?\./', '/\.txt/'), '', $file);
 					$file_vars[] = array(
