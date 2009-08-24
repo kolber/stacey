@@ -55,9 +55,9 @@ class Cache {
 		if(!file_exists($this->cachefile)) return true;
 		elseif(filemtime($this->page->content_file) > filemtime($this->cachefile)) return true;
 		elseif(filemtime($this->page->template_file) > filemtime($this->cachefile)) return true;
-		elseif(filemtime('./templates/partials/images.html') > filemtime($this->cachefile)) return true;
-		elseif(filemtime('./templates/partials/projects.html') > filemtime($this->cachefile)) return true;
-		elseif(filemtime('./templates/partials/navigation.html') > filemtime($this->cachefile)) return true;
+		elseif(filemtime('../templates/partials/images.html') > filemtime($this->cachefile)) return true;
+		elseif(filemtime('../templates/partials/projects.html') > filemtime($this->cachefile)) return true;
+		elseif(filemtime('../templates/partials/navigation.html') > filemtime($this->cachefile)) return true;
 		elseif($this->create_hash() !== $this->get_current_hash()) return true;
 		else return false;
 	}
@@ -166,8 +166,8 @@ class Page {
 	}
 	
 	function get_template_file() {
-		if(file_exists("./templates/$this->page.html")) return "./templates/$this->page.html";
-		elseif(file_exists("./templates/content.html")) return "./templates/content.html";
+		if(file_exists("../templates/$this->page.html")) return "../templates/$this->page.html";
+		elseif(file_exists("../templates/content.html")) return "../templates/content.html";
 		else return false;
 	}
 	
@@ -198,7 +198,7 @@ class Project extends Page {
 	}
 	
 	function get_template_file() {
-		if(file_exists("./templates/project.html")) return "./templates/project.html";
+		if(file_exists("../templates/project.html")) return "../templates/project.html";
 		else return false;
 	}
 	
@@ -333,7 +333,7 @@ class Partial {
 class NavigationPartial extends Partial {
 
 	var $dir = "../content/";
-	var $partial_file = "./templates/partials/navigation.html";
+	var $partial_file = "../templates/partials/navigation.html";
 
 	function render($page) {
 		$wrappers = $this->parse($this->partial_file);
@@ -368,7 +368,7 @@ class NavigationPartial extends Partial {
 class ImagesPartial extends Partial {
 
 	var $dir;
-	var $partial_file = "./templates/partials/images.html";
+	var $partial_file = "../templates/partials/images.html";
 
 	function render($dir) {
 		
@@ -401,7 +401,7 @@ class ImagesPartial extends Partial {
 class ProjectsPartial extends Partial {
 	
 	var $dir;
-	var $partial_file = "./templates/partials/projects.html";
+	var $partial_file = "../templates/partials/projects.html";
 
 	function render($page) {
 		$this->dir = "../content/".$page->projects_folder_unclean;
