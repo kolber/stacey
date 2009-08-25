@@ -1,5 +1,4 @@
 To do:
-* Test all different image file types (and suffix in ALL CAPS)
 * allow Stacey to run from a subdirectory
 * Clean up HTML Output (mainly trailing newlines on key/var replacements)
 

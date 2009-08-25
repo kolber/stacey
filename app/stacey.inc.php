@@ -332,7 +332,7 @@ class Partial {
 		$file_types = array("jpg", "gif", "png");
 		foreach($file_types as $file_type) {
 			if(file_exists($dir."/".$file."/thumb.".$file_type)) {
-				return '<img src="'.$dir.'/'.$file.'/thumb.'.$file_type.'" alt="Project Thumbnail">';
+				return $dir.'/'.$file.'/thumb.'.$file_type;
 			}
 		}
 		return "";
@@ -393,7 +393,7 @@ class ImagesPartial extends Partial {
 		if(is_dir($dir)) {
 		 	if($dh = opendir($dir)) {
 		 		while (($file = readdir($dh)) !== false) {
-		 			if(!is_dir($file) && preg_match("/(?<!thumb)\.gif|jpg|png|jpeg/i", $file)) {
+		 			if(!is_dir($file) && preg_match("/\.(gif|jpg|png|jpeg)/i", $file) && !preg_match("/thumb\./i", $file)) {
 						$files[] = $file;
 						$file_vars[] = array(
 							"/@url/" => preg_replace('/\.\.\//', '/', $dir)."/".$file,
@@ -430,7 +430,7 @@ class ProjectsPartial extends Partial {
 						$files[] = $file;
 						$vars = array(
 							"/@url/" => preg_replace('/^\d+?\./', '', $file),
-							"/@thumb/" => $this->check_thumb($dir, $file),
+							"/@thumb/" => $this->check_thumb($this->dir, $file),
 						);
 						$c = new ContentParser;
 						$file_vars[] = array_merge($vars, $c->parse($this->dir."/".$file."/content.txt"));
