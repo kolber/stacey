@@ -377,7 +377,7 @@ class ImagesPartial extends Partial {
 		if(is_dir($dir)) {
 		 	if($dh = opendir($dir)) {
 		 		while (($file = readdir($dh)) !== false) {
-		 			if(!is_dir($file) && preg_match("/\.[gif|jpg|png|jpeg]/i", $file) && !preg_match("/thumb\.[gif|jpg|png|jpeg]/i", $file)) {
+		 			if(!is_dir($file) && preg_match("/(?<!thumb)\.gif|jpg|png|jpeg/i", $file)) {
 						$files[] = $file;
 						$file_vars[] = array(
 							"/@url/" => preg_replace('/\.\.\//', '/', $dir)."/".$file,
