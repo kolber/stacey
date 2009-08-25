@@ -5,18 +5,23 @@
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 		<title>@page_title</title>
 		<meta name="description" content="@page_description">
+		<link rel="stylesheet" href="/docs/css/screen.css" type="text/css" media="screen"> 
 	</head>
 	<body>
-		<h1>@name's Portfolio</h1>
-		<p>@profession</p>
-		<p>@email</p>
-		<hr>
-		@Navigation
-		<hr>
-		<h2>About me</h2>
-		@about
-		@about2
-		<hr>
-		<p>&copy; Copyright @name @Year</p>
+		<div id="container">
+			<h1 class="col three">
+				@name
+				<strong>@profession</strong>
+			</h1>
+			<em class="col three">@email</em>
+			<hr>
+			@Navigation
+			<div id="content" class="col eight">
+				@Projects
+			</div>
+			<hr>
+			<em class="col three">Built by <a href="http://www.staceyapp.com">Stacey</a></em>
+			<p class="col five">&copy; Copyright @name @Year</p>
+		</div>
 	</body>
 </html>

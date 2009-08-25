@@ -2,4 +2,4 @@ name: Anthony Kolber
 
 profession: — Graphic Designer
 
-email: ae@aestheticallyloyal.com
+email: — ae@aestheticallyloyal.com
