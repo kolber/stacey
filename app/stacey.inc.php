@@ -72,7 +72,7 @@ class Cache {
 	function create_hash() {
 		$images = $this->collate_images(preg_replace('/\/[^\/]+$/', '', $this->page->content_file));
 		$content = $this->collate_files('../content/');
-		$projects = $this->collate_files('../content/'.$this->page->projects_folder_unclean);
+		$projects = $this->collate_projects();
 		return md5($images.$content.$projects);
 	}
 	
@@ -81,16 +81,31 @@ class Cache {
 		if(is_dir($dir)) {
 			if($dh = opendir($dir)) {
 				while (($file = readdir($dh)) !== false) {
-					if(!is_dir($file)) {
-						if(!is_dir($file)) $files_modified .= $file.":".filemtime($dir."/".$file);
-						/* 
-							Need to check the modified times on all files within the folder as well
-						*/
-					}
+					if(!is_dir($file)) $files_modified .= $file.":".filemtime($dir."/".$file);
 				}
 			}
 		}
 		return $files_modified;
+	}
+	
+	function collate_projects() {
+		$projects_modified = "";
+		$dir = '../content/'.$this->page->projects_folder_unclean;
+		if($dh = opendir($dir)) {
+			while (($file = readdir($dh)) !== false) {
+				if(!is_dir($file)) {
+					$projects_modified .= $file.":".filemtime($dir."/".$file);
+					if(is_dir($dir."/".$file)){
+						if($idh = opendir($dir."/".$file)) {
+							while (($inner_file = readdir($idh)) !== false) {
+								$projects_modified .= $inner_file.":".filemtime($dir."/".$file."/".$inner_file);
+							}
+						}
+					}
+				}
+			}
+		}
+		return $projects_modified;
 	}
 	
 	function collate_images($dir) {
