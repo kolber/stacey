@@ -98,7 +98,7 @@ class Cache {
 			if($dh = opendir($dir)) {
 				while (($file = readdir($dh)) !== false) {
 					if(!is_dir($file)) {
-						if(!is_dir($file) && preg_match("/\.[gif|jpg|png|jpeg]/i", $file) && !preg_match("/thumb\.[gif|jpg|png|jpeg]/i", $file)) {
+						if(!is_dir($file) && !preg_match("/thumb\.[gif|jpg|png|jpeg]/i", $file)) {
 							$images_modified .= $file.":".filemtime($dir."/".$file);
 						} 
 					}
