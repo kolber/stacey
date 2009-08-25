@@ -73,7 +73,7 @@ class Cache {
 		$images = $this->collate_images(preg_replace('/\/[^\/]+$/', '', $this->page->content_file));
 		$content = $this->collate_files('../content/');
 		$projects = $this->collate_files('../content/'.$this->page->projects_folder_unclean);
-		return md5($images.$projects.$content);
+		return md5($images.$content.$projects);
 	}
 	
 	function collate_files($dir) {
@@ -82,9 +82,10 @@ class Cache {
 			if($dh = opendir($dir)) {
 				while (($file = readdir($dh)) !== false) {
 					if(!is_dir($file)) {
-						if(!is_dir($file)) {
-							$files_modified .= $file.":".filemtime($dir."/".$file);
-						} 
+						if(!is_dir($file)) $files_modified .= $file.":".filemtime($dir."/".$file);
+						/* 
+							Need to check the modified times on all files within the folder as well
+						*/
 					}
 				}
 			}
@@ -262,7 +263,7 @@ class ContentParser {
 		preg_match_all('/[\w\d_-]+?:[\S\s]+?\n\n/', $text, $matches);
 		foreach($matches[0] as $match) {
 			$colon_split = split(":", $match);
-			$replacement_pairs[$colon_split[0]] = $colon_split[1];
+			$replacement_pairs["/@".$colon_split[0]."/"] = $colon_split[1];
 		}
 		// sort keys by length, to ensure replacements are made in the correct order
 		uksort($replacement_pairs, array("ContentParser", "sort_by_length"));
@@ -296,7 +297,7 @@ class TemplateParser {
 	
 	function add_replacement_rules($rules) {
 		foreach($rules as $key => $value) {
-			$this->matches[] = '/@'.$key.'/';
+			$this->matches[] = $key;
 			$this->replacements[] = $value;
 		}
 	}
@@ -412,12 +413,12 @@ class ProjectsPartial extends Partial {
 		 		while (($file = readdir($dh)) !== false) {
 		 			if(!is_dir($file) && file_exists($this->dir."/".$file."/content.txt")) {
 						$files[] = $file;
-						preg_match("/project_title:(.+)/", file_get_contents($this->dir."/".$file."/content.txt"), $matches);
-						$file_vars[] = array(
-							"/@project_title/" => $matches[1],
+						$vars = array(
 							"/@url/" => preg_replace('/^\d+?\./', '', $file),
 							"/@thumb/" => $this->check_thumb($dir, $file),
 						);
+						$c = new ContentParser;
+						$file_vars[] = array_merge($vars, $c->parse($this->dir."/".$file."/content.txt"));
 					}
 				}
 			}
