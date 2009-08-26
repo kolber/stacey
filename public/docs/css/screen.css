@@ -1,7 +1,6 @@
 /* Colours */
 
-body,
-a { color: #000; }
+body, a { color: #000; }
 em, strong, em a, p.date { color: #888888; }
 
 /* Typography */
@@ -42,15 +41,15 @@ hr { display: block; clear: both; margin: 0px 0px 45px; padding: 0px; height: 0p
 
 ul li { margin: 0px 0px 3px; }
 ul#navigation, ul.projects { list-style: none; padding: 0px; margin: 0px; }
-ul#navigation { margin: 20px 0px 0px 20px; }
+ul#navigation { margin: 10px 0px 0px 20px; }
 ul#navigation li, ul.projects li { clear: both; }
-ul.projects li { margin: 0px; }
+ul.projects li { float: left; padding: 0px 0px 6px; }
 ul#navigation ul { display: none; }
 
-p.date { text-align: right; padding: 10px 20px 14px 0px; }
+p.date { text-align: right; padding: 10px 20px 0px 0px; }
 div.description p { clear: both; }
 div.description h2 { padding: 0px 0px 15px; }
 
 div#images { clear: both; padding: 30px 0px 0px 70px; }
 div#images img { margin: 0px 0px 10px; }
-img.project-thumb { float: left; padding: 0px 10px 5px 0px; display: none;  }
+img.project-thumb { padding: 0px 10px 5px 0px; float: left; display: none; }
