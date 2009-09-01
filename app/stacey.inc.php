@@ -278,7 +278,7 @@ class ContentParser {
 		preg_match_all('/[\w\d_-]+?:[\S\s]+?\n\n/', $text, $matches);
 		foreach($matches[0] as $match) {
 			$colon_split = split(":", $match);
-			$replacement_pairs["/@".$colon_split[0]."/"] = $colon_split[1];
+			$replacement_pairs["/@".$colon_split[0]."/"] = trim($colon_split[1]);
 		}
 		// sort keys by length, to ensure replacements are made in the correct order
 		uksort($replacement_pairs, array("ContentParser", "sort_by_length"));
@@ -430,7 +430,7 @@ class ProjectsPartial extends Partial {
 						$files[] = $file;
 						$vars = array(
 							"/@url/" => preg_replace('/^\d+?\./', '', $file),
-							"/@thumb/" => $this->check_thumb($this->dir, $file),
+							"/@thumb/" => $this->check_thumb($this->dir, $file)
 						);
 						$c = new ContentParser;
 						$file_vars[] = array_merge($vars, $c->parse($this->dir."/".$file."/content.txt"));
