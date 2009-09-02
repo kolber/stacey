@@ -352,8 +352,8 @@ class ContentParser {
 				"/@images_count/" => "<Not implemented>",
 				"/@project_number/" => "<Not implemented>",
 
-				"/@previous_project/" => $pp->render($this->page->sibling_projects[0]),
-				"/@next_project/" => $np->render($this->page->sibling_projects[1])
+				"/@Previous_Project/" => $pp->render($this->page->sibling_projects[0]),
+				"/@Next_Project/" => $np->render($this->page->sibling_projects[1])
 			);
 		}
 		
