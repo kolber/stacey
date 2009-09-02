@@ -1,4 +1,6 @@
 To do:
+* Add support for @images_count & @project_number on projects
+
 * allow Stacey to run from a subdirectory
 * Clean up HTML Output (mainly trailing newlines on key/var replacements)
 

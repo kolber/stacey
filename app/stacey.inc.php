@@ -30,7 +30,7 @@ class Renderer {
 				$t = new TemplateParser;
 				$c = new ContentParser;
 				ob_start();
-					echo $t->parse($this->page, $c->parse($this->page->content_file));
+					echo $t->parse($this->page, $c->parse($this->page));
 					if(is_writable('./cache')) $cache->write_cache();
 				ob_end_flush();
 			} else {
@@ -147,13 +147,14 @@ class Page {
 		$this->store_unclean_page_names('../content/');
 		$this->page_name_unclean = $this->unclean_page_name($this->page);
 		$this->projects_folder_unclean = $this->unclean_page_name('projects');
+		
 		$this->template_file = $this->get_template_file();
 		$this->content_file = $this->get_content_file();
 		$this->public_file = $this->get_public_file();
 	}
 	
 	function store_unclean_page_names($dir) {
-		$this->unclean_page_names = $this->list_files($dir, '/./');
+		$this->unclean_page_names = $this->list_files($dir, '/^(?<!\.)[\w\d-]+/');
 	}
 
 	function list_files($dir, $regex) {
@@ -161,6 +162,7 @@ class Page {
 		if(!$dh = opendir($dir)) return false;
 		while (($file = readdir($dh)) !== false) if(!is_dir($file) && preg_match($regex, $file)) $files[] = $file;
 		closedir($dh);
+		sort($files, SORT_NUMERIC);
 		return $files;
 	}
 	
@@ -191,10 +193,13 @@ class Page {
 		if(file_exists("../public/$this->page.html")) return "../public/$this->page.html";
 		else return false;
 	}
+
 	
 }
 
 class Project extends Page {
+	
+	var $sibling_projects;
 	
 	function __construct($page_name) {
 		$this->page = ($page_name) ? $page_name : "index";
@@ -202,6 +207,7 @@ class Project extends Page {
 		$this->projects_folder_unclean = $this->unclean_page_name('projects');
 		$this->store_unclean_page_names('../content/'.$this->projects_folder_unclean);
 		$this->page_name_unclean = $this->unclean_page_name($this->page);
+		$this->sibling_projects = $this->get_sibling_projects();
 		
 		$this->template_file = $this->get_template_file();
 		$this->content_file = $this->get_content_file();
@@ -218,9 +224,73 @@ class Project extends Page {
 		else return false;
 	}
 	
+	function get_sibling_projects() {
+		foreach($this->unclean_page_names as $key => $page_name) {
+			if($page_name == $this->page_name_unclean) {
+				$previous_project_name = ($this->unclean_page_names[$key-1]) ? $this->unclean_page_names[$key-1] : $this->unclean_page_names[(count($this->unclean_page_names)-1)];
+				$next_project_name = ($this->unclean_page_names[$key+1]) ? $this->unclean_page_names[$key+1] : $this->unclean_page_names[0];
+
+				$previous_project = array("/@url/" => $this->clean_page_name($previous_project_name));
+				$next_project = array("/@url/" => $this->clean_page_name($next_project_name));
+
+				$previous_project_page = new MockProject($previous_project_name);
+				$next_project_page = new MockProject($next_project_name);
+				
+				$c = new ContentParser;
+				return array(
+					array_merge($previous_project, $c->parse($previous_project_page)),
+					array_merge($next_project, $c->parse($next_project_page)),
+				);
+			}
+		}
+		
+		return array(array(), array());
+	}
+}
+
+class MockProject {
+	var $content_file;
+	var $folder_name;
+	var $projects_folder_unclean;
+	var $unclean_page_names = array();
+	
+	function __construct($folder_name) {
+		$this->folder_name = $folder_name;
+		$this->store_unclean_page_names('../content/');
+		$this->projects_folder_unclean = $this->unclean_page_name('projects');
+		$this->content_file = $this->get_content_file();
+	}
+	
+	function store_unclean_page_names($dir) {
+		$this->unclean_page_names = $this->list_files($dir, '/^(?<!\.)[\w\d-]+/');
+	}
+	
+	function list_files($dir, $regex) {
+		if(!is_dir($dir)) return false;
+		if(!$dh = opendir($dir)) return false;
+		while (($file = readdir($dh)) !== false) if(!is_dir($file) && preg_match($regex, $file)) $files[] = $file;
+		closedir($dh);
+		sort($files, SORT_NUMERIC);
+		return $files;
+	}
+	
+	function unclean_page_name($name) {
+		foreach($this->unclean_page_names as $key => $file) {
+			if(preg_match("/".$name."(\.txt)?$/", $file)) return $file;
+		}
+		return false;
+	}
+	
+	function get_content_file() {
+		if(file_exists("../content/".$this->projects_folder_unclean."/".$this->folder_name."/content.txt")) return "../content/".$this->projects_folder_unclean."/$this->folder_name/content.txt";
+		else return false;
+	}
+	
 }
 
 class ContentParser {
+	
+	var $page;
 	
 	static function sort_by_length($a,$b){
 		if($a == $b) return 0;
@@ -275,22 +345,37 @@ class ContentParser {
 	}
 	
 	function create_replacement_rules($text) {
+		if(isset($this->page->sibling_projects)) {
+			$np = new NextProjectPartial;
+			$pp = new PreviousProjectPartial;
+			$replacement_pairs = array(
+				"/@images_count/" => "<Not implemented>",
+				"/@project_number/" => "<Not implemented>",
+
+				"/@previous_project/" => $pp->render($this->page->sibling_projects[0]),
+				"/@next_project/" => $np->render($this->page->sibling_projects[1])
+			);
+		}
+		
 		preg_match_all('/[\w\d_-]+?:[\S\s]+?\n\n/', $text, $matches);
 		foreach($matches[0] as $match) {
 			$colon_split = split(":", $match);
 			$replacement_pairs["/@".$colon_split[0]."/"] = trim($colon_split[1]);
 		}
+		
 		// sort keys by length, to ensure replacements are made in the correct order
 		uksort($replacement_pairs, array("ContentParser", "sort_by_length"));
 		return $replacement_pairs;
 	}
 	
-	function parse($content_file) {
-		$text = file_get_contents($content_file);
+	function parse($page) {
+		$this->page = $page;
+		$text = file_get_contents($this->page->content_file);
 		$shared = (file_exists('../content/_shared.txt')) ? file_get_contents('../content/_shared.txt') : "";
 		$parsed_text = $this->preparse("\n\n".$text."\n\n".$shared."\n\n");
 		return $this->create_replacement_rules($parsed_text);
 	}
+	
 }
 
 class TemplateParser {
@@ -348,10 +433,12 @@ class Partial {
 
 class NavigationPartial extends Partial {
 
+	var $page;
 	var $dir = "../content/";
 	var $partial_file = "../templates/partials/navigation.html";
 
 	function render($page) {
+		$this->page = $page;
 		$wrappers = $this->parse($this->partial_file);
 		
 		if($dh = opendir($this->dir)) {
@@ -372,7 +459,7 @@ class NavigationPartial extends Partial {
 		$p = new ProjectsPartial;
 		foreach($files as $key => $file) {
 			$html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
-			if(preg_match('/projects$/', $file)) $html .= $p->render($page);
+			if(preg_match('/projects$/', $file)) $html .= $p->render($this->page);
 		}
 		$html .= $wrappers[2];
 		
@@ -416,10 +503,12 @@ class ImagesPartial extends Partial {
 
 class ProjectsPartial extends Partial {
 	
+	var $page;
 	var $dir;
 	var $partial_file = "../templates/partials/projects.html";
 
 	function render($page) {
+		$this->page = $page;
 		$this->dir = "../content/".$page->projects_folder_unclean;
 		$wrappers = $this->parse($this->partial_file);
 		
@@ -433,7 +522,8 @@ class ProjectsPartial extends Partial {
 							"/@thumb/" => $this->check_thumb($this->dir, $file)
 						);
 						$c = new ContentParser;
-						$file_vars[] = array_merge($vars, $c->parse($this->dir."/".$file."/content.txt"));
+						$project_page = new MockProject($file);
+						$file_vars[] = array_merge($vars, $c->parse($project_page));
 					}
 				}
 			}
@@ -447,6 +537,20 @@ class ProjectsPartial extends Partial {
 		return $html;
 	}
 
+}
+
+class NextProjectPartial extends Partial {
+	var $page;
+	var $partial_file = "../templates/partials/next-project-link.html";
+	
+	function render($project_sibling) {
+		$html = preg_replace(array_keys($project_sibling), array_values($project_sibling), file_get_contents($this->partial_file));
+		return $html;
+	}
+}
+
+class PreviousProjectPartial extends NextProjectPartial {
+	var $partial_file = "../templates/partials/previous-project-link.html";
 }
 
 ?>
