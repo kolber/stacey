@@ -13,6 +13,7 @@ h2 { font-size: 24px; padding: 0px; margin: 0px; font-weight: normal; letter-spa
 p.date { font-size: 11px; letter-spacing: 0.03em; }
 h2 a { text-decoration: underline; border: 0px; }
 h2 a:visited { font-style: italic; }
+p#gallery-count span { letter-spacing: 0.02em; }
 
 /* Layout */
 
@@ -54,6 +55,12 @@ div.description h2 { padding: 0px 0px 15px; }
 div#images { clear: both; padding: 30px 0px 0px 70px; }
 div#images img { margin: 0px 0px 10px; }
 p#gallery-count { margin: 0px 20px 0px 0px; }
+p#gallery-count span { margin: 1px 0px 0px; display: block; }
 div#project-navigation { margin: 0px 0px 0px 20px; }
+div#project-navigation p, div#gallery-navigation p { margin: 0px 0px 1px; }
+
+div#image-wrapper { overflow: hidden; width: 560px; }
+div#image-wrapper div#image-holder { width: 100000000px; }
+div#image-wrapper div#image-holder div.image { float: left; }
 
 img.project-thumb { padding: 0px 10px 5px 0px; float: left; display: none; }
