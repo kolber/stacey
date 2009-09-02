@@ -58,6 +58,8 @@ class Cache {
 		elseif(filemtime('../templates/partials/images.html') > filemtime($this->cachefile)) return true;
 		elseif(filemtime('../templates/partials/projects.html') > filemtime($this->cachefile)) return true;
 		elseif(filemtime('../templates/partials/navigation.html') > filemtime($this->cachefile)) return true;
+		elseif(filemtime('../templates/partials/previous-project-link.html') > filemtime($this->cachefile)) return true;
+		elseif(filemtime('../templates/partials/next-project-link.html') > filemtime($this->cachefile)) return true;
 		elseif($this->create_hash() !== $this->get_current_hash()) return true;
 		else return false;
 	}
