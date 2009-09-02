@@ -137,6 +137,7 @@ class Page {
 	var $content_file;
 	var $template_file;
 	var $public_file;
+	var $image_files = array();
 	
 	var $page_name_unclean;
 	var $projects_folder_unclean;
@@ -151,6 +152,7 @@ class Page {
 		$this->template_file = $this->get_template_file();
 		$this->content_file = $this->get_content_file();
 		$this->public_file = $this->get_public_file();
+		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
 	}
 	
 	function store_unclean_page_names($dir) {
@@ -175,6 +177,19 @@ class Page {
 			if(preg_match("/".$name."(\.txt)?$/", $file)) return $file;
 		}
 		return false;
+	}
+	
+	function get_images($dir) {
+		if(is_dir($dir)) {
+		 	if($dh = opendir($dir)) {
+		 		while (($file = readdir($dh)) !== false) {
+		 			if(!is_dir($file) && preg_match("/\.(gif|jpg|png|jpeg)/i", $file) && !preg_match("/thumb\./i", $file)) {
+						$this->images[] = $file;
+					}
+				}
+			}
+			closedir($dh);
+		}
 	}
 	
 	function get_content_file() {
@@ -212,6 +227,7 @@ class Project extends Page {
 		$this->template_file = $this->get_template_file();
 		$this->content_file = $this->get_content_file();
 		$this->public_file = $this->get_public_file();
+		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
 	}
 	
 	function get_content_file() {
@@ -248,39 +264,18 @@ class Project extends Page {
 	}
 }
 
-class MockProject {
-	var $content_file;
+class MockProject extends Project {
+	
 	var $folder_name;
-	var $projects_folder_unclean;
-	var $unclean_page_names = array();
 	
 	function __construct($folder_name) {
 		$this->folder_name = $folder_name;
 		$this->store_unclean_page_names('../content/');
 		$this->projects_folder_unclean = $this->unclean_page_name('projects');
 		$this->content_file = $this->get_content_file();
+		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
 	}
-	
-	function store_unclean_page_names($dir) {
-		$this->unclean_page_names = $this->list_files($dir, '/^(?<!\.)[\w\d-]+/');
-	}
-	
-	function list_files($dir, $regex) {
-		if(!is_dir($dir)) return false;
-		if(!$dh = opendir($dir)) return false;
-		while (($file = readdir($dh)) !== false) if(!is_dir($file) && preg_match($regex, $file)) $files[] = $file;
-		closedir($dh);
-		sort($files, SORT_NUMERIC);
-		return $files;
-	}
-	
-	function unclean_page_name($name) {
-		foreach($this->unclean_page_names as $key => $file) {
-			if(preg_match("/".$name."(\.txt)?$/", $file)) return $file;
-		}
-		return false;
-	}
-	
+
 	function get_content_file() {
 		if(file_exists("../content/".$this->projects_folder_unclean."/".$this->folder_name."/content.txt")) return "../content/".$this->projects_folder_unclean."/$this->folder_name/content.txt";
 		else return false;
@@ -294,7 +289,7 @@ class ContentParser {
 	
 	static function sort_by_length($a,$b){
 		if($a == $b) return 0;
-		return (strlen($a) > strlen($b) ? -1 : 1);
+		return (strlen($a) < strlen($b) ? -1 : 1);
 	}
 	
 	function preparse($text) {
@@ -349,8 +344,9 @@ class ContentParser {
 			$np = new NextProjectPartial;
 			$pp = new PreviousProjectPartial;
 			$replacement_pairs = array(
-				"/@images_count/" => "<Not implemented>",
-				"/@project_number/" => "<Not implemented>",
+				"/@Images_Count/" => count($this->page->images),
+				"/@Projects_Count/" => "(Not implemented)",
+				"/@Project_Number/" => "(Not implemented)",
 
 				"/@Previous_Project/" => $pp->render($this->page->sibling_projects[0]),
 				"/@Next_Project/" => $np->render($this->page->sibling_projects[1])
@@ -397,9 +393,10 @@ class TemplateParser {
 	
 	function add_replacement_rules($rules) {
 		foreach($rules as $key => $value) {
-			$this->matches[] = $key;
-			$this->replacements[] = $value;
+			array_unshift($this->matches, $key);
+			array_unshift($this->replacements, $value);
 		}
+		var_dump($this->matches);
 	}
 	
 	function parse($page, $rules) {
@@ -459,7 +456,7 @@ class NavigationPartial extends Partial {
 		$p = new ProjectsPartial;
 		foreach($files as $key => $file) {
 			$html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
-			if(preg_match('/projects$/', $file)) $html .= $p->render($this->page);
+			#if(preg_match('/projects$/', $file)) $html .= $p->render($this->page);
 		}
 		$html .= $wrappers[2];
 		
