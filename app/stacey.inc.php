@@ -140,6 +140,7 @@ class Page {
 	var $image_files = array();
 	
 	var $page_name_unclean;
+	var $page_number;
 	var $projects_folder_unclean;
 	var $unclean_page_names = array();
 	
@@ -174,7 +175,10 @@ class Page {
 
 	function unclean_page_name($name) {
 		foreach($this->unclean_page_names as $key => $file) {
-			if(preg_match("/".$name."(\.txt)?$/", $file)) return $file;
+			if(preg_match("/".$name."(\.txt)?$/", $file)) {
+				$this->page_number = ($key + 1);
+				return $file;
+			}
 		}
 		return false;
 	}
@@ -343,11 +347,11 @@ class ContentParser {
 		if(isset($this->page->sibling_projects)) {
 			$np = new NextProjectPartial;
 			$pp = new PreviousProjectPartial;
+			// additional, useful values
 			$replacement_pairs = array(
 				"/@Images_Count/" => count($this->page->images),
-				"/@Projects_Count/" => "(Not implemented)",
-				"/@Project_Number/" => "(Not implemented)",
-
+				"/@Projects_Count/" => count($this->page->unclean_page_names),
+				"/@Project_Number/" => $this->page->page_number,
 				"/@Previous_Project/" => $pp->render($this->page->sibling_projects[0]),
 				"/@Next_Project/" => $np->render($this->page->sibling_projects[1])
 			);
@@ -396,7 +400,6 @@ class TemplateParser {
 			array_unshift($this->matches, $key);
 			array_unshift($this->replacements, $value);
 		}
-		var_dump($this->matches);
 	}
 	
 	function parse($page, $rules) {

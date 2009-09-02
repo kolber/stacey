@@ -1,6 +1,4 @@
 To do:
-* Add support for & @project_number on projects
-
 * allow Stacey to run from a subdirectory
 * Clean up HTML Output (mainly trailing newlines on key/var replacements)
 
