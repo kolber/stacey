@@ -20,13 +20,17 @@
 				<p class="date col one">@project_date</p>
 				<div class="description col six">
 					<h2 class="col six"><a href="/">@project_title</a></h2>
-					@Images_Count images<br>
-					Project: @Project_Number / @Projects_Count
-					<br>
+					@project_description
+				</div>
+				<hr>
+				<p id="gallery-count" class="col one">Image: 1/5</p>
+				<div id="gallery-navigation" class="col three">
+					<p><a href="#">&larr; Previous image</a></p>
+					<p><a href="#">&rarr; Next image </a></p>
+				</div>
+				<div id="project-navigation" class="col three">
 					@Previous_Project
 					@Next_Project
-					<br>
-					@project_description
 				</div>
 				@Images
 			</div>
