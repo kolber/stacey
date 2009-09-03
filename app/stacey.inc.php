@@ -190,9 +190,10 @@ class Page {
 		 	if($dh = opendir($dir)) {
 		 		while (($file = readdir($dh)) !== false) {
 		 			if(!is_dir($file) && preg_match("/\.(gif|jpg|png|jpeg)/i", $file) && !preg_match("/thumb\./i", $file)) {
-						$this->images[] = $file;
+						$image_files[] = $file;
 					}
 				}
+				return $image_files;
 			}
 			closedir($dh);
 		}
@@ -247,6 +248,8 @@ class Project extends Page {
 	}
 	
 	function get_sibling_projects() {
+		if(get_class($this) == "MockProject") return array(array(), array());
+		
 		foreach($this->unclean_page_names as $key => $page_name) {
 			if($page_name == $this->page_name_unclean) {
 				$previous_project_name = ($this->unclean_page_names[$key-1]) ? $this->unclean_page_names[$key-1] : $this->unclean_page_names[(count($this->unclean_page_names)-1)];
@@ -278,8 +281,12 @@ class MockProject extends Project {
 		$this->folder_name = $folder_name;
 		$this->store_unclean_page_names('../content/');
 		$this->projects_folder_unclean = $this->unclean_page_name('projects');
+		$this->store_unclean_page_names('../content/'.$this->projects_folder_unclean);
+		$this->page_name_unclean = $this->unclean_page_name(preg_replace("/^\d+/", "", $folder_name));
+		$this->sibling_projects = $this->get_sibling_projects();
+		
 		$this->content_file = $this->get_content_file();
-		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
+		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file)); 
 	}
 
 	function get_content_file() {
@@ -351,7 +358,7 @@ class ContentParser {
 			$pp = new PreviousProjectPartial;
 			// additional, useful values
 			$replacement_pairs = array(
-				"/@Images_Count/" => count($this->page->images),
+				"/@Images_Count/" => count($this->page->image_files),
 				"/@Projects_Count/" => count($this->page->unclean_page_names),
 				"/@Project_Number/" => $this->page->page_number,
 				"/@Previous_Project/" => $pp->render($this->page->sibling_projects[0]),
