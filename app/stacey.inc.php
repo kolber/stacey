@@ -2,6 +2,7 @@
 
 class Stacey {
 	function __construct($get) {
+		date_default_timezone_set('Australia/Melbourne');
 		$r = new Renderer($get);
 		$r->render();
 	}
