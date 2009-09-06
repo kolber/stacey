@@ -424,7 +424,7 @@ class TemplateParser {
 class Partial {
 	
 	function check_thumb($dir, $file) {
-		$file_types = array("jpg", "gif", "png");
+		$file_types = array("jpg", "gif", "png", "jpeg", "JPG", "GIF", "PNG");
 		foreach($file_types as $file_type) {
 			if(file_exists($dir."/".$file."/thumb.".$file_type)) {
 				return $dir.'/'.$file.'/thumb.'.$file_type;
