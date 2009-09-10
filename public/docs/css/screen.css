@@ -53,6 +53,7 @@ div.description p { clear: both; }
 div.description h2 { padding: 0px 0px 15px; }
 
 div#images { clear: both; padding: 30px 0px 0px 70px; }
+div.description div#images { padding: 0px 0px 0px 0px; }
 div#images img { margin: 0px 0px 10px; }
 p#gallery-count { margin: 0px 20px 0px 0px; }
 p#gallery-count span { margin: 1px 0px 0px; display: block; }

@@ -2,7 +2,7 @@ page_title: Project Name | Anthony Kolber's Graphic Design Portfolio
 
 page_description: The Project Name project, designed by Anthony Kolber
 
-project_title: Project
+project_title: The Longer Project Name 6
 
 project_date: 2009, Jun–
 

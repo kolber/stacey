@@ -1,6 +1,6 @@
-page_title: Anthony Kolber's Graphic Design Portfolio
+page_title: Name's Graphic Design Portfolio
 
-page_description: A collection of Anthony Kolber's graphic design work
+page_description: A collection of Name's graphic design work
 
 about: 
 - Lorem ipsum,

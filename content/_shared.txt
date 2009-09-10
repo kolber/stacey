@@ -1,5 +1,5 @@
-name: Anthony Kolber
+name: Name
 
 profession: — Graphic Designer
 
-email: — ae@aestheticallyloyal.com
+email: — hi@yourdomain.com
