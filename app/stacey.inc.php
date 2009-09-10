@@ -59,8 +59,8 @@ class Cache {
 		elseif(filemtime('../templates/partials/images.html') > filemtime($this->cachefile)) return true;
 		elseif(filemtime('../templates/partials/projects.html') > filemtime($this->cachefile)) return true;
 		elseif(filemtime('../templates/partials/navigation.html') > filemtime($this->cachefile)) return true;
-		elseif(filemtime('../templates/partials/previous-project-link.html') > filemtime($this->cachefile)) return true;
-		elseif(filemtime('../templates/partials/next-project-link.html') > filemtime($this->cachefile)) return true;
+		elseif(filemtime('../templates/partials/previous-project.html') > filemtime($this->cachefile)) return true;
+		elseif(filemtime('../templates/partials/next-project.html') > filemtime($this->cachefile)) return true;
 		elseif($this->create_hash() !== $this->get_current_hash()) return true;
 		else return false;
 	}
@@ -551,7 +551,7 @@ class ProjectsPartial extends Partial {
 
 class NextProjectPartial extends Partial {
 	var $page;
-	var $partial_file = "../templates/partials/next-project-link.html";
+	var $partial_file = "../templates/partials/next-project.html";
 	
 	function render($project_sibling) {
 		$html = preg_replace(array_keys($project_sibling), array_values($project_sibling), file_get_contents($this->partial_file));
@@ -560,7 +560,7 @@ class NextProjectPartial extends Partial {
 }
 
 class PreviousProjectPartial extends NextProjectPartial {
-	var $partial_file = "../templates/partials/previous-project-link.html";
+	var $partial_file = "../templates/partials/previous-project.html";
 }
 
 ?>
