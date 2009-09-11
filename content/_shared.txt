@@ -1,5 +1,5 @@
 name: Name
 
-profession: — Graphic Designer
+profession: Graphic Designer
 
-email: — hi@yourdomain.com
+email: hi@yourdomain.com
