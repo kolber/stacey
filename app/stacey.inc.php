@@ -152,6 +152,7 @@ class Page {
 		$this->store_unclean_page_names('../content/');
 		$this->page_name_unclean = $this->unclean_page_name($this->page);
 		$this->projects_folder_unclean = $this->unclean_page_name('projects');
+		$this->store_unclean_page_names('../content/'.$this->projects_folder_unclean);
 		
 		$this->template_file = $this->get_template_file();
 		$this->content_file = $this->get_content_file();
@@ -354,17 +355,18 @@ class ContentParser {
 	}
 	
 	function create_replacement_rules($text) {
+		// additional, useful values
+		$replacement_pairs = array(
+			"/@Images_Count/" => count($this->page->image_files),
+			"/@Projects_Count/" => count($this->page->unclean_page_names),
+		);
+		
 		if(isset($this->page->sibling_projects)) {
 			$np = new NextProjectPartial;
 			$pp = new PreviousProjectPartial;
-			// additional, useful values
-			$replacement_pairs = array(
-				"/@Images_Count/" => count($this->page->image_files),
-				"/@Projects_Count/" => count($this->page->unclean_page_names),
-				"/@Project_Number/" => $this->page->page_number,
-				"/@Previous_Project/" => $pp->render($this->page->sibling_projects[0]),
-				"/@Next_Project/" => $np->render($this->page->sibling_projects[1])
-			);
+			$replacement_pairs["/@Project_Number/"] = $this->page->page_number;
+			$replacement_pairs["/@Previous_Project/"] = $pp->render($this->page->sibling_projects[0]);
+			$replacement_pairs["/@Next_Project/"] = $np->render($this->page->sibling_projects[1]);
 		}
 		
 		preg_match_all('/[\w\d_-]+?:[\S\s]+?\n\n/', $text, $matches);
