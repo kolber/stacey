@@ -21,7 +21,27 @@ class Renderer {
 		echo file_get_contents('../public/404.html');
 	}
 	
+	function handle_redirects() {
+		// if page does not end in a trailing slash, add one
+		if(!preg_match("/\/$/", $_SERVER["REQUEST_URI"])) {
+			header("HTTP/1.1 301 Moved Permanently");
+			header('Location:'.$_SERVER["REQUEST_URI"]."/");
+			return true;
+		}
+		
+		// if they're looking for /projects/, redirect them to the index page
+		if(preg_match("/projects\/$/", $_SERVER["REQUEST_URI"])) {
+			header("HTTP/1.1 301 Moved Permanently");
+			header('Location: ../');
+			return true;
+		}
+		
+		return false;
+	}
+	
 	function render() {
+		if($this->handle_redirects()) return;
+		
 		if(!$this->page->content_file || !$this->page->template_file) {
 			if($this->page->public_file) echo file_get_contents($this->page->public_file);
 			else $this->render_404();
@@ -146,6 +166,7 @@ class Page {
 	var $page_number;
 	var $projects_folder_unclean;
 	var $unclean_page_names = array();
+	var $link_path;
 	
 	function __construct($page_name) {
 		$this->page = ($page_name) ? $page_name : "index";
@@ -158,6 +179,17 @@ class Page {
 		$this->content_file = $this->get_content_file();
 		$this->public_file = $this->get_public_file();
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
+		$this->link_path = $this->construct_link_path();
+	}
+	
+	function construct_link_path() {
+		$link_path = "";
+		if(!preg_match("/index/", $this->content_file)) {
+			$link_path .= "../";
+			preg_match_all("/\//", $this->content_file, $slashes);
+			for($i = 3; $i < count($slashes[0]); $i++) $link_path .= "../";
+		}
+		return $link_path;
 	}
 	
 	function store_unclean_page_names($dir) {
@@ -237,6 +269,7 @@ class Project extends Page {
 		$this->content_file = $this->get_content_file();
 		$this->public_file = $this->get_public_file();
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
+		$this->link_path = $this->construct_link_path();
 	}
 	
 	function get_content_file() {
@@ -289,6 +322,7 @@ class MockProject extends Project {
 		
 		$this->content_file = $this->get_content_file();
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file)); 
+		$this->link_path = $this->construct_link_path();
 	}
 
 	function get_content_file() {
@@ -401,7 +435,7 @@ class TemplateParser {
 		$i = new ImagesPartial;
 		$n = new NavigationPartial;
 		$partials[] = $p->render($this->page);
-		$partials[] = $i->render(preg_replace('/\/[^\/]+$/', '', $this->page->content_file));
+		$partials[] = $i->render($this->page);
 		$partials[] = $n->render($this->page);
 		$partials[] = date('Y');
 		return $partials;
@@ -425,11 +459,13 @@ class TemplateParser {
 
 class Partial {
 	
+	var $page;
+	
 	function check_thumb($dir, $file) {
 		$file_types = array("jpg", "gif", "png", "jpeg", "JPG", "GIF", "PNG");
 		foreach($file_types as $file_type) {
 			if(file_exists($dir."/".$file."/thumb.".$file_type)) {
-				return $dir.'/'.$file.'/thumb.'.$file_type;
+				return preg_replace("/\.\.\//", $this->page->link_path, $dir).'/'.$file.'/thumb.'.$file_type;
 			}
 		}
 		return "";
@@ -445,7 +481,6 @@ class Partial {
 
 class NavigationPartial extends Partial {
 
-	var $page;
 	var $dir = "../content/";
 	var $partial_file = "../templates/partials/navigation.html";
 
@@ -459,7 +494,7 @@ class NavigationPartial extends Partial {
 					$files[] = $file;
 					$file_name_clean = preg_replace(array('/^\d+?\./', '/\.txt/'), '', $file);
 					$file_vars[] = array(
-						"/@url/" => $file_name_clean,
+						"/@url/" => $this->page->link_path.$file_name_clean."/",
 						"/@name/" => ucfirst(preg_replace('/-/', ' ', $file_name_clean)),
 					);
 				}
@@ -485,8 +520,10 @@ class ImagesPartial extends Partial {
 	var $dir;
 	var $partial_file = "../templates/partials/images.html";
 
-	function render($dir) {
+	function render($page) {
 		
+		$this->page = $page;
+		$dir = preg_replace('/\/[^\/]+$/', '', $this->page->content_file);
 		$wrappers = $this->parse($this->partial_file);
 		
 		if(is_dir($dir)) {
@@ -495,7 +532,7 @@ class ImagesPartial extends Partial {
 		 			if(!is_dir($file) && preg_match("/\.(gif|jpg|png|jpeg)/i", $file) && !preg_match("/thumb\./i", $file)) {
 						$files[] = $file;
 						$file_vars[] = array(
-							"/@url/" => preg_replace('/\.\.\//', '/', $dir)."/".$file,
+							"/@url/" => $this->page->link_path.preg_replace('/\.\.\//', '', $dir)."/".$file,
 						);
 					}
 				}
@@ -515,7 +552,6 @@ class ImagesPartial extends Partial {
 
 class ProjectsPartial extends Partial {
 	
-	var $page;
 	var $dir;
 	var $partial_file = "../templates/partials/projects.html";
 
@@ -530,7 +566,7 @@ class ProjectsPartial extends Partial {
 		 			if(!is_dir($file) && file_exists($this->dir."/".$file."/content.txt")) {
 						$files[] = $file;
 						$vars = array(
-							"/@url/" => preg_replace('/^\d+?\./', '', $file),
+							"/@url/" => $this->page->link_path."projects/".preg_replace('/^\d+?\./', '', $file)."/",
 							"/@thumb/" => $this->check_thumb($this->dir, $file)
 						);
 						$c = new ContentParser;

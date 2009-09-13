@@ -3,19 +3,12 @@ RewriteEngine on
 
 ErrorDocument 404 /404.html
 
-RewriteBase /
-
-# Rewrite any searches for index.html
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_URI} !app/(.*)$
-RewriteRule ^(.*)/index.html$ $1/ [R=301,L]
-
 # Add a trailing slash to directories
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} !app/(.*)$
 RewriteCond %{REQUEST_URI} !(\.\w+)$
 RewriteCond %{REQUEST_URI} !(.*)/$
-RewriteRule ^(.*)$ $1/ [R=301,L]
+RewriteRule ([^/]+)$ $1/ [L]
 
 # Deny access to any any non-index.php files within /app
 RewriteCond %{REQUEST_URI} app(.*)$
