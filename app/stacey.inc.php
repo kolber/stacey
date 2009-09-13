@@ -296,8 +296,8 @@ class Project extends Page {
 				$previous_project_name = ($this->unclean_page_names[$key-1]) ? $this->unclean_page_names[$key-1] : $this->unclean_page_names[(count($this->unclean_page_names)-1)];
 				$next_project_name = ($this->unclean_page_names[$key+1]) ? $this->unclean_page_names[$key+1] : $this->unclean_page_names[0];
 
-				$previous_project = array("/@url/" => $this->clean_page_name($previous_project_name));
-				$next_project = array("/@url/" => $this->clean_page_name($next_project_name));
+				$previous_project = array("/@url/" => "../".$this->clean_page_name($previous_project_name));
+				$next_project = array("/@url/" => "../".$this->clean_page_name($next_project_name));
 
 				$previous_project_page = new MockProject($previous_project_name);
 				$next_project_page = new MockProject($next_project_name);
