@@ -23,6 +23,12 @@ class Renderer {
 	
 	function handle_redirects() {
 		// if page does not end in a trailing slash, add one
+		if(preg_match("/index\/?$/", $_SERVER["REQUEST_URI"])) {
+			header("HTTP/1.1 301 Moved Permanently");
+			header('Location: ../');
+			return true;
+		}
+		
 		if(!preg_match("/\/$/", $_SERVER["REQUEST_URI"])) {
 			header("HTTP/1.1 301 Moved Permanently");
 			header('Location:'.$_SERVER["REQUEST_URI"]."/");
