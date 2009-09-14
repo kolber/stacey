@@ -16,9 +16,9 @@ RewriteRule ^projects/([^/]+)/$ app/?project&name=$1
 
 # Rewrite any calls to /* to the app
 RewriteCond %{REQUEST_URI} app/$
-RewriteRule ^app - [S=3]
-	RewriteRule ^([^/]+)/$ app/?$1 [S=2]
-	RewriteRule ^$ app/ [S=1]
+RewriteRule ^app - [S=5]
+	RewriteRule ^([^/]+)/$ app/?$1 [S=4]
+	RewriteRule ^$ app/ [S=3]
 		
 # Rewrite any file calls to the public directory
 RewriteCond %{REQUEST_URI} public/$
