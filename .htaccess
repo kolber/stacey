@@ -10,10 +10,6 @@ RewriteCond %{REQUEST_URI} !(\.\w+)$
 RewriteCond %{REQUEST_URI} !(.*)/$
 RewriteRule ([^/]+)$ $1/ [L]
 
-# Deny access to any any non-index.php files within /app
-RewriteCond %{REQUEST_URI} app(.*)$
-RewriteRule !^app/index.php$ app/index.php
-
 # Rewrite any calls to /projects to the app
 RewriteRule ^projects/$ app/
 RewriteRule ^projects/([^/]+)/$ app/?project&name=$1
