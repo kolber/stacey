@@ -359,6 +359,8 @@ class ContentParser {
 			'/\\\x02/',
 			# automatically link http:// websites
 			'/(?<!")http&#58;\/\/([\S]+\.[\S]*\.?[A-Za-z0-9]{2,4})/',
+			# automatically link email addresses
+			'/(?<![;>])\b([A-Za-z0-9.-]+)@([A-Za-z0-9.-]+\.[A-Za-z]{2,4})/',
 			# convert lists
 			'/\n?-(.+?)(?=\n)/',
 			'/(<li>.*<\/li>)/',
@@ -366,8 +368,6 @@ class ContentParser {
 			'/([^\n]+?)(?=\n)/',
 			'/<p>(.+):(.+)<\/p>/',
 			'/: (.+)(?=\n<p>)/',
-			# automatically link email addresses
-			'/([A-Za-z0-9.-]+)@([A-Za-z0-9.-]+\.[A-Za-z]{2,4})/',
 		);
 		$replacements = array(
 			# replace inline colons
@@ -380,6 +380,8 @@ class ContentParser {
 			'-',
 			# automatically link http:// websites
 			'<a href="http&#58;//$1">http&#58;//$1</a>',
+			# automatically link email addresses
+			'<a href="mailto&#58;$1&#64;$2">$1&#64;$2</a>',
 			# convert lists
 			'<li>$1</li>',
 			'<ul>$1</ul>',
@@ -387,8 +389,6 @@ class ContentParser {
 			'<p>$1</p>',
 			'$1:$2',
 			':<p>$1</p>',
-			# automatically link email addresses
-			'<a href="mailto&#58;$1&#64;$2">$1&#64;$2</a>',
 		);
 		$parsed_text = preg_replace($patterns, $replacements, $text);
 		return $parsed_text;
