@@ -350,13 +350,15 @@ class ContentParser {
 	function preparse($text) {
 		$patterns = array(
 			# replace inline colons
-			'/(?<=\n)([a-z0-9_-]+?):/',
+			'/(?<=\n)([a-z0-9_-]+?):(?!\/)/',
 			'/:/',
 			'/\\\x01/',
 			# replace inline dashes
 			'/(?<=\n)-/',
 			'/-/',
 			'/\\\x02/',
+			# automatically link http:// websites
+			'/(?<!")http&#58;\/\/([\S]+\.[\S]*\.?[A-Za-z0-9]{2,4})/',
 			# convert lists
 			'/\n?-(.+?)(?=\n)/',
 			'/(<li>.*<\/li>)/',
@@ -366,8 +368,6 @@ class ContentParser {
 			'/: (.+)(?=\n<p>)/',
 			# automatically link email addresses
 			'/([A-Za-z0-9.-]+)@([A-Za-z0-9.-]+\.[A-Za-z]{2,4})/',
-			# automatically link http:// websites
-			'/http&#58;\/\/([A-Za-z0-9.-]+\.[A-Za-z]{2,4})/',
 		);
 		$replacements = array(
 			# replace inline colons
@@ -378,6 +378,8 @@ class ContentParser {
 			'\\x02',
 			'&#45;',
 			'-',
+			# automatically link http:// websites
+			'<a href="http&#58;//$1">http&#58;//$1</a>',
 			# convert lists
 			'<li>$1</li>',
 			'<ul>$1</ul>',
@@ -387,8 +389,6 @@ class ContentParser {
 			':<p>$1</p>',
 			# automatically link email addresses
 			'<a href="mailto&#58;$1&#64;$2">$1&#64;$2</a>',
-			# automatically link http:// websites
-			'<a href="http&#58;//$1">http&#58;//$1</a>',
 		);
 		$parsed_text = preg_replace($patterns, $replacements, $text);
 		return $parsed_text;
