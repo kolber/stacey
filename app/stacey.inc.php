@@ -509,7 +509,7 @@ class NavigationPartial extends Partial {
 		
 		asort($files, SORT_NUMERIC);
 		$html .= $wrappers[0];
-		$p = new ProjectsPartial;
+		#$p = new ProjectsPartial;
 		foreach($files as $key => $file) {
 			$html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
 			#if(preg_match('/projects$/', $file)) $html .= $p->render($this->page);
