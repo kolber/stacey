@@ -1,7 +1,3 @@
-To do:
-* allow Stacey to run from a subdirectory
-* Clean up HTML Output (mainly trailing newlines on key/var replacements)
-
 ? Ability to select images by number (for use within template)
 ? Add support for template selection (from /content/pagename.templatename.txt?)
 ? Add support for '/section/page/information.txt & /projects/section/page
