@@ -417,7 +417,7 @@ class ContentParser {
 			$replacement_pairs["/@Next_Project/"] = $np->render($this->page->sibling_projects[1]);
 		}
 		
-		preg_match_all('/[\w\d_-]+?:[\S\s]+?\n\n/', $text, $matches);
+		preg_match_all('/[\w\d_-]+?:[\S\s]*?\n\n/', $text, $matches);
 		foreach($matches[0] as $match) {
 			$colon_split = split(":", $match);
 			$replacement_pairs["/@".$colon_split[0]."/"] = trim($colon_split[1]);
