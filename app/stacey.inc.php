@@ -358,16 +358,20 @@ class ContentParser {
 			'/-/',
 			'/\\\x02/',
 			# automatically link http:// websites
-			'/(?<!")http&#58;\/\/([\S]+\.[\S]*\.?[A-Za-z0-9]{2,4})/',
+			'/(?<![">])\bhttp&#58;\/\/([\S]+\.[\S]*\.?[A-Za-z0-9]{2,4})/',
 			# automatically link email addresses
 			'/(?<![;>])\b([A-Za-z0-9.-]+)@([A-Za-z0-9.-]+\.[A-Za-z]{2,4})/',
 			# convert lists
 			'/\n?-(.+?)(?=\n)/',
 			'/(<li>.*<\/li>)/',
+			# replace doubled lis
+			'/<\/li><\/li>/',
 			# wrap multi-line text in paragraphs
 			'/([^\n]+?)(?=\n)/',
 			'/<p>(.+):(.+)<\/p>/',
 			'/: (.+)(?=\n<p>)/',
+			# replace any keys that got wrapped in ps
+			'/(<p>)([a-z0-9_-]+):(<\/p>)/',
 		);
 		$replacements = array(
 			# replace inline colons
@@ -385,10 +389,14 @@ class ContentParser {
 			# convert lists
 			'<li>$1</li>',
 			'<ul>$1</ul>',
+			# replace doubled lis
+			'</li>',
 			# wrap multi-line text in paragraphs
 			'<p>$1</p>',
 			'$1:$2',
 			':<p>$1</p>',
+			# replace any keys that got wrapped in ps
+			'$2:',
 		);
 		$parsed_text = preg_replace($patterns, $replacements, $text);
 		return $parsed_text;
