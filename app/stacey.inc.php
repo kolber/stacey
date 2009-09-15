@@ -487,7 +487,7 @@ class Partial {
 	
 	function parse($file) {
 		$file = file_get_contents($file);
-		preg_match('/([\S\s]*)foreach[\S\s]*:([\S\s]*)endforeach;([\S\s]*)/', $file, $matches);
+		preg_match('/([\S\s]*)foreach[\S\s]*?:([\S\s]*)endforeach;([\S\s]*)/', $file, $matches);
 		return array($matches[1], $matches[2], $matches[3]);
 	}
 	
