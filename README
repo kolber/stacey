@@ -4,7 +4,7 @@ If you look in the /content and /templates folders, you should get the general i
 Or check out http://staceyapp.com for more detailed usage information.
 
 Installation–
-Rename htacess file to .htaccess, copy to server.
+Copy to server, chmod 777 app/cache, rename htacess file to .htaccess.
 
 Copyright—
 Copyright (c) 2009 Anthony Kolber. See LICENSE for details.
