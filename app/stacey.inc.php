@@ -46,6 +46,7 @@ class Renderer {
 	}
 	
 	function render() {
+		
 		if($this->handle_redirects()) return;
 		
 		if(!$this->page->content_file || !$this->page->template_file) {
@@ -67,6 +68,7 @@ class Renderer {
 		}
 	}
 }
+
 
 class Cache {
 
