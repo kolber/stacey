@@ -295,7 +295,7 @@ class Project extends Page {
 		
 		foreach($this->unclean_page_names as $key => $page_name) {
 			if($page_name == $this->page_name_unclean) {
-				$previous_project_name = ($key > 1) ? $this->unclean_page_names[$key-1] : $this->unclean_page_names[(count($this->unclean_page_names)-1)];
+				$previous_project_name = ($key >= 1) ? $this->unclean_page_names[$key-1] : $this->unclean_page_names[(count($this->unclean_page_names)-1)];
 				$next_project_name = ($key + 1 < count($this->unclean_page_names)) ? $this->unclean_page_names[$key+1] : $this->unclean_page_names[0];
 
 				$previous_project = array("/@url/" => "../".$this->clean_page_name($previous_project_name));
