@@ -13,7 +13,7 @@ class Renderer {
 	var $page;
 	
 	function __construct($get) {
-		$this->page = ($get['name']) ? new Project($get['name']) : new Page(key($get));
+		$this->page = (array_key_exists('name', $get)) ? new Project($get['name']) : new Page(key($get));
 	}
 	
 	function render_404() {
@@ -205,6 +205,7 @@ class Page {
 	function list_files($dir, $regex) {
 		if(!is_dir($dir)) return false;
 		if(!$dh = opendir($dir)) return false;
+		$files = null;
 		while (($file = readdir($dh)) !== false) if(!is_dir($file) && preg_match($regex, $file)) $files[] = $file;
 		closedir($dh);
 		sort($files, SORT_NUMERIC);
@@ -226,6 +227,7 @@ class Page {
 	}
 	
 	function get_images($dir) {
+		$image_files = null;
 		if(is_dir($dir)) {
 		 	if($dh = opendir($dir)) {
 		 		while (($file = readdir($dh)) !== false) {
@@ -233,10 +235,10 @@ class Page {
 						$image_files[] = $file;
 					}
 				}
-				return $image_files;
 			}
 			closedir($dh);
 		}
+		return $image_files;
 	}
 	
 	function get_content_file() {
@@ -293,8 +295,8 @@ class Project extends Page {
 		
 		foreach($this->unclean_page_names as $key => $page_name) {
 			if($page_name == $this->page_name_unclean) {
-				$previous_project_name = ($this->unclean_page_names[$key-1]) ? $this->unclean_page_names[$key-1] : $this->unclean_page_names[(count($this->unclean_page_names)-1)];
-				$next_project_name = ($this->unclean_page_names[$key+1]) ? $this->unclean_page_names[$key+1] : $this->unclean_page_names[0];
+				$previous_project_name = ($key > 1) ? $this->unclean_page_names[$key-1] : $this->unclean_page_names[(count($this->unclean_page_names)-1)];
+				$next_project_name = ($key + 1 < count($this->unclean_page_names)) ? $this->unclean_page_names[$key+1] : $this->unclean_page_names[0];
 
 				$previous_project = array("/@url/" => "../".$this->clean_page_name($previous_project_name));
 				$next_project = array("/@url/" => "../".$this->clean_page_name($next_project_name));
@@ -501,6 +503,7 @@ class NavigationPartial extends Partial {
 	function render($page) {
 		$this->page = $page;
 		$wrappers = $this->parse($this->partial_file);
+		$html = null;
 		
 		if($dh = opendir($this->dir)) {
 			while (($file = readdir($dh)) !== false) {
@@ -538,10 +541,12 @@ class ImagesPartial extends Partial {
 		
 		$this->page = $page;
 		$dir = preg_replace('/\/[^\/]+$/', '', $this->page->content_file);
+		$html = null;
 		$wrappers = $this->parse($this->partial_file);
 		
 		if(is_dir($dir)) {
 		 	if($dh = opendir($dir)) {
+				$files = null;
 		 		while (($file = readdir($dh)) !== false) {
 		 			if(!is_dir($file) && preg_match("/\.(gif|jpg|png|jpeg)/i", $file) && !preg_match("/thumb\./i", $file)) {
 						$files[] = $file;
