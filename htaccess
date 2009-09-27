@@ -7,7 +7,7 @@ ErrorDocument 404 /404.html
 # Add a trailing slash to directories
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} !app/(.*)$
-RewriteCond %{REQUEST_URI} !(\.\w+)$
+RewriteCond %{REQUEST_URI} !(\.)
 RewriteCond %{REQUEST_URI} !(.*)/$
 RewriteRule ([^/]+)$ $1/ [L]
 

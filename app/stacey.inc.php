@@ -2,7 +2,7 @@
 
 class Stacey {
 	function __construct($get) {
-		date_default_timezone_set('Australia/Melbourne');
+		if(function_exists('date_default_timezone_set')) date_default_timezone_set('Australia/Melbourne');
 		$r = new Renderer($get);
 		$r->render();
 	}
@@ -46,6 +46,7 @@ class Renderer {
 	}
 	
 	function render() {
+		
 		if($this->handle_redirects()) return;
 		
 		if(!$this->page->content_file || !$this->page->template_file) {
@@ -67,6 +68,7 @@ class Renderer {
 		}
 	}
 }
+
 
 class Cache {
 
@@ -421,7 +423,7 @@ class ContentParser {
 		
 		preg_match_all('/[\w\d_-]+?:[\S\s]*?\n\n/', $text, $matches);
 		foreach($matches[0] as $match) {
-			$colon_split = split(":", $match);
+			$colon_split = explode(":", $match);
 			$replacement_pairs["/@".$colon_split[0]."/"] = trim($colon_split[1]);
 		}
 		
