@@ -2,7 +2,7 @@
 
 class Stacey {
 	function __construct($get) {
-		date_default_timezone_set('Australia/Melbourne');
+		if(function_exists('date_default_timezone_set')) date_default_timezone_set('Australia/Melbourne');
 		$r = new Renderer($get);
 		$r->render();
 	}
