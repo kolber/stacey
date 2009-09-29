@@ -592,7 +592,7 @@ class ProjectsPartial extends Partial {
 				}
 			}
 			closedir($dh);
-			asort($files, SORT_NUMERIC);
+			arsort($files, SORT_NUMERIC);
 			$html = $wrappers[0];
 			foreach($files as $key => $file) $html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
 			$html .= $wrappers[2];
