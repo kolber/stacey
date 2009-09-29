@@ -244,13 +244,13 @@ class Page {
 	}
 	
 	function get_content_file() {
-		if($this->page_name_unclean && file_exists('../content/$this->page_name_unclean/content.txt')) return '../content/$this->page_name_unclean/content.txt';
+		if($this->page_name_unclean && file_exists('../content/'.$this->page_name_unclean.'/content.txt')) return '../content/'.$this->page_name_unclean.'/content.txt';
 		elseif($this->page_name_unclean && file_exists('../content/'.$this->page_name_unclean)) return '../content/'.$this->page_name_unclean;
 		else return false;
 	}
 	
 	function get_template_file() {
-		if(file_exists('../templates/$this->page.html')) return '../templates/$this->page.html';
+		if(file_exists('../templates/'.$this->page.'.html')) return '../templates/'.$this->page.'.html';
 		elseif(file_exists('../templates/content.html')) return '../templates/content.html';
 		else return false;
 	}
