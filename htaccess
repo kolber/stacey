@@ -1,6 +1,7 @@
 Options +FollowSymLinks
 RewriteEngine on
 
+#RewriteBase /
 ErrorDocument 404 /404.html
 
 # Add a trailing slash to directories
