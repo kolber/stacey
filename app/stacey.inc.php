@@ -31,7 +31,7 @@ class Renderer {
 		
 		if(!preg_match('/\/$/', $_SERVER['REQUEST_URI'])) {
 			header('HTTP/1.1 301 Moved Permanently');
-			header('Location: ' . $_SERVER['REQUEST_URI'] . '/');
+			header('Location: '.$_SERVER['REQUEST_URI'].'/');
 			return true;
 		}
 		
@@ -63,7 +63,7 @@ class Renderer {
 				ob_end_flush();
 			} else {
 				include($cache->cachefile);
-				echo "\n" . '<!-- Cached. -->';
+				echo "\n".'<!-- Cached. -->';
 			}
 		}
 	}
@@ -77,7 +77,7 @@ class Cache {
 	
 	function __construct($page) {
 		$this->page = $page;
-		$this->cachefile = './cache/' . base64_encode($this->page->content_file);
+		$this->cachefile = './cache/'.base64_encode($this->page->content_file);
 	}
 	
 	function check_expired() {
@@ -94,7 +94,7 @@ class Cache {
 	}
 	
 	function write_cache() {
-		echo "\n" . '<!-- Cache: ' . $this->create_hash(preg_replace('/\/[^\/]+$/', '', $this->page->content_file)) . ' -->';
+		echo "\n".'<!-- Cache: '.$this->create_hash(preg_replace('/\/[^\/]+$/', '', $this->page->content_file)).' -->';
 		$fp = fopen($this->cachefile, 'w');
 		fwrite($fp, ob_get_contents());
 		fclose($fp);
@@ -220,7 +220,7 @@ class Page {
 
 	function unclean_page_name($name) {
 		foreach($this->unclean_page_names as $key => $file) {
-			if(preg_match('/' . $name . '(\.txt)?$/', $file)) {
+			if(preg_match('/'.$name.'(\.txt)?$/', $file)) {
 				$this->page_number = ($key + 1);
 				return $file;
 			}
@@ -256,7 +256,7 @@ class Page {
 	}
 	
 	function get_public_file() {
-		if(file_exists('../public/' . $this->page . '.html')) return '../public/' . $this->page . '.html';
+		if(file_exists('../public/'.$this->page.'.html')) return '../public/'.$this->page.'.html';
 		else return false;
 	}
 
@@ -283,7 +283,7 @@ class Project extends Page {
 	}
 	
 	function get_content_file() {
-		if($this->page_name_unclean && file_exists('../content/'.$this->projects_folder_unclean.'/' . $this->page_name_unclean . '/content.txt')) return '../content/'.$this->projects_folder_unclean . '/' . $this->page_name_unclean . '/content.txt';
+		if($this->page_name_unclean && file_exists('../content/'.$this->projects_folder_unclean.'/'.$this->page_name_unclean.'/content.txt')) return '../content/'.$this->projects_folder_unclean.'/'.$this->page_name_unclean.'/content.txt';
 		else return false;
 	}
 	
