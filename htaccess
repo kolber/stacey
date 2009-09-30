@@ -1,7 +1,6 @@
 Options +FollowSymLinks
 RewriteEngine on
 
-#RewriteBase /
 ErrorDocument 404 /404.html
 
 # Add a trailing slash to directories
@@ -11,18 +10,12 @@ RewriteCond %{REQUEST_URI} !(\.)
 RewriteCond %{REQUEST_URI} !(.*)/$
 RewriteRule ([^/]+)$ $1/ [L]
 
-# Rewrite any calls to /projects to the app
-RewriteRule ^projects/$ app/
-RewriteRule ^projects/([^/]+)/$ app/?project&name=$1
-
 # Rewrite any calls to /* to the app
 RewriteCond %{REQUEST_URI} app/$
-RewriteRule ^app - [S=5]
-	RewriteRule ^([^/]+)/$ app/?$1 [S=4]
-	RewriteRule ^$ app/ [S=3]
+RewriteRule ^app - [L]
+RewriteRule ^(.*)/$ app/?$1 [L]
+RewriteRule ^$ app/ [L]
 		
 # Rewrite any file calls to the public directory
-RewriteCond %{REQUEST_URI} public/$
-RewriteRule ^public - [S=2]
-	RewriteCond %{REQUEST_URI} !(projects|app|public|content)/(.*)$
-	RewriteRule ^(.+) public/$1
+RewriteCond %{REQUEST_URI} !(app|public|content)/(.*)$
+RewriteRule ^(.+) public/$1 [L]

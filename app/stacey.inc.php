@@ -1,6 +1,125 @@
 <?php
 
 class Stacey {
+	
+	function __construct($get) {
+		// it's easier to handle some redirection through php rather than relying on a more complex .htaccess file to do all the work
+		if($this->handle_redirects()) return;
+		// parse get request
+		$r = new Renderer($get);
+		// handle rendering of the page
+		$r->render();
+	}
+	
+	function handle_date_issue() {
+		// in PHP version 5.3.0 they added a requisite for setting a default timezone, this should be handled via the php.ini, but as we cannot rely on this, we have to set a default timezone ourselves
+		if(function_exists('date_default_timezone_set')) date_default_timezone_set('Australia/Melbourne');
+	}
+	
+	function handle_redirects() {
+		// rewrite any calls to /index or /index/ back to /
+		if(preg_match("/index\/?$/", $_SERVER["REQUEST_URI"])) {
+			header("HTTP/1.1 301 Moved Permanently");
+			header('Location: ../');
+			return true;
+		}
+		
+		// add trailing slash if required
+		if(!preg_match("/\/$/", $_SERVER["REQUEST_URI"])) {
+			header("HTTP/1.1 301 Moved Permanently");
+			header('Location:'.$_SERVER["REQUEST_URI"]."/");
+			return true;
+		}
+		
+		return false;
+	}
+	
+}
+
+Class Renderer {
+	
+	var $page;
+	
+	function __construct($get) {
+		// take the passed url ($get) and turn it into an object
+		$this->page = $this->handle_routes($get);
+	}
+	
+	function handle_routes($get) {
+		// if key is empty, we're looking for the index page
+		if(key($get) == '') {
+			return new Page();
+		}
+		// if key does contain slashes, it must be a category/page
+		else if(preg_match('/\//', key($get))) {
+			// explode key, [0] => category, [1] => name
+			$path = explode('/', key($get));
+			// if key contains more than one /, return a 404 as the app doesn't handle more than 2 levels of depth
+			if(count($path) > 2) return false;
+			else return new PageInCategory($path[0], $path[1]);
+		}
+		// if key contains no slashes, it must be a page
+		else {
+			return new Page(key($get));
+		}
+	}
+	
+	function render_404($path = '') {
+		/*
+			TODO: If file or folder exists, should we redirect to it?
+		*/
+		header('HTTP/1.0 404 Not Found');
+		// if there is a 404 page set, use it
+		if(file_exists('../public/404.html')) echo file_get_contents('../public/404.html');
+		else echo '<h1>404</h1><h2>Page could not be found.</h2><p>Unfortunately, the page you were looking for does not exist here.</p>';
+	}
+	
+	function render() {
+		// if $this->page is false, return 404
+		if(!$this->page) $this->render_404();
+		
+		/*
+		if(!$this->page->content_file || !$this->page->template_file) {
+			if($this->page->public_file) echo file_get_contents($this->page->public_file);
+			else $this->render_404();
+		} else {
+			$cache = new Cache($this->page);
+			if($cache->check_expired()) {
+				$t = new TemplateParser;
+				$c = new ContentParser;
+				ob_start();
+					echo $t->parse($this->page, $c->parse($this->page));
+					if(is_writable('./cache')) $cache->write_cache();
+				ob_end_flush();
+			} else {
+				include($cache->cachefile);
+				echo "\n".'<!-- Cached. -->';
+			}
+		}
+		*/
+	}
+}
+
+Class Page {
+	function __construct($name = 'index') {
+		echo $name;
+	}
+}
+
+Class PageInCategory extends Page {
+	function __construct($name, $category) {
+		echo $name."<br>";
+		echo $category;
+	}
+}
+
+/*
+
+---
+OLD
+---
+
+class Stacey {
 	function __construct($get) {
 		if(function_exists('date_default_timezone_set')) date_default_timezone_set('Australia/Melbourne');
 		$r = new Renderer($get);
@@ -621,5 +740,7 @@ class NextProjectPartial extends Partial {
 class PreviousProjectPartial extends NextProjectPartial {
 	var $partial_file = '../templates/partials/previous-project.html';
 }
+
+*/
 
 ?>
