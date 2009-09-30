@@ -17,17 +17,17 @@ class Stacey {
 	}
 	
 	function handle_redirects() {
-		// rewrite any calls to /index or /index/ back to /
-		if(preg_match("/index\/?$/", $_SERVER["REQUEST_URI"])) {
-			header("HTTP/1.1 301 Moved Permanently");
+		// rewrite any calls to /index or /app back to /
+		if(preg_match('/index|app\/?$/', $_SERVER['REQUEST_URI'])) {
+			header('HTTP/1.1 301 Moved Permanently');
 			header('Location: ../');
 			return true;
 		}
 		
 		// add trailing slash if required
-		if(!preg_match("/\/$/", $_SERVER["REQUEST_URI"])) {
-			header("HTTP/1.1 301 Moved Permanently");
-			header('Location:'.$_SERVER["REQUEST_URI"]."/");
+		if(!preg_match('/\/$/', $_SERVER['REQUEST_URI'])) {
+			header('HTTP/1.1 301 Moved Permanently');
+			header('Location:'.$_SERVER['REQUEST_URI'].'/');
 			return true;
 		}
 		
@@ -55,7 +55,7 @@ Class Renderer {
 			// explode key, [0] => category, [1] => name
 			$path = explode('/', key($get));
 			// if key contains more than one /, return a 404 as the app doesn't handle more than 2 levels of depth
-			if(count($path) > 2) return false;
+			if(count($path) > 2) return key($get);
 			else return new PageInCategory($path[0], $path[1]);
 		}
 		// if key contains no slashes, it must be a page
@@ -65,9 +65,7 @@ Class Renderer {
 	}
 	
 	function render_404($path = '') {
-		/*
-			TODO: If file or folder exists, should we redirect to it?
-		*/
+		// return correct 404 header
 		header('HTTP/1.0 404 Not Found');
 		// if there is a 404 page set, use it
 		if(file_exists('../public/404.html')) echo file_get_contents('../public/404.html');
@@ -75,43 +73,372 @@ Class Renderer {
 	}
 	
 	function render() {
-		// if $this->page is false, return 404
-		if(!$this->page) $this->render_404();
-		
-		/*
-		if(!$this->page->content_file || !$this->page->template_file) {
+		// if page doesn't contain a content file or have a matching template file, redirect to it or return 404
+		if(!$this->page || !$this->page->content_file || !$this->page->template_file) {
+			// if a static html page with a name matching the current route exists in the public folder, serve it 
 			if($this->page->public_file) echo file_get_contents($this->page->public_file);
+			// serve 404
 			else $this->render_404();
 		} else {
-			$cache = new Cache($this->page);
+			
+/*			$cache = new Cache($this->page);
 			if($cache->check_expired()) {
+				ob_start();
+*/
+
 				$t = new TemplateParser;
 				$c = new ContentParser;
-				ob_start();
-					echo $t->parse($this->page, $c->parse($this->page));
-					if(is_writable('./cache')) $cache->write_cache();
+				echo $t->parse($this->page, $c->parse($this->page));
+
+/*		if(is_writable('./cache')) $cache->write_cache();
 				ob_end_flush();
 			} else {
 				include($cache->cachefile);
 				echo "\n".'<!-- Cached. -->';
 			}
+*/
+
 		}
-		*/
 	}
 }
 
 Class Page {
+	var $name;
+	
+	var $content_file;
+	var $template_file;
+	var $public_file;
+	
+	var $i;
+	var $name_unclean;
+	var $unclean_names = array();
+	var $image_files = array();
+	var $link_path;
+	
 	function __construct($name = 'index') {
-		echo $name;
+		$this->name = $name;
+		$this->store_unclean_names('../content/');
+		$this->name_unclean = $this->unclean_name($this->name);
+
+		$this->content_file = $this->get_content_file();
+		echo $this->content_file."<br>";
+		$this->template_file = $this->get_template_file();
+		echo $this->template_file."<br>";
+		$this->public_file = $this->get_public_file();
+		echo $this->public_file."<br>";
+		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
+		var_dump($this->image_files);
+		echo "<br>";
+		$this->link_path = $this->construct_link_path();
+		echo $this->link_path."<br>";
 	}
+	
+	function construct_link_path() {
+		$link_path = '';
+		if(!preg_match('/index/', $this->content_file)) {
+			$link_path .= '../';
+			preg_match_all('/\//', $this->content_file, $slashes);
+			for($i = 3; $i < count($slashes[0]); $i++) $link_path .= '../';
+		}
+		return $link_path;
+	}
+	
+	function store_unclean_names($dir) {
+		// store a list of folder names
+		$this->unclean_names = $this->list_files($dir, '/^(?<!\.)[\w\d-]+/');
+	}
+
+	function list_files($dir, $regex) {
+		if(!is_dir($dir)) return false;
+		if(!$dh = opendir($dir)) return false;
+		$files = array();
+		// if file matches regex, push it to the files array
+		while (($file = readdir($dh)) !== false) if(!is_dir($file) && preg_match($regex, $file)) $files[] = $file;
+		closedir($dh);
+		// sort list of files reverse-numerically (10, 9, 8, etc)
+		rsort($files, SORT_NUMERIC);
+		// return list of files
+		return $files;
+	}
+	
+	function clean_name($name) {
+		// strip leading digit and dot from filename (1.xx becomes xx)
+		return preg_replace('/^\d+?\./', '', $name);
+	}
+
+	function unclean_name($name) {
+		// loop through each unclean page name looking for a match for $name
+		foreach($this->unclean_names as $key => $file) {
+			if(preg_match('/'.$name.'(\.txt)?$/', $file)) {
+				// store current number of this page
+				$this->i = ($key + 1);
+				// return match
+				return $file;
+			}
+		}
+		return false;
+	}
+	
+	function get_images($dir) {
+		$image_files = array();
+		if(is_dir($dir)) {
+		 	if($dh = opendir($dir)) {
+		 		while (($file = readdir($dh)) !== false) {
+		 			if(!is_dir($file) && preg_match('/\.(gif|jpg|png|jpeg)/i', $file) && !preg_match('/thumb\./i', $file)) {
+						$image_files[] = $file;
+					}
+				}
+			}
+			closedir($dh);
+		}
+		return $image_files;
+	}
+	
+	function get_template_file() {
+		// find the name of the text file
+		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $template_name);
+		// if template exists, return it
+		if(file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
+		// return content.html as default template (if it exists)
+		elseif(file_exists('../templates/content.html')) return '../templates/content.html';
+		else return false;
+	}
+	
+	function get_content_file() {
+		// check folder exists
+		if($this->name_unclean && file_exists('../content/'.$this->name_unclean)) {
+			// look for a .txt file
+			$txts = $this->list_files('../content/'.$this->name_unclean, '/\.txt$/');
+			// if $txts contains a result, return it
+			if(count($txts) > 0) return '../content/'.$this->name_unclean.'/'.$txts[0];
+			else return false;
+		} else return false;
+	}
+	
+	function get_public_file() {
+		// see if a static html file with $name exists in the public folder
+		if(file_exists('../public/'.$this->name.'.html')) return '../public/'.$this->name.'.html';
+		else return false;
+	}
+	
 }
 
 Class PageInCategory extends Page {
-	function __construct($name, $category) {
-		echo $name."<br>";
-		echo $category;
+	
+	var $category;
+	var $category_unclean;
+	var $sibling_pages;
+	
+	function __construct($category, $name) {
+		$this->name = $name;
+		$this->category = $category;
+		$this->store_unclean_names('../content/');
+		$this->category_unclean = $this->unclean_name($this->category);
+		echo $this->category_unclean."<br>";
+		$this->store_unclean_names('../content/'.$this->category_unclean);
+		$this->name_unclean = $this->unclean_name($this->name);
+		echo $this->name_unclean."<br>";
+		$this->sibling_projects = $this->get_sibling_projects();
+		var_dump($this->sibling_projects);
+		echo "<br>";
+
+		$this->content_file = $this->get_content_file();
+		echo $this->content_file."<br>";
+		$this->template_file = $this->get_template_file();
+		echo $this->template_file."<br>";
+		$this->public_file = $this->get_public_file();
+		echo $this->public_file."<br>";
+		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
+		var_dump($this->image_files);
+		echo "<br>";
+		$this->link_path = $this->construct_link_path();
+		echo $this->link_path."<br>";
 	}
+	
+	function get_sibling_projects() {
+		// if current project is a MockPageInCategory, escape this function (to prevent infinite loop)
+		if(get_class($this) == 'MockPageInCategory') return array(array(), array());
+		// loop through each unclean name looking for a match
+		foreach($this->unclean_names as $key => $name) {
+			// if match found...
+			if($name == $this->name_unclean) {
+				// store the names of the next/previous pages
+				$previous_name = ($key >= 1) ? $this->unclean_names[$key-1] : $this->unclean_names[(count($this->unclean_names)-1)];
+				$next_name = ($key + 1 < count($this->unclean_names)) ? $this->unclean_names[$key+1] : $this->unclean_names[0];
+				//store the urls of the next/previous pages
+				$previous = array('/@url/' => '../'.$this->clean_name($previous_name));
+				$next = array('/@url/' => '../'.$this->clean_name($next_name));
+				// create MockPageInCategory objects so we can access the variables of the pages
+				$previous_page = new MockPageInCategory($this->category, $previous_name);
+				$next_page = new MockPageInCategory($this->category, $next_name);
+				
+				// $c = new ContentParser;
+				// return array(
+				// 	array_merge($previous_project, $c->parse($previous_project_page)),
+				// 	array_merge($next_project, $c->parse($next_project_page)),
+				// );
+				// kill loop
+				break;
+			}
+		}
+		
+		return array(array(), array());
+	}
+	
+	function get_content_file() {
+		// check folder exists
+		if($this->name_unclean && $this->category_unclean && file_exists('../content/'.$this->category_unclean.'/'.$this->name_unclean)) {
+			// look for a .txt file
+			$txts = $this->list_files('../content/'.$this->category_unclean.'/'.$this->name_unclean, '/\.txt$/');
+			// if $txts contains a result, return it
+			if(count($txts) > 0) return '../content/'.$this->category_unclean.'/'.$this->name_unclean.'/'.$txts[0];
+			else return false;
+		}
+		else return false;
+	}
+	
+	function get_template_file() {
+		// find the name of the text file
+		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $template_name);
+		// if template exists, return it
+		if(file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
+		// return content.html as default template (if it exists)
+		elseif(file_exists('../templates/category.html')) return '../templates/category.html';
+		else return false;
+	}
+	
 }
+
+class MockPageInCategory extends PageInCategory {
+	
+	var $folder_name;
+	
+	function __construct($category, $folder_name) {
+		$this->folder_name = $folder_name;
+		$this->store_unclean_names('../content/');
+		$this->category_unclean = $this->unclean_name($this->category);
+		echo $this->category_unclean."<br>";
+		$this->store_unclean_names('../content/'.$this->category_unclean);
+		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+/', '', $folder_name));
+		echo $this->name_unclean."<br>";
+		$this->sibling_projects = $this->get_sibling_projects();
+		
+		$this->content_file = $this->get_content_file();
+		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file)); 
+		$this->link_path = $this->construct_link_path();
+	}
+
+	function get_content_file() {
+		if(file_exists('../content/'.$this->projects_folder_unclean.'/'.$this->folder_name.'/content.txt')) return '../content/'.$this->projects_folder_unclean.'/'.$this->folder_name.'/content.txt';
+		else return false;
+	}
+	
+}
+
+class ContentParser {
+	
+	var $page;
+	
+	static function sort_by_length($a,$b){
+		if($a == $b) return 0;
+		return (strlen($a) < strlen($b) ? -1 : 1);
+	}
+	
+	function preparse($text) {
+		$patterns = array(
+			# replace inline colons
+			'/(?<=\n)([a-z0-9_-]+?):(?!\/)/',
+			'/:/',
+			'/\\\x01/',
+			# replace inline dashes
+			'/(?<=\n)-/',
+			'/-/',
+			'/\\\x02/',
+			# automatically link http:// websites
+			'/(?<![">])\bhttp&#58;\/\/([\S]+\.[\S]*\.?[A-Za-z0-9]{2,4})/',
+			# automatically link email addresses
+			'/(?<![;>])\b([A-Za-z0-9.-]+)@([A-Za-z0-9.-]+\.[A-Za-z]{2,4})/',
+			# convert lists
+			'/\n?-(.+?)(?=\n)/',
+			'/(<li>.*<\/li>)/',
+			# replace doubled lis
+			'/<\/li><\/li>/',
+			# wrap multi-line text in paragraphs
+			'/([^\n]+?)(?=\n)/',
+			'/<p>(.+):(.+)<\/p>/',
+			'/: (.+)(?=\n<p>)/',
+			# replace any keys that got wrapped in ps
+			'/(<p>)([a-z0-9_-]+):(<\/p>)/',
+		);
+		$replacements = array(
+			# replace inline colons
+			'$1\\x01',
+			'&#58;',
+			':',
+			# replace inline dashes
+			'\\x02',
+			'&#45;',
+			'-',
+			# automatically link http:// websites
+			'<a href="http&#58;//$1">http&#58;//$1</a>',
+			# automatically link email addresses
+			'<a href="mailto&#58;$1&#64;$2">$1&#64;$2</a>',
+			# convert lists
+			'<li>$1</li>',
+			'<ul>$1</ul>',
+			# replace doubled lis
+			'</li>',
+			# wrap multi-line text in paragraphs
+			'<p>$1</p>',
+			'$1:$2',
+			':<p>$1</p>',
+			# replace any keys that got wrapped in ps
+			'$2:',
+		);
+		$parsed_text = preg_replace($patterns, $replacements, $text);
+		return $parsed_text;
+	}
+	
+	function create_replacement_rules($text) {
+		// push additional, useful values to the replacement pairs
+		$replacement_pairs = array(
+			'/@Total_Images/' => count($this->page->image_files),
+			'/@Total_Projects/' => count($this->page->unclean_page_names),
+		);
+		
+		// if the page has siblings, push additional values to the replacement pairs
+		if(get_class($this) == 'PageInCategory') {
+			$np = new NextPagePartial;
+			$pp = new PreviousPagePartial;
+			$replacement_pairs['/@Project_Number/'] = $this->page->i;
+			$replacement_pairs['/@Previous/'] = $pp->render($this->page->sibling_projects[0]);
+			$replacement_pairs['/@Next/'] = $np->render($this->page->sibling_projects[1]);
+		}
+		// pull out each key/value pair from the content file
+		preg_match_all('/[\w\d_-]+?:[\S\s]*?\n\n/', $text, $matches);
+		foreach($matches[0] as $match) {
+			$colon_split = explode(':', $match);
+			$replacement_pairs['/@'.$colon_split[0].'/'] = trim($colon_split[1]);
+		}
+		// sort keys by length, to ensure replacements are made in the correct order (ie. @project does not partially replace @project_name)
+		uksort($replacement_pairs, array('ContentParser', 'sort_by_length'));
+		return $replacement_pairs;
+	}
+	
+	function parse($page) {
+		// store page and parse its content file
+		$this->page = $page;
+		$text = file_get_contents($this->page->content_file);
+		// include shared variables for each page
+		$shared = (file_exists('../content/_shared.txt')) ? file_get_contents('../content/_shared.txt') : '';
+		// run preparsing rules to clean up content files
+		$parsed_text = $this->preparse("\n\n".$text."\n\n".$shared."\n\n");
+		// create the replacement rules
+		return $this->create_replacement_rules($parsed_text);
+	}
+	
+}
+
 
 /*
 
