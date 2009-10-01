@@ -1,8 +1,12 @@
-foreach:
+foreach(@Category):
 <ul id="categories" class="col two">
 	<li>
 		<p>@name</p>
-		@Page_In_Category
+		<ul class="category">
+		foreach(@Page_In_Category):
+			<li><a href="@url">@name</a></li>
+		endforeach;
+		</ul>
 	</li>
 endforeach;
 </ul>

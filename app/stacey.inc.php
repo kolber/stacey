@@ -1,8 +1,10 @@
 <?php
 
-class Stacey {
+Class Stacey {
 	
 	function __construct($get) {
+		
+		$this->php_fixes();
 		// it's easier to handle some redirection through php rather than relying on a more complex .htaccess file to do all the work
 		if($this->handle_redirects()) return;
 		// parse get request
@@ -11,7 +13,7 @@ class Stacey {
 		$r->render();
 	}
 	
-	function handle_date_issue() {
+	function php_fixes() {
 		// in PHP version 5.3.0 they added a requisite for setting a default timezone, this should be handled via the php.ini, but as we cannot rely on this, we have to set a default timezone ourselves
 		if(function_exists('date_default_timezone_set')) date_default_timezone_set('Australia/Melbourne');
 	}
@@ -32,6 +34,15 @@ class Stacey {
 		}
 		
 		return false;
+	}
+	
+}
+
+Class Helpers {
+	
+	static function sort_by_length($a,$b){
+		if($a == $b) return 0;
+		return (strlen($a) < strlen($b) ? -1 : 1);
 	}
 	
 }
@@ -94,7 +105,7 @@ Class Renderer {
 				ob_end_flush();
 			} else {
 				include($cache->cachefile);
-				echo "\n".'<!-- Cached. -->';
+				echo '\n'.'<!-- Cached. -->';
 			}
 */
 
@@ -121,16 +132,16 @@ Class Page {
 		$this->name_unclean = $this->unclean_name($this->name);
 
 		$this->content_file = $this->get_content_file();
-		echo $this->content_file."<br>";
+#		echo $this->content_file."<br>";
 		$this->template_file = $this->get_template_file();
-		echo $this->template_file."<br>";
+#		echo $this->template_file."<br>";
 		$this->public_file = $this->get_public_file();
-		echo $this->public_file."<br>";
+#		echo $this->public_file."<br>";
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
-		var_dump($this->image_files);
-		echo "<br>";
+#		var_dump($this->image_files);
+#		echo "<br>";
 		$this->link_path = $this->construct_link_path();
-		echo $this->link_path."<br>";
+#		echo $this->link_path."<br>";
 	}
 	
 	function construct_link_path() {
@@ -234,25 +245,25 @@ Class PageInCategory extends Page {
 		$this->category = $category;
 		$this->store_unclean_names('../content/');
 		$this->category_unclean = $this->unclean_name($this->category);
-		echo $this->category_unclean."<br>";
+#		echo $this->category_unclean."<br>";
 		$this->store_unclean_names('../content/'.$this->category_unclean);
 		$this->name_unclean = $this->unclean_name($this->name);
-		echo $this->name_unclean."<br>";
+#		echo $this->name_unclean."<br>";
 		$this->sibling_projects = $this->get_sibling_projects();
-		var_dump($this->sibling_projects);
-		echo "<br>";
+#		var_dump($this->sibling_projects);
+#		echo "<br>";
 
 		$this->content_file = $this->get_content_file();
-		echo $this->content_file."<br>";
+#		echo $this->content_file."<br>";
 		$this->template_file = $this->get_template_file();
-		echo $this->template_file."<br>";
+#		echo $this->template_file."<br>";
 		$this->public_file = $this->get_public_file();
-		echo $this->public_file."<br>";
+#		echo $this->public_file."<br>";
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
-		var_dump($this->image_files);
-		echo "<br>";
+#		var_dump($this->image_files);
+#		echo "<br>";
 		$this->link_path = $this->construct_link_path();
-		echo $this->link_path."<br>";
+#		echo $this->link_path."<br>";
 	}
 	
 	function get_sibling_projects() {
@@ -272,11 +283,11 @@ Class PageInCategory extends Page {
 				$previous_page = new MockPageInCategory($this->category, $previous_name);
 				$next_page = new MockPageInCategory($this->category, $next_name);
 				
-				// $c = new ContentParser;
-				// return array(
-				// 	array_merge($previous_project, $c->parse($previous_project_page)),
-				// 	array_merge($next_project, $c->parse($next_project_page)),
-				// );
+				$c = new ContentParser;
+				return array(
+					array_merge($previous, $c->parse($previous_page)),
+					array_merge($next, $c->parse($next_page)),
+				);
 				// kill loop
 				break;
 			}
@@ -309,90 +320,92 @@ Class PageInCategory extends Page {
 	
 }
 
-class MockPageInCategory extends PageInCategory {
+Class MockPageInCategory extends PageInCategory {
 	
 	var $folder_name;
 	
 	function __construct($category, $folder_name) {
 		$this->folder_name = $folder_name;
 		$this->store_unclean_names('../content/');
-		$this->category_unclean = $this->unclean_name($this->category);
-		echo $this->category_unclean."<br>";
+		$this->category_unclean = $this->unclean_name($category);
+#		echo $this->category_unclean."<br>";
 		$this->store_unclean_names('../content/'.$this->category_unclean);
 		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+/', '', $folder_name));
-		echo $this->name_unclean."<br>";
-		$this->sibling_projects = $this->get_sibling_projects();
+#		echo $this->name_unclean."<br>";
 		
 		$this->content_file = $this->get_content_file();
+#		echo $this->content_file.'<br>';
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file)); 
 		$this->link_path = $this->construct_link_path();
 	}
 
 	function get_content_file() {
-		if(file_exists('../content/'.$this->projects_folder_unclean.'/'.$this->folder_name.'/content.txt')) return '../content/'.$this->projects_folder_unclean.'/'.$this->folder_name.'/content.txt';
+		// check folder exists
+		if($this->folder_name && $this->category_unclean && file_exists('../content/'.$this->category_unclean.'/'.$this->folder_name)) {
+			// look for a .txt file
+			$txts = $this->list_files('../content/'.$this->category_unclean.'/'.$this->folder_name, '/\.txt$/');
+			// if $txts contains a result, return it
+			if(count($txts) > 0) return '../content/'.$this->category_unclean.'/'.$this->folder_name.'/'.$txts[0];
+			else return false;
+		}
 		else return false;
 	}
 	
 }
 
-class ContentParser {
+Class ContentParser {
 	
 	var $page;
 	
-	static function sort_by_length($a,$b){
-		if($a == $b) return 0;
-		return (strlen($a) < strlen($b) ? -1 : 1);
-	}
-	
 	function preparse($text) {
 		$patterns = array(
-			# replace inline colons
+			// replace inline colons
 			'/(?<=\n)([a-z0-9_-]+?):(?!\/)/',
 			'/:/',
 			'/\\\x01/',
-			# replace inline dashes
+			// replace inline dashes
 			'/(?<=\n)-/',
 			'/-/',
 			'/\\\x02/',
-			# automatically link http:// websites
+			// automatically link http:// websites
 			'/(?<![">])\bhttp&#58;\/\/([\S]+\.[\S]*\.?[A-Za-z0-9]{2,4})/',
-			# automatically link email addresses
+			// automatically link email addresses
 			'/(?<![;>])\b([A-Za-z0-9.-]+)@([A-Za-z0-9.-]+\.[A-Za-z]{2,4})/',
-			# convert lists
+			// convert lists
 			'/\n?-(.+?)(?=\n)/',
 			'/(<li>.*<\/li>)/',
-			# replace doubled lis
+			// replace doubled lis
 			'/<\/li><\/li>/',
-			# wrap multi-line text in paragraphs
+			// wrap multi-line text in paragraphs
 			'/([^\n]+?)(?=\n)/',
 			'/<p>(.+):(.+)<\/p>/',
 			'/: (.+)(?=\n<p>)/',
-			# replace any keys that got wrapped in ps
+			// replace any keys that got wrapped in ps
 			'/(<p>)([a-z0-9_-]+):(<\/p>)/',
 		);
 		$replacements = array(
-			# replace inline colons
+			// replace inline colons
 			'$1\\x01',
 			'&#58;',
 			':',
-			# replace inline dashes
+			// replace inline dashes
 			'\\x02',
 			'&#45;',
 			'-',
-			# automatically link http:// websites
+			// automatically link http:// websites
 			'<a href="http&#58;//$1">http&#58;//$1</a>',
-			# automatically link email addresses
+			// automatically link email addresses
 			'<a href="mailto&#58;$1&#64;$2">$1&#64;$2</a>',
-			# convert lists
+			// convert lists
 			'<li>$1</li>',
 			'<ul>$1</ul>',
-			# replace doubled lis
+			// replace doubled lis
 			'</li>',
-			# wrap multi-line text in paragraphs
+			// wrap multi-line text in paragraphs
 			'<p>$1</p>',
 			'$1:$2',
 			':<p>$1</p>',
-			# replace any keys that got wrapped in ps
+			// replace any keys that got wrapped in ps
 			'$2:',
 		);
 		$parsed_text = preg_replace($patterns, $replacements, $text);
@@ -407,13 +420,14 @@ class ContentParser {
 		);
 		
 		// if the page has siblings, push additional values to the replacement pairs
-		if(get_class($this) == 'PageInCategory') {
+		if(get_class($this->page) == 'PageInCategory') {
 			$np = new NextPagePartial;
 			$pp = new PreviousPagePartial;
 			$replacement_pairs['/@Project_Number/'] = $this->page->i;
-			$replacement_pairs['/@Previous/'] = $pp->render($this->page->sibling_projects[0]);
-			$replacement_pairs['/@Next/'] = $np->render($this->page->sibling_projects[1]);
+			$replacement_pairs['/@Previous_Page/'] = $pp->render($this->page->sibling_projects[0]);
+			$replacement_pairs['/@Next_Page/'] = $np->render($this->page->sibling_projects[1]);
 		}
+		
 		// pull out each key/value pair from the content file
 		preg_match_all('/[\w\d_-]+?:[\S\s]*?\n\n/', $text, $matches);
 		foreach($matches[0] as $match) {
@@ -421,17 +435,18 @@ class ContentParser {
 			$replacement_pairs['/@'.$colon_split[0].'/'] = trim($colon_split[1]);
 		}
 		// sort keys by length, to ensure replacements are made in the correct order (ie. @project does not partially replace @project_name)
-		uksort($replacement_pairs, array('ContentParser', 'sort_by_length'));
+		uksort($replacement_pairs, array('Helpers', 'sort_by_length'));
 		return $replacement_pairs;
 	}
 	
 	function parse($page) {
 		// store page and parse its content file
 		$this->page = $page;
+		// store contents of content file
 		$text = file_get_contents($this->page->content_file);
 		// include shared variables for each page
 		$shared = (file_exists('../content/_shared.txt')) ? file_get_contents('../content/_shared.txt') : '';
-		// run preparsing rules to clean up content files
+		// run preparsing rules to clean up content files (the newlines are added to ensure the first and last rules have their double-newlines to match on)
 		$parsed_text = $this->preparse("\n\n".$text."\n\n".$shared."\n\n");
 		// create the replacement rules
 		return $this->create_replacement_rules($parsed_text);
@@ -439,6 +454,300 @@ class ContentParser {
 	
 }
 
+Class TemplateParser {
+
+	var $page;
+	var $replacement_pairs;
+	
+	function find_categories() {
+		$dir = '../content/';
+		$categories = array();
+		// loop through each top-level folder to check if it contains other folders (in which case it is a category);
+		if(is_dir($dir)) {
+			if($dh = opendir($dir)) {
+				while (($file = readdir($dh)) !== false) {
+					if(is_dir($dir.'/'.$file) && $file != '.' && $file != '..') {
+						if($idh = opendir($dir.'/'.$file)) {
+							while (($inner_file = readdir($idh)) !== false) {
+								if(is_dir($dir.'/'.$file.'/'.$inner_file) && $inner_file != '.' && $inner_file != '..') {
+									// strip leading digit and dot from filename (1.xx becomes xx)
+									$file_clean = preg_replace('/^\d+?\./', '', $file);
+									$categories[] = array(
+										'name' => $file,
+										'name_clean' => $file_clean,
+										// look for a partial file matching the categories name, otherwise fall back to using the category partial
+										'partial_file' => file_exists('../templates/partials/'.$file_clean.'.html') ? '../templates/partials/'.$file_clean.'.html' : '../templates/partials/category.html'
+									);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		closedir($dh);
+		return $categories;
+	}
+	
+	function create_replacement_partials() {
+		// constructs a partial for each category within the content folder
+		$c = new CategoryPartial;
+		// constructs a partial containing each image on the page
+		$i = new ImagesPartial;
+		// constructs a partial containing all of the top level pages/categories, excluding the index
+		//$n = new NavigationPartial;
+		// constructs a partial containing the full navigation tree
+		//$t = new NavigationTreePartial;
+		// construct a partial containing each category and their pages
+		//$cs = new CategoriesPartial;
+		
+		// find all categories
+		$categories = $this->find_categories();
+		foreach($categories as $category) $partials['/@'.ucfirst($category['name_clean']).'/'] = $c->render($this->page, $category['name'], $category['partial_file']);
+		// construct the rest of the special variables
+		$partials['/@Images/'] = $i->render($this->page);
+		//$partials['/@Navigation/'] = $n->render($this->page);
+		//$partials['/@NavigationTree/'] = $t->render($this->page);
+		//$partials['/@Categories/'] = $cs->render($this->page);
+		$partials['/@Year/'] = date('Y');
+		return $partials;
+	}
+	
+	function parse($page, $rules) {
+		$this->page = $page;
+		// create all the replacement pairs that rely on partials
+		$this->replacement_pairs = array_merge($rules, $this->create_replacement_partials());
+		// store template file content
+		$text = file_get_contents($this->page->template_file);
+		// sort keys by length, to ensure replacements are made in the correct order (ie. @project does not partially replace @project_name)
+		uksort($this->replacement_pairs, array('Helpers', 'sort_by_length'));
+		// run replacements on the template
+		return preg_replace(array_keys($this->replacement_pairs), array_values($this->replacement_pairs), $text);
+	}
+}
+
+Class Partial {
+	
+	var $page;
+	
+	function check_thumb($dir, $file) {
+		if($dh = opendir($dir.'/'.$file)) {
+			while (($inner_file = readdir($dh)) !== false) {
+				// check for an image named thumb
+				if(!is_dir($inner_file) && preg_match('/thumb\.(gif|jpg|png|jpeg)/i', $inner_file, $file_type)) {
+					return preg_replace('/\.\.\//', $this->page->link_path, $dir).'/'.$file.'/thumb.'.$file_type[1];
+				}
+			}
+		}
+		return '';
+	}
+	/*
+		TODO: This function could definitely be beefed up
+	*/
+	function parse($file) {
+		$file = file_get_contents($file);
+		// split the template file by loop code
+		preg_match('/([\S\s]*)foreach[\S\s]*?:([\S\s]*)endforeach;([\S\s]*)/', $file, $matches);
+		// return array containing the markup: before loop, inside loop & after loop (in that order)
+		return array($matches[1], $matches[2], $matches[3]);
+	}
+	
+}
+
+Class CategoryPartial extends Partial {
+	
+	var $dir;
+	var $partial_file;
+
+	function render($page, $dir, $partial_file) {
+		$this->page = $page;
+		// store correct partial file
+		$this->partial_file = $partial_file;
+		$this->dir = '../content/'.$dir;
+		// pull out html wrappers from partial file
+		$wrappers = $this->parse($this->partial_file);
+		
+		// for each page within this category...
+		if(is_dir($this->dir)) {
+		 	if($dh = opendir($this->dir)) {
+		 		while (($file = readdir($dh)) !== false) {
+					if(is_dir($this->dir.'/'.$file)  && $file != '.' && $file != '..') {
+						// store filename
+						$files[] = $file;
+						// store url and thumb
+						$vars = array(
+							'/@url/' => $this->page->link_path.preg_replace('/^\d+?\./', '', $dir).'/'.preg_replace('/^\d+?\./', '', $file).'/',
+							'/@thumb/' => $this->check_thumb($this->dir, $file)
+						);
+						// create a MockPageInCategory to give us access to all the variables inside this PageInCategory
+						$c = new ContentParser;
+						$category_page = new MockPageInCategory($dir, $file);
+						$file_vars[] = array_merge($vars, $c->parse($category_page));
+					}
+				}
+			}
+			closedir($dh);
+
+			// sort files in reverse-numeric order
+			arsort($files, SORT_NUMERIC);
+			// add opening outer wrapper
+			$html .= $wrappers[0];
+			
+			foreach($files as $key => $file) $html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
+			// add closing outer wrapper
+			$html .= $wrappers[2];
+
+		}
+		
+		return $html;
+	}
+	
+}
+
+Class ImagesPartial extends Partial {
+
+	var $dir;
+	var $partial_file = '../templates/partials/images.html';
+
+	function render($page) {
+		
+		$this->page = $page;
+		
+		// strip out the name of the content file (ie content.txt) to create the path to the folder
+		$dir = preg_replace('/\/[^\/]+$/', '', $this->page->content_file);
+		$html = '';
+		// pull out html wrappers from partial file
+		$wrappers = $this->parse($this->partial_file);
+		
+		// loop through directory looking for images
+		if(is_dir($dir)) {
+		 	if($dh = opendir($dir)) {
+				$files = array();
+		 		while (($file = readdir($dh)) !== false) {
+					// if images isn't a thumb, add it to the files array
+		 			if(!is_dir($file) && preg_match('/\.(gif|jpg|png|jpeg)/i', $file) && !preg_match('/thumb\./i', $file)) {
+						$files[] = $file;
+						$file_vars[] = array(
+							// store url to this image, appending the correct link path
+							'/@url/' => $this->page->link_path.preg_replace('/\.\.\//', '', $dir).'/'.$file,
+						);
+					}
+				}
+			}
+			closedir($dh);
+			if(count($files) > 0) {
+				// sort files in reverse-numeric order
+				arsort($files, SORT_NUMERIC);
+				// add opening outer wrapper
+				$html = $wrappers[0];
+				// loop through inner wrapper, replacing any variables contained within
+				foreach($files as $key => $file) $html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
+				// add closing outer wrapper
+				$html .= $wrappers[2];
+			}
+		}
+		return $html;
+	}
+
+}
+
+Class NextPagePartial extends Partial {
+	var $page;
+	var $partial_file = '../templates/partials/next-page.html';
+	
+	function render($project_sibling) {
+		// replace html with @vars
+		$html = preg_replace(array_keys($project_sibling), array_values($project_sibling), file_get_contents($this->partial_file));
+		return $html;
+	}
+}
+
+Class PreviousPagePartial extends NextPagePartial {
+	var $partial_file = '../templates/partials/previous-page.html';
+}
+
+
+/*
+Class NavigationPartial extends Partial {
+	
+	var $dir = '../content/';
+	var $partial_file = '../templates/partials/navigation.html';
+
+	function render($page) {
+		
+		$this->page = $page;
+		$html = '';
+		// pull out html wrappers from partial file
+		$wrappers = $this->parse($this->partial_file);
+		
+		// collate navigation set
+		if($dh = opendir($this->dir)) {
+			while (($file = readdir($dh)) !== false) {
+				// if 
+				if(!is_dir($file) && $file != '.DS_Store' && !preg_match('/index/', $file) && !preg_match('/^_/', $file)) {
+					echo $file;
+					$files[] = $file;
+					$file_name_clean = preg_replace(array('/^\d+?\./', '/\.txt/'), '', $file);
+					$file_vars[] = array(
+						'/@url/' => $this->page->link_path.$file_name_clean.'/',
+						'/@name/' => ucfirst(preg_replace('/-/', ' ', $file_name_clean)),
+					);
+				}
+			}
+		}
+		// sort files in reverse-numeric order
+		arsort($files, SORT_NUMERIC);
+		// add opening outer wrapper
+		$html .= $wrappers[0];
+		
+		foreach($files as $key => $file) {
+			$html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
+		}
+		// add closing outer wrapper
+		$html .= $wrappers[2];
+		
+		return $html;
+	}
+	
+}
+
+Class NavigationTreePartial extends Partial {
+	
+	var $dir = '../content/';
+	var $partial_file = '../templates/partials/navigation.html';
+
+	function render($page) {
+		$this->page = $page;
+		$wrappers = $this->parse($this->partial_file);
+		$html = '';
+		
+		if($dh = opendir($this->dir)) {
+			while (($file = readdir($dh)) !== false) {
+				if(!is_dir($file) && $file != '.DS_Store' && !preg_match('/index/', $file) && !preg_match('/^_/', $file)) {
+					$files[] = $file;
+					$file_name_clean = preg_replace(array('/^\d+?\./', '/\.txt/'), '', $file);
+					$file_vars[] = array(
+						'/@url/' => $this->page->link_path.$file_name_clean.'/',
+						'/@name/' => ucfirst(preg_replace('/-/', ' ', $file_name_clean)),
+					);
+				}
+			}
+		}
+						// sort files in reverse-numeric order
+		arsort($files, SORT_NUMERIC);
+		$html .= $wrappers[0];
+		foreach($files as $key => $file) {
+			$html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
+		}
+		$html .= $wrappers[2];
+		
+		return $html;
+	}
+	
+}
+
+*/
 
 /*
 
