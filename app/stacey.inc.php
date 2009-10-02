@@ -3,7 +3,6 @@
 Class Stacey {
 	
 	function __construct($get) {
-		
 		$this->php_fixes();
 		// it's easier to handle some redirection through php rather than relying on a more complex .htaccess file to do all the work
 		if($this->handle_redirects()) return;
@@ -14,7 +13,7 @@ Class Stacey {
 	}
 	
 	function php_fixes() {
-		// in PHP version 5.3.0 they added a requisite for setting a default timezone, this should be handled via the php.ini, but as we cannot rely on this, we have to set a default timezone ourselves
+		// in PHP/5.3.0 they added a requisite for setting a default timezone, this should be handled via the php.ini, but as we cannot rely on this, we have to set a default timezone ourselves
 		if(function_exists('date_default_timezone_set')) date_default_timezone_set('Australia/Melbourne');
 	}
 	
@@ -25,14 +24,12 @@ Class Stacey {
 			header('Location: ../');
 			return true;
 		}
-		
 		// add trailing slash if required
 		if(!preg_match('/\/$/', $_SERVER['REQUEST_URI'])) {
 			header('HTTP/1.1 301 Moved Permanently');
 			header('Location:'.$_SERVER['REQUEST_URI'].'/');
 			return true;
 		}
-		
 		return false;
 	}
 	
@@ -49,7 +46,7 @@ Class Helpers {
 		if(!is_dir($dir)) return false;
 		if(!$dh = opendir($dir)) return false;
 		$files = array();
-		// if file matches regex (and doesn't being with a .), push it to the files array
+		// if file matches regex (and doesn't begin with a .), push it to the files array
 		while (($file = readdir($dh)) !== false) if(!preg_match('/^\./', $file)  && preg_match($regex, $file)) $files[] = $file;
 		closedir($dh);
 		// sort list of files reverse-numerically (10, 9, 8, etc)
@@ -71,14 +68,14 @@ Class Renderer {
 	
 	function is_category($name) {
 		// find folder name from $name
-		$folders = Helpers::list_files('../content', '/^(\d+)?\.[^\.]+$/');
+		$folders = Helpers::list_files('../content', '/^\d+?\.[^\.]+$/');
 		foreach($folders as $folder) {
 			if(preg_match('/'.$name.'$/', $folder)) {
 				$dir = '../content/'.$folder;
 				break;
 			}
 		}
-		// check if this folder contains other folders (in which case it is a category)
+		// check if this folder contains inner folders (in which case it is a category)
 		if(is_dir($dir)) {
 			if($dh = opendir($dir)) {
 				while (($file = readdir($dh)) !== false) {
@@ -87,13 +84,14 @@ Class Renderer {
 			}
 			closedir($dh);
 		}
-		// if this folder doesn't contain any folders, then it is not a category
+		// if the folder doesn't contain any inner folders, then it is not a category
 		return false;
 	}
 	
 	function handle_routes($get) {
 		// if key is empty, we're looking for the index page
 		if(key($get) == '') {
+			// creating a new page without passing through a name creates the index page
 			return new Page();
 		}
 		// if key does contain slashes, it must be a category/page
@@ -195,7 +193,7 @@ Class Page {
 	
 	function store_unclean_names($dir) {
 		// store a list of folder names
-		$this->unclean_names = Helpers::list_files($dir, '/^(\d+)?\.[^\.]+$/');
+		$this->unclean_names = Helpers::list_files($dir, '/^\d+?\.[^\.]+$/');
 	}
 	
 	function clean_name($name) {
@@ -384,7 +382,7 @@ Class MockPageInCategory extends PageInCategory {
 		$this->category_unclean = $this->unclean_name($category);
 #		echo $this->category_unclean."<br>";
 		$this->store_unclean_names('../content/'.$this->category_unclean);
-		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+\./', '', $folder_name));
+		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+?\./', '', $folder_name));
 #		echo $this->name_unclean."<br>";
 		
 		$this->content_file = $this->get_content_file();
