@@ -42,7 +42,7 @@ Class Helpers {
 		return (strlen($a) < strlen($b) ? -1 : 1);
 	}
 	
-	function list_files($dir, $regex) {
+	static function list_files($dir, $regex) {
 		if(!is_dir($dir)) return false;
 		if(!$dh = opendir($dir)) return false;
 		$files = array();
@@ -92,7 +92,7 @@ Class Cache {
 		// create a hash of every file inside the content folder
 		$content = $this->collate_files('../content/');
 		// create a hash of every file inside the templates folder
-		$content = $this->collate_files('../templates/');
+		$templates = $this->collate_files('../templates/');
 		// collate the two hashes together
 		return md5($content.$templates);
 	}
@@ -551,7 +551,7 @@ Class ContentParser {
 		// push additional, useful values to the replacement pairs
 		$replacement_pairs = array(
 			'/@Total_Images/' => count($this->page->image_files),
-			'/@Total_Projects/' => count($this->page->unclean_page_names),
+			'/@Total_Projects/' => count($this->page->unclean_names),
 		);
 		
 		if(get_class($this->page) == 'Category') {
@@ -704,6 +704,7 @@ Class CategoryListPartial extends Partial {
 		$this->dir = '../content/'.$dir;
 		// pull out html wrappers from partial file
 		$wrappers = $this->parse($this->partial_file);
+		$html = '';
 		
 		// for each page within this category...
 		if(is_dir($this->dir)) {
