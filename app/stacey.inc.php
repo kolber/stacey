@@ -57,6 +57,90 @@ Class Helpers {
 	
 }
 
+Class Cache {
+
+	var $page;
+	var $cachefile;
+	
+	function __construct($page) {
+		$this->page = $page;
+		// turn the full path to the page's content file into the name of the cache file
+		$this->cachefile = './cache/'.base64_encode($this->page->content_file);
+		$this->create_hash();
+	}
+	
+	function check_expired() {
+		if(!file_exists($this->cachefile)) return true;
+		// create a hosh of all files to compare to existing cache
+		elseif($this->create_hash() !== $this->get_current_hash()) return true;
+		else return false;
+	}
+	
+	function get_current_hash() {
+		preg_match('/Cache: (.+?)\s/', file_get_contents($this->cachefile), $matches);
+		return $matches[1];
+	}
+	
+	function write_cache() {
+		echo "\n".'<!-- Cache: '.$this->create_hash().' -->';
+		$fp = fopen($this->cachefile, 'w');
+		fwrite($fp, ob_get_contents());
+		fclose($fp);
+	}
+
+	function create_hash() {
+		// create a hash of every file inside the content folder
+		$content = $this->collate_files('../content/');
+		// create a hash of every file inside the templates folder
+		$content = $this->collate_files('../templates/');
+		// collate the two hashes together
+		return md5($content.$templates);
+	}
+	
+	function collate_files($dir) {
+		$files_modified = '';
+		if(is_dir($dir)) {
+			if($dh = opendir($dir)) {
+				while (($file = readdir($dh)) !== false) {
+					// loop through first level
+					if(!preg_match('/^\./', $file)) {
+						// write out first level
+						$files_modified .= $file.':'.filemtime($dir.'/'.$file);
+						if(is_dir($dir.'/'.$file)){
+							if($idh = opendir($dir.'/'.$file)) {
+								while (($inner_file = readdir($idh)) !== false) {
+									// loop through second level
+									if(!preg_match('/^\./', $inner_file)) {
+										// write out second level
+										$files_modified .= $inner_file.':'.filemtime($dir.'/'.$file.'/'.$inner_file);
+										if(is_dir($dir.'/'.$file.'/'.$inner_file)) {
+											if($iidh = opendir($dir.'/'.$file.'/'.$inner_file)) {
+												while (($inner_inner_file = readdir($iidh)) !== false) {
+													// loop through third level
+													if(!preg_match('/^\./', $inner_inner_file)) {
+														// write out third level
+														$files_modified .= $inner_inner_file.':'.filemtime($dir.'/'.$file.'/'.$inner_file.'/'.$inner_inner_file);
+													}
+												}
+												closedir($iidh);
+											}
+										}
+									}
+								}
+								closedir($idh);
+							}
+						}
+					}
+				}
+				closedir($dh);
+			}
+		}
+		return $files_modified;
+	}
+	
+}
+
+
 Class Renderer {
 	
 	var $page;
@@ -126,26 +210,25 @@ Class Renderer {
 			// serve 404
 			else $this->render_404();
 		} else {
-			
-/*			
+			// create new cache object
 			$cache = new Cache($this->page);
+			// check if cache needs to be expired
 			if($cache->check_expired()) {
-			ob_start();
-*/
-
-				$t = new TemplateParser;
-				$c = new ContentParser;
-				echo $t->parse($this->page, $c->parse($this->page));
-
-/*		
-			if(is_writable('./cache')) $cache->write_cache();
-				ob_end_flush();
+				// start output buffer
+				ob_start();
+					// render page
+					$t = new TemplateParser;
+					$c = new ContentParser;
+					echo $t->parse($this->page, $c->parse($this->page));
+					// cache folder is writable, write to it
+					if(is_writable('./cache')) $cache->write_cache();
+						// end buffer
+						ob_end_flush();
 			} else {
+				// else buffer isn't expired, so use cache
 				include($cache->cachefile);
-				echo '\n'.'<!-- Cached. -->';
+				echo "\n".'<!-- Cached. -->';
 			}
-*/
-
 		}
 	}
 }
