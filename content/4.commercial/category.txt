@@ -3,4 +3,4 @@ page_title: Commercial Projects on Name's Graphic Design Portfolio
 page_description: A collection of Name's commercial graphic design work
 
 category_description:
-Personal
+Commercial

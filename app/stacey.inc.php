@@ -49,8 +49,8 @@ Class Helpers {
 		if(!is_dir($dir)) return false;
 		if(!$dh = opendir($dir)) return false;
 		$files = array();
-		// if file matches regex, push it to the files array
-		while (($file = readdir($dh)) !== false) if(!is_dir($file) && preg_match($regex, $file)) $files[] = $file;
+		// if file matches regex (and doesn't being with a .), push it to the files array
+		while (($file = readdir($dh)) !== false) if(!preg_match('/^\./', $file)  && preg_match($regex, $file)) $files[] = $file;
 		closedir($dh);
 		// sort list of files reverse-numerically (10, 9, 8, etc)
 		rsort($files, SORT_NUMERIC);
@@ -71,7 +71,7 @@ Class Renderer {
 	
 	function is_category($name) {
 		// find folder name from $name
-		$folders = Helpers::list_files('../content', '/^(?<!\.)[\w\d-]+/');
+		$folders = Helpers::list_files('../content', '/^(\d+)?\.[^\.]+$/');
 		foreach($folders as $folder) {
 			if(preg_match('/'.$name.'$/', $folder)) {
 				$dir = '../content/'.$folder;
@@ -82,7 +82,7 @@ Class Renderer {
 		if(is_dir($dir)) {
 			if($dh = opendir($dir)) {
 				while (($file = readdir($dh)) !== false) {
-					if(is_dir($dir.'/'.$file) && $file != '.' && $file != '..') return true;
+					if(is_dir($dir.'/'.$file) && !preg_match('/^\./', $file)) return true;
 				}
 			}
 			closedir($dh);
@@ -195,7 +195,7 @@ Class Page {
 	
 	function store_unclean_names($dir) {
 		// store a list of folder names
-		$this->unclean_names = Helpers::list_files($dir, '/^(?<!\.)[\w\d-]+/');
+		$this->unclean_names = Helpers::list_files($dir, '/^(\d+)?\.[^\.]+$/');
 	}
 	
 	function clean_name($name) {
@@ -206,7 +206,7 @@ Class Page {
 	function unclean_name($name) {
 		// loop through each unclean page name looking for a match for $name
 		foreach($this->unclean_names as $key => $file) {
-			if(preg_match('/'.$name.'(\.txt)?$/', $file)) {
+			if(preg_match('/'.$name.'$/', $file)) {
 				// store current number of this page
 				$this->i = ($key + 1);
 				// return match
@@ -221,7 +221,7 @@ Class Page {
 		if(is_dir($dir)) {
 		 	if($dh = opendir($dir)) {
 		 		while (($file = readdir($dh)) !== false) {
-		 			if(!is_dir($file) && preg_match('/\.(gif|jpg|png|jpeg)/i', $file) && !preg_match('/thumb\./i', $file)) {
+		 			if(!preg_match('/^\./', $file)  && preg_match('/\.(gif|jpg|png|jpeg)/i', $file) && !preg_match('/thumb\./i', $file)) {
 						$image_files[] = $file;
 					}
 				}
@@ -303,8 +303,8 @@ Class PageInCategory extends Page {
 		$this->store_unclean_names('../content/'.$this->category_unclean);
 		$this->name_unclean = $this->unclean_name($this->name);
 #		echo $this->name_unclean."<br>";
-		$this->sibling_projects = $this->get_sibling_projects();
-#		var_dump($this->sibling_projects);
+		$this->sibling_pages = $this->get_sibling_pages();
+#		var_dump($this->sibling_pages);
 #		echo "<br>";
 
 		$this->content_file = $this->get_content_file();
@@ -320,7 +320,7 @@ Class PageInCategory extends Page {
 #		echo $this->link_path."<br>";
 	}
 	
-	function get_sibling_projects() {
+	function get_sibling_pages() {
 		// if current project is a MockPageInCategory, escape this function (to prevent infinite loop)
 		if(get_class($this) == 'MockPageInCategory') return array(array(), array());
 		// loop through each unclean name looking for a match
@@ -384,7 +384,7 @@ Class MockPageInCategory extends PageInCategory {
 		$this->category_unclean = $this->unclean_name($category);
 #		echo $this->category_unclean."<br>";
 		$this->store_unclean_names('../content/'.$this->category_unclean);
-		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+/', '', $folder_name));
+		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+\./', '', $folder_name));
 #		echo $this->name_unclean."<br>";
 		
 		$this->content_file = $this->get_content_file();
@@ -486,8 +486,8 @@ Class ContentParser {
 			$np = new NextPagePartial;
 			$pp = new PreviousPagePartial;
 			$replacement_pairs['/@Project_Number/'] = $this->page->i;
-			$replacement_pairs['/@Previous_Page/'] = $pp->render($this->page->sibling_projects[0]);
-			$replacement_pairs['/@Next_Page/'] = $np->render($this->page->sibling_projects[1]);
+			$replacement_pairs['/@Previous_Page/'] = $pp->render($this->page->sibling_pages[0]);
+			$replacement_pairs['/@Next_Page/'] = $np->render($this->page->sibling_pages[1]);
 		}
 		
 		// pull out each key/value pair from the content file
@@ -528,10 +528,10 @@ Class TemplateParser {
 		if(is_dir($dir)) {
 			if($dh = opendir($dir)) {
 				while (($file = readdir($dh)) !== false) {
-					if(is_dir($dir.'/'.$file) && $file != '.' && $file != '..') {
+					if(is_dir($dir.'/'.$file) && !preg_match('/^\./', $file)) {
 						if($idh = opendir($dir.'/'.$file)) {
 							while (($inner_file = readdir($idh)) !== false) {
-								if(is_dir($dir.'/'.$file.'/'.$inner_file) && $inner_file != '.' && $inner_file != '..') {
+								if(is_dir($dir.'/'.$file.'/'.$inner_file) && !preg_match('/^\./', $inner_file)) {
 									// strip leading digit and dot from filename (1.xx becomes xx)
 									$file_clean = preg_replace('/^\d+?\./', '', $file);
 									$categories[] = array(
@@ -571,6 +571,7 @@ Class TemplateParser {
 	}
 	
 	function parse($page, $rules) {
+		// store reference to current page
 		$this->page = $page;
 		// create all the replacement pairs that rely on partials
 		$this->replacement_pairs = array_merge($rules, $this->create_replacement_partials());
@@ -591,7 +592,7 @@ Class Partial {
 		if($dh = opendir($dir.'/'.$file)) {
 			while (($inner_file = readdir($dh)) !== false) {
 				// check for an image named thumb
-				if(!is_dir($inner_file) && preg_match('/thumb\.(gif|jpg|png|jpeg)/i', $inner_file, $file_type)) {
+				if(!preg_match('/^\./', $inner_file)  && preg_match('/thumb\.(gif|jpg|png|jpeg)/i', $inner_file, $file_type)) {
 					return preg_replace('/\.\.\//', $this->page->link_path, $dir).'/'.$file.'/thumb.'.$file_type[1];
 				}
 			}
@@ -615,6 +616,7 @@ Class CategoryListPartial extends Partial {
 	var $partial_file;
 
 	function render($page, $dir, $partial_file) {
+		// store reference to current page
 		$this->page = $page;
 		// store correct partial file
 		$this->partial_file = $partial_file;
@@ -626,7 +628,7 @@ Class CategoryListPartial extends Partial {
 		if(is_dir($this->dir)) {
 		 	if($dh = opendir($this->dir)) {
 		 		while (($file = readdir($dh)) !== false) {
-					if(is_dir($this->dir.'/'.$file)  && $file != '.' && $file != '..') {
+					if(is_dir($this->dir.'/'.$file) && !preg_match('/^\./', $file)) {
 						// store filename
 						$files[] = $file;
 						// store url and thumb
@@ -665,7 +667,7 @@ Class NavigationPartial extends Partial {
 	var $partial_file = '../templates/partials/navigation.html';
 
 	function render($page) {
-		
+		// store reference to current page
 		$this->page = $page;
 		$html = '';
 		// pull out html wrappers from partial file
@@ -675,7 +677,7 @@ Class NavigationPartial extends Partial {
 		if($dh = opendir($this->dir)) {
 			while (($file = readdir($dh)) !== false) {
 				// if file is a folder and is not /index, add it to the navigation list
-				if(!is_dir($file) && $file != '.DS_Store' && !preg_match('/index/', $file) && !preg_match('/^_/', $file)) {
+				if(!preg_match('/^\./', $file) && !preg_match('/index/', $file) && !preg_match('/^_/', $file)) {
 					$files[] = $file;
 					$file_name_clean = preg_replace(array('/^\d+?\./', '/\.txt/'), '', $file);
 					// store the url and name of the navigation item
@@ -708,7 +710,7 @@ Class ImagesPartial extends Partial {
 	var $partial_file = '../templates/partials/images.html';
 
 	function render($page) {
-		
+		// store reference to current page
 		$this->page = $page;
 		
 		// strip out the name of the content file (ie content.txt) to create the path to the folder
@@ -723,7 +725,7 @@ Class ImagesPartial extends Partial {
 				$files = array();
 		 		while (($file = readdir($dh)) !== false) {
 					// if images isn't a thumb, add it to the files array
-		 			if(!is_dir($file) && preg_match('/\.(gif|jpg|png|jpeg)/i', $file) && !preg_match('/thumb\./i', $file)) {
+		 			if(!preg_match('/^\./', $file) && preg_match('/\.(gif|jpg|png|jpeg)/i', $file) && !preg_match('/^thumb\./i', $file)) {
 						$files[] = $file;
 						$file_vars[] = array(
 							// store url to this image, appending the correct link path
@@ -737,7 +739,7 @@ Class ImagesPartial extends Partial {
 				// sort files in reverse-numeric order
 				arsort($files, SORT_NUMERIC);
 				// add opening outer wrapper
-				$html = $wrappers[0];
+				$html .= $wrappers[0];
 				// loop through inner wrapper, replacing any variables contained within
 				foreach($files as $key => $file) $html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
 				// add closing outer wrapper
@@ -750,7 +752,6 @@ Class ImagesPartial extends Partial {
 }
 
 Class NextPagePartial extends Partial {
-	var $page;
 	var $partial_file = '../templates/partials/next-page.html';
 	
 	function render($project_sibling) {
