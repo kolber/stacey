@@ -1,6 +1,16 @@
 Version 1.0beta–
 This is a minor rewrite of the original stacey application.
-At the moment, all of the base functionality is working, but still needs some cleaning up and proper testing
+At the moment, all of the base functionality is working, but still needs some proper testing behind it.
+Any help beta testing would be much appreciated.
+
+New stuff–
+- You can now have rename and have multiple projects folders. Each page list can accessed within the templates as follows: #.folder-name => @Folder-name (obviously a little inconsistent at the moment)
+- Ordering now works in reverse (10. is first, 9. is second, etc), this makes adding a new project to the top of the list 1,000,000 times easier
+- The caching system now caches *anything* it regards as a file that can be changed by the user
+- Images_Count renamed to Total_Images, Projects_Count renamed to Total_Projects
+- .htaccess file is a lot cleaner
+
+---
 
 Overview—
 Stacey takes static content from .txt files, image files and directory structure and generates a static portfolio website. So, a no-cms, no-database, semi-dynamic website generator.
