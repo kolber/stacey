@@ -47,7 +47,7 @@ Class Helpers {
 		if(!$dh = opendir($dir)) return false;
 		$files = array();
 		// if file matches regex (and doesn't begin with a .), push it to the files array
-		while (($file = readdir($dh)) !== false) if(!preg_match('/^\./', $file)  && preg_match($regex, $file)) $files[] = $file;
+		while (($file = readdir($dh)) !== false) if(!preg_match('/^\./', $file) && preg_match($regex, $file)) $files[] = $file;
 		closedir($dh);
 		// sort list of files reverse-numerically (10, 9, 8, etc)
 		rsort($files, SORT_NUMERIC);
@@ -219,7 +219,7 @@ Class Page {
 		if(is_dir($dir)) {
 		 	if($dh = opendir($dir)) {
 		 		while (($file = readdir($dh)) !== false) {
-		 			if(!preg_match('/^\./', $file)  && preg_match('/\.(gif|jpg|png|jpeg)/i', $file) && !preg_match('/thumb\./i', $file)) {
+		 			if(!preg_match('/^\./', $file) && preg_match('/\.(gif|jpg|png|jpeg)/i', $file) && !preg_match('/thumb\./i', $file)) {
 						$image_files[] = $file;
 					}
 				}
@@ -590,7 +590,7 @@ Class Partial {
 		if($dh = opendir($dir.'/'.$file)) {
 			while (($inner_file = readdir($dh)) !== false) {
 				// check for an image named thumb
-				if(!preg_match('/^\./', $inner_file)  && preg_match('/thumb\.(gif|jpg|png|jpeg)/i', $inner_file, $file_type)) {
+				if(!preg_match('/^\./', $inner_file) && preg_match('/thumb\.(gif|jpg|png|jpeg)/i', $inner_file, $file_type)) {
 					return preg_replace('/\.\.\//', $this->page->link_path, $dir).'/'.$file.'/thumb.'.$file_type[1];
 				}
 			}
