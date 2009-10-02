@@ -1,14 +1,26 @@
-Version 1.0beta–
+Version 1.0b–
 This is a minor rewrite of the original stacey application.
 At the moment, all of the base functionality is working, but still needs some proper testing behind it.
 Any help beta testing would be much appreciated.
 
 New stuff–
-- You can now have rename and have multiple projects folders. Each page list can accessed within the templates as follows: #.folder-name => @Folder-name (obviously a little inconsistent at the moment)
+- The concept of Pages and Projects have been replaced with Pages, Categories and PageInCategories
+- You can now rename and have multiple projects folders. Each list can accessed within the templates as follows: #.folder-name => @Folder-name or #.folder => @Folder
+	- There is also a fallback template-finding system:
+		Using the @Folder var will first look for '/templates/partials/folder.html', failing that it will fall back to using '/templates/partials/category-list.html'
+- Templates are now selected by the name of the text file (ie. /folder/page/project.txt will look for /templates/project.html as it's template)
+	Fallbacks:
+		Page => /templates/content.html
+		Category => /templates/category.html
+		PageInCategory => /templates/page-in-category.html
 - Ordering now works in reverse (10. is first, 9. is second, etc), this makes adding a new project to the top of the list 1,000,000 times easier
 - The caching system now caches *anything* it regards as a file that can be changed by the user
-- Images_Count renamed to Total_Images, Projects_Count renamed to Total_Projects
 - .htaccess file is a lot cleaner
+- @Images_Count renamed to @Total_Images, @Projects_Count renamed to @Total_Projects
+- /templates/partials/next-project.html renamed to /templates/partials/next-page.html, var is now @Next_Page
+- /templates/partials/previous-project.html renamed to /templates/partials/previous-page.html, var is now @Previous_Page
+
+This is a bit of a brain dump, so I may have missed some things.
 
 ---
 
