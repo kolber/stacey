@@ -141,7 +141,7 @@ Class Renderer {
 				break;
 			}
 		}
-		// check if this folder contains inner folders (in which case it is a category)
+		// check if this folder contains inner folders - if it does, then it is a category
 		if(is_dir($dir)) {
 			if($dh = opendir($dir)) {
 				while (($file = readdir($dh)) !== false) {
@@ -181,6 +181,7 @@ Class Renderer {
 		header('HTTP/1.0 404 Not Found');
 		// if there is a 404 page set, use it
 		if(file_exists('../public/404.html')) echo file_get_contents('../public/404.html');
+		// otherwise, use this text as a default
 		else echo '<h1>404</h1><h2>Page could not be found.</h2><p>Unfortunately, the page you were looking for does not exist here.</p>';
 	}
 	
