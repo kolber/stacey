@@ -47,7 +47,9 @@ Class Helpers {
 		if(!$dh = opendir($dir)) return false;
 		$files = array();
 		// if file matches regex (and doesn't begin with a .), push it to the files array
-		while (($file = readdir($dh)) !== false) if(!preg_match('/^\./', $file) && preg_match($regex, $file)) $files[] = $file;
+		while (($file = readdir($dh)) !== false) {
+			if(!preg_match('/^\./', $file) && preg_match($regex, $file)) $files[] = $file;
+		}
 		closedir($dh);
 		// sort list of files reverse-numerically (10, 9, 8, etc)
 		rsort($files, SORT_NUMERIC);
@@ -61,13 +63,13 @@ Class Cache {
 
 	var $page;
 	var $cachefile;
+	var $hash;
 	
 	function __construct($page) {
 		// store reference to current page
 		$this->page = $page;
 		// turn a base64 of the full path to the page's content file into the name of the cache file
 		$this->cachefile = './cache/'.base64_encode($this->page->content_file);
-		$this->create_hash();
 	}
 	
 	function check_expired() {
@@ -84,7 +86,7 @@ Class Cache {
 	}
 	
 	function write_cache() {
-		echo "\n".'<!-- Cache: '.$this->create_hash().' -->';
+		echo "\n".'<!-- Cache: '.$this->hash.' -->';
 		$fp = fopen($this->cachefile, 'w');
 		fwrite($fp, ob_get_contents());
 		fclose($fp);
@@ -96,47 +98,25 @@ Class Cache {
 		// create a collection of every file inside the templates folder
 		$templates = $this->collate_files('../templates/');
 		// create an md5 of the two collections
-		return md5($content.$templates);
+		return $this->hash = md5($content.$templates);
 	}
 	
 	function collate_files($dir) {
-		$files_modified = '';
-		if(is_dir($dir)) {
-			if($dh = opendir($dir)) {
-				while (($file = readdir($dh)) !== false) {
-					// loop through first level
-					if(!preg_match('/^\./', $file)) {
-						// write out first level
-						$files_modified .= $file.':'.filemtime($dir.'/'.$file);
-						if(is_dir($dir.'/'.$file)){
-							if($idh = opendir($dir.'/'.$file)) {
-								while (($inner_file = readdir($idh)) !== false) {
-									// loop through second level
-									if(!preg_match('/^\./', $inner_file)) {
-										// write out second level
-										$files_modified .= $inner_file.':'.filemtime($dir.'/'.$file.'/'.$inner_file);
-										if(is_dir($dir.'/'.$file.'/'.$inner_file)) {
-											if($iidh = opendir($dir.'/'.$file.'/'.$inner_file)) {
-												while (($inner_inner_file = readdir($iidh)) !== false) {
-													// loop through third level
-													if(!preg_match('/^\./', $inner_inner_file)) {
-														// write out third level
-														$files_modified .= $inner_inner_file.':'.filemtime($dir.'/'.$file.'/'.$inner_file.'/'.$inner_inner_file);
-													}
-												}
-												closedir($iidh);
-											}
-										}
-									}
-								}
-								closedir($idh);
-							}
-						}
-					}
+		if(!$files_modified) $files_modified = '';
+		if(!is_dir($dir)) return false;
+		if(!$dh = opendir($dir)) return false;
+		$files = array();
+		while (($file = readdir($dh)) !== false) {
+			if(!preg_match('/^\./', $file)) {
+				if(is_dir($dir.'/'.$file)) {
+					$files_modified .= $file.':'.filemtime($dir.'/'.$file);
+					$files_modified .= $this->collate_files($dir.'/'.$file);
+				} else {
+					$files_modified .= $file.':'.filemtime($dir.'/'.$file);
 				}
-				closedir($dh);
 			}
 		}
+		closedir($dh);
 		return $files_modified;
 	}
 	
