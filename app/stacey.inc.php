@@ -63,15 +63,17 @@ Class Cache {
 	var $cachefile;
 	
 	function __construct($page) {
+		// store reference to current page
 		$this->page = $page;
-		// turn the full path to the page's content file into the name of the cache file
+		// turn a base64 of the full path to the page's content file into the name of the cache file
 		$this->cachefile = './cache/'.base64_encode($this->page->content_file);
 		$this->create_hash();
 	}
 	
 	function check_expired() {
+		// if cachefile doesn't exist, we need to create one
 		if(!file_exists($this->cachefile)) return true;
-		// create a hosh of all files to compare to existing cache
+		// collect an md5 of all files to compare to existing cache md5
 		elseif($this->create_hash() !== $this->get_current_hash()) return true;
 		else return false;
 	}
@@ -89,11 +91,11 @@ Class Cache {
 	}
 
 	function create_hash() {
-		// create a hash of every file inside the content folder
+		// create a collection of every file inside the content folder
 		$content = $this->collate_files('../content/');
-		// create a hash of every file inside the templates folder
+		// create a collection of every file inside the templates folder
 		$templates = $this->collate_files('../templates/');
-		// collate the two hashes together
+		// create an md5 of the two collections
 		return md5($content.$templates);
 	}
 	
@@ -165,8 +167,8 @@ Class Renderer {
 				while (($file = readdir($dh)) !== false) {
 					if(is_dir($dir.'/'.$file) && !preg_match('/^\./', $file)) return true;
 				}
+				closedir($dh);
 			}
-			closedir($dh);
 		}
 		// if the folder doesn't contain any inner folders, then it is not a category
 		return false;
@@ -194,7 +196,7 @@ Class Renderer {
 		}
 	}
 	
-	function render_404($path = '') {
+	function render_404() {
 		// return correct 404 header
 		header('HTTP/1.0 404 Not Found');
 		// if there is a 404 page set, use it
@@ -306,8 +308,8 @@ Class Page {
 						$image_files[] = $file;
 					}
 				}
+				closedir($dh);
 			}
-			closedir($dh);
 		}
 		return $image_files;
 	}
@@ -548,12 +550,13 @@ Class ContentParser {
 	}
 	
 	function create_replacement_rules($text) {
-		// push additional, useful values to the replacement pairs
+		// push additional useful values to the replacement pairs
 		$replacement_pairs = array(
 			'/@Total_Images/' => count($this->page->image_files),
 			'/@Total_Projects/' => count($this->page->unclean_names),
 		);
 		
+		// if the page is a Category, push category-specific variables
 		if(get_class($this->page) == 'Category') {
 			$c = new CategoryListPartial;
 			// look for a partial file matching the categories name, otherwise fall back to using the category partial
@@ -562,7 +565,7 @@ Class ContentParser {
 			$replacement_pairs['/@Category_List/'] = $c->render($this->page, $this->page->name_unclean, $partial_file);
 		}
 		
-		// if the page has siblings, push additional values to the replacement pairs
+		// if the page is a PageInCategory, push pageincategory-specific variables
 		if(get_class($this->page) == 'PageInCategory') {
 			$np = new NextPagePartial;
 			$pp = new PreviousPagePartial;
@@ -624,12 +627,13 @@ Class TemplateParser {
 									break;
 								}
 							}
+							closedir($idh);
 						}
 					}
 				}
+				closedir($dh);
 			}
 		}
-		closedir($dh);
 		return $categories;
 	}
 	
@@ -724,8 +728,8 @@ Class CategoryListPartial extends Partial {
 						$file_vars[] = array_merge($vars, $c->parse($category_page));
 					}
 				}
+				closedir($dh);
 			}
-			closedir($dh);
 
 			// sort files in reverse-numeric order
 			arsort($files, SORT_NUMERIC);
@@ -815,8 +819,9 @@ Class ImagesPartial extends Partial {
 						);
 					}
 				}
+				closedir($dh);
 			}
-			closedir($dh);
+			
 			if(count($files) > 0) {
 				// sort files in reverse-numeric order
 				arsort($files, SORT_NUMERIC);
