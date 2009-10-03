@@ -70,13 +70,15 @@ Class Cache {
 		$this->page = $page;
 		// turn a base64 of the full path to the page's content file into the name of the cache file
 		$this->cachefile = './cache/'.base64_encode($this->page->content_file);
+		//collect an md5 of all files
+		$this->hash = $this->create_hash();
 	}
 	
 	function check_expired() {
 		// if cachefile doesn't exist, we need to create one
 		if(!file_exists($this->cachefile)) return true;
-		// collect an md5 of all files to compare to existing cache md5
-		elseif($this->create_hash() !== $this->get_current_hash()) return true;
+		// compare new m5d to existing cached md5
+		elseif($this->hash !== $this->get_current_hash()) return true;
 		else return false;
 	}
 	
@@ -102,7 +104,7 @@ Class Cache {
 	}
 	
 	function collate_files($dir) {
-		if(!$files_modified) $files_modified = '';
+		if(!isset($files_modified)) $files_modified = '';
 		if(!is_dir($dir)) return false;
 		if(!$dh = opendir($dir)) return false;
 		$files = array();
