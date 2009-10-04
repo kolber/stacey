@@ -514,7 +514,7 @@ Class ContentParser {
 	function create_replacement_rules($text) {
 		// push additional useful values to the replacement pairs
 		$replacement_pairs = array(
-			'/@Images_count/' => count($this->page->image_files),
+			'/@Images_Count/' => count($this->page->image_files),
 			'/@Pages_Count/' => count($this->page->unclean_names),
 		);
 		
