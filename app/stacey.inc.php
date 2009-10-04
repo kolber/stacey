@@ -630,7 +630,10 @@ Class TemplateParser {
 		
 		// find all categories
 		$categories = $this->find_categories();
-		foreach($categories as $category) $partials['/@'.ucfirst($category['name_clean']).'/'] = $c->render($this->page, $category['name'], $category['partial_file']);
+		// category lists will become available as a variable as: '$.projects-folder' => @Projects_Folder
+		foreach($categories as $category) {
+			$partials['/@'.ucfirst(preg_replace('/-(.)/e', "'_'.strtoupper('\\1')", $category['name_clean'])).'/'] = $c->render($this->page, $category['name'], $category['partial_file']);
+		}
 		// construct the rest of the special variables
 		$partials['/@Images/'] = $i->render($this->page);
 		$partials['/@Navigation/'] = $n->render($this->page);
@@ -664,6 +667,7 @@ Class Partial {
 					return preg_replace('/\.\.\//', $this->page->link_path, $dir).'/'.$file.'/thumb.'.$file_type[1];
 				}
 			}
+			closedir($dh);
 		}
 		return '';
 	}

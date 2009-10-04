@@ -5,7 +5,7 @@ Any help beta testing would be much appreciated.
 
 New stuff–
 - The concept of Pages and Projects have been replaced with Pages, Categories and PageInCategories
-- You can now rename and have multiple projects folders. Each list can accessed within the templates as follows: #.folder-name => @Folder-name or #.folder => @Folder
+- You can now rename and have multiple projects folders. Each list can accessed within the templates as follows: #.folder-name => @Folder_Name or #.folder => @Folder
 	- There is also a fallback template-finding system:
 		Using the @Folder var will first look for '/templates/partials/folder.html', failing that it will fall back to using '/templates/partials/category-list.html'
 - Templates are now selected by the name of the text file (ie. /folder/page/project.txt will look for /templates/project.html as it's template)
