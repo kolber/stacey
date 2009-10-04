@@ -16,7 +16,8 @@ New stuff–
 - Ordering now works in reverse (10. is first, 9. is second, etc), this makes adding a new project to the top of the list 1,000,000 times easier
 - The caching system now caches *anything* it regards as a file that can be changed by the user
 - .htaccess file is a lot cleaner
-- @Images_Count renamed to @Total_Images, @Projects_Count renamed to @Total_Projects
+- @Projects_Count renamed to @Pages_Count
+- Category folders now have their own .txt file
 - /templates/partials/next-project.html renamed to /templates/partials/next-page.html, var is now @Next_Page
 - /templates/partials/previous-project.html renamed to /templates/partials/previous-page.html, var is now @Previous_Page
 
