@@ -2,7 +2,7 @@
 
 Class Stacey {
 
-	static $version = "1.0b";
+	static $version = '1.0b';
 	
 	function __construct($get) {
 		$this->php_fixes();
@@ -174,7 +174,7 @@ Class Renderer {
 		}
 		// if key contains no slashes, it must be a page or a category
 		else {
-			// check whether we're looking for a category or a pge
+			// check whether we're looking for a category or a page
 			if($this->is_category(key($get))) return new Category(key($get));
 			else return new Page(key($get));
 		}
@@ -210,8 +210,8 @@ Class Renderer {
 					// cache folder is writable, write to it
 					if(is_writable('./cache')) $cache->write_cache();
 					else echo "\n".'<!-- Stacey('.Stacey::$version.'). -->';
-						// end buffer
-						ob_end_flush();
+				// end buffer
+				ob_end_flush();
 			} else {
 				// else buffer isn't expired, so use cache
 				echo file_get_contents($cache->cachefile)."\n".'<!-- Cached. -->';
@@ -339,7 +339,7 @@ Class Category extends Page {
 		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $template_name);
 		// if template exists, return it
 		if(file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
-		// return page-in-category.html as default template (if it exists)
+		// return category.html as default template (if it exists)
 		elseif(file_exists('../templates/category.html')) return '../templates/category.html';
 		else return false;
 	}
