@@ -1,6 +1,8 @@
 <?php
 
 Class Stacey {
+
+	static $version = "1.0b";
 	
 	function __construct($get) {
 		$this->php_fixes();
@@ -83,12 +85,12 @@ Class Cache {
 	}
 	
 	function get_current_hash() {
-		preg_match('/Cache: (.+?)\s/', file_get_contents($this->cachefile), $matches);
+		preg_match('/Stacey.*: (.+?)\s/', file_get_contents($this->cachefile), $matches);
 		return $matches[1];
 	}
 	
 	function write_cache() {
-		echo "\n".'<!-- Cache: '.$this->hash.' -->';
+		echo "\n".'<!-- Stacey('.Stacey::$version.'): '.$this->hash.' -->';
 		$fp = fopen($this->cachefile, 'w');
 		fwrite($fp, ob_get_contents());
 		fclose($fp);
@@ -207,12 +209,12 @@ Class Renderer {
 					echo $t->parse($this->page, $c->parse($this->page));
 					// cache folder is writable, write to it
 					if(is_writable('./cache')) $cache->write_cache();
+					else echo "\n".'<!-- Stacey('.Stacey::$version.'). -->';
 						// end buffer
 						ob_end_flush();
 			} else {
 				// else buffer isn't expired, so use cache
-				include($cache->cachefile);
-				echo "\n".'<!-- Cached. -->';
+				echo file_get_contents($cache->cachefile)."\n".'<!-- Cached. -->';
 			}
 		}
 	}
