@@ -67,6 +67,6 @@ div#project-navigation p, div#gallery-navigation p { margin: 0px 0px 1px; }
 
 div#image-wrapper { overflow: hidden; width: 560px; }
 div#image-wrapper div#image-holder { width: 100000000px; }
-div#image-wrapper div#image-holder div.image { float: left; }
+div#image-wrapper div#image-holder div.image { float: left; width: 560px; }
 
 img.project-thumb { padding: 0px 10px 5px 0px; float: left; display: none; }
