@@ -387,7 +387,7 @@ Class PageInCategory extends Page {
 	}
 	
 	function get_sibling_pages() {
-		// if current project is a MockPageInCategory, escape this function (to prevent infinite loop)
+		// if current page is a MockPageInCategory, escape this function (to prevent infinite loop)
 		if(get_class($this) == 'MockPageInCategory') return array(array(), array());
 		// loop through each unclean name looking for a match
 		foreach($this->unclean_names as $key => $name) {
@@ -535,8 +535,8 @@ Class ContentParser {
 	function create_replacement_rules($text) {
 		// push additional useful values to the replacement pairs
 		$replacement_pairs = array(
-			'/@Total_Images/' => count($this->page->image_files),
-			'/@Total_Projects/' => count($this->page->unclean_names),
+			'/@Images_count/' => count($this->page->image_files),
+			'/@Pages_Count/' => count($this->page->unclean_names),
 		);
 		
 		// if the page is a Category, push category-specific variables
@@ -552,7 +552,7 @@ Class ContentParser {
 		if(get_class($this->page) == 'PageInCategory') {
 			$np = new NextPagePartial;
 			$pp = new PreviousPagePartial;
-			$replacement_pairs['/@Project_Number/'] = $this->page->i;
+			$replacement_pairs['/@Page_Number/'] = $this->page->i;
 			$replacement_pairs['/@Previous_Page/'] = $pp->render($this->page->sibling_pages[0]);
 			$replacement_pairs['/@Next_Page/'] = $np->render($this->page->sibling_pages[1]);
 		}
@@ -563,7 +563,7 @@ Class ContentParser {
 			$colon_split = explode(':', $match);
 			$replacement_pairs['/@'.$colon_split[0].'/'] = trim($colon_split[1]);
 		}
-		// sort keys by length, to ensure replacements are made in the correct order (ie. @project does not partially replace @project_name)
+		// sort keys by length, to ensure replacements are made in the correct order (ie. @page does not partially replace @page_name)
 		uksort($replacement_pairs, array('Helpers', 'sort_by_length'));
 		return $replacement_pairs;
 	}
@@ -645,7 +645,7 @@ Class TemplateParser {
 		$this->replacement_pairs = array_merge($rules, $this->create_replacement_partials());
 		// store template file content
 		$text = file_get_contents($this->page->template_file);
-		// sort keys by length, to ensure replacements are made in the correct order (ie. @project does not partially replace @project_name)
+		// sort keys by length, to ensure replacements are made in the correct order (ie. @page does not partially replace @page_name)
 		uksort($this->replacement_pairs, array('Helpers', 'sort_by_length'));
 		// run replacements on the template
 		return preg_replace(array_keys($this->replacement_pairs), array_values($this->replacement_pairs), $text);
@@ -824,9 +824,9 @@ Class ImagesPartial extends Partial {
 Class NextPagePartial extends Partial {
 	var $partial_file = '../templates/partials/next-page.html';
 	
-	function render($project_sibling) {
+	function render($page_sibling) {
 		// replace html with @vars
-		$html = preg_replace(array_keys($project_sibling), array_values($project_sibling), file_get_contents($this->partial_file));
+		$html = preg_replace(array_keys($page_sibling), array_values($page_sibling), file_get_contents($this->partial_file));
 		return $html;
 	}
 }
