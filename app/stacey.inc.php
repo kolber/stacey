@@ -237,16 +237,10 @@ Class Page {
 		$this->name_unclean = $this->unclean_name($this->name);
 
 		$this->content_file = $this->get_content_file();
-#		echo $this->content_file."<br>";
 		$this->template_file = $this->get_template_file();
-#		echo $this->template_file."<br>";
 		$this->public_file = $this->get_public_file();
-#		echo $this->public_file."<br>";
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
-#		var_dump($this->image_files);
-#		echo "<br>";
 		$this->link_path = $this->construct_link_path();
-#		echo $this->link_path."<br>";
 	}
 	
 	function construct_link_path() {
@@ -333,13 +327,9 @@ Class Category extends Page {
 		$this->name_unclean = $this->unclean_name($this->name);
 
 		$this->content_file = $this->get_content_file();
-#		echo $this->content_file."<br>";
 		$this->template_file = $this->get_template_file();
-#		echo $this->template_file."<br>";
 		$this->public_file = '';
-#		echo $this->public_file."<br>";
 		$this->link_path = $this->construct_link_path();
-#		echo $this->link_path."<br>";
 	}
 	
 	function get_template_file() {
@@ -365,25 +355,15 @@ Class PageInCategory extends Page {
 		$this->category = $category;
 		$this->store_unclean_names('../content/');
 		$this->category_unclean = $this->unclean_name($this->category);
-#		echo $this->category_unclean."<br>";
 		$this->store_unclean_names('../content/'.$this->category_unclean);
 		$this->name_unclean = $this->unclean_name($this->name);
-#		echo $this->name_unclean."<br>";
 		$this->sibling_pages = $this->get_sibling_pages();
-#		var_dump($this->sibling_pages);
-#		echo "<br>";
 
 		$this->content_file = $this->get_content_file();
-#		echo $this->content_file."<br>";
 		$this->template_file = $this->get_template_file();
-#		echo $this->template_file."<br>";
 		$this->public_file = $this->get_public_file();
-#		echo $this->public_file."<br>";
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
-#		var_dump($this->image_files);
-#		echo "<br>";
 		$this->link_path = $this->construct_link_path();
-#		echo $this->link_path."<br>";
 	}
 	
 	function get_sibling_pages() {
@@ -448,13 +428,10 @@ Class MockPageInCategory extends PageInCategory {
 		$this->folder_name = $folder_name;
 		$this->store_unclean_names('../content/');
 		$this->category_unclean = $this->unclean_name($category);
-#		echo $this->category_unclean."<br>";
 		$this->store_unclean_names('../content/'.$this->category_unclean);
 		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+?\./', '', $folder_name));
-#		echo $this->name_unclean."<br>";
 		
 		$this->content_file = $this->get_content_file();
-#		echo $this->content_file.'<br>';
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file)); 
 		$this->link_path = $this->construct_link_path();
 	}
