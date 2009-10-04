@@ -41,7 +41,7 @@ Class Helpers {
 	
 	static function sort_by_length($a,$b){
 		if($a == $b) return 0;
-		return (strlen($a) < strlen($b) ? -1 : 1);
+		return (strlen($a) > strlen($b) ? -1 : 1);
 	}
 	
 	static function list_files($dir, $regex) {
