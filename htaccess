@@ -1,5 +1,9 @@
 RewriteEngine on
 
+# Some hosts require a rewritebase rule, if so, uncomment the RewriteBase line below. If you are running from a subdirectory, your rewritebase should match the name of the path to where stacey is stored.
+# ie. if in a folder named 'stacey', RewriteBase /stacey
+#RewriteBase /
+
 ErrorDocument 404 /404.html
 
 # Add a trailing slash to directories
