@@ -18,6 +18,7 @@ New stuff–
 - .htaccess file is a lot cleaner
 - @Projects_Count renamed to @Pages_Count
 - Category folders now have their own .txt file
+- New @Pages variable (partial: /templates/partials/pages.html) will give a list of all top-level pages but no categories
 - /templates/partials/next-project.html renamed to /templates/partials/next-page.html, var is now @Next_Page
 - /templates/partials/previous-project.html renamed to /templates/partials/previous-page.html, var is now @Previous_Page
 

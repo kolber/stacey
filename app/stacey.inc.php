@@ -604,8 +604,10 @@ Class TemplateParser {
 		$c = new CategoryListPartial;
 		// constructs a partial containing each image on the page
 		$i = new ImagesPartial;
-		// constructs a partial containing all of the top level pages/categories, excluding the index
+		// constructs a partial containing all of the top level pages & categories, excluding the index
 		$n = new NavigationPartial;
+		// constructs a partial containing all of the top level pages, excluding any categories and the index
+		$p = new PagesPartial;
 		
 		// find all categories
 		$categories = $this->find_categories();
@@ -616,6 +618,7 @@ Class TemplateParser {
 		// construct the rest of the special variables
 		$partials['/@Images/'] = $i->render($this->page);
 		$partials['/@Navigation/'] = $n->render($this->page);
+		$partials['/@Pages/'] = $p->render($this->page);
 		$partials['/@Year/'] = date('Y');
 		return $partials;
 	}
@@ -741,6 +744,66 @@ Class NavigationPartial extends Partial {
 					);
 				}
 			}
+			closedir($dh);
+		}
+		// sort files in reverse-numeric order
+		arsort($files, SORT_NUMERIC);
+		// add opening outer wrapper
+		$html .= $wrappers[0];
+		
+		foreach($files as $key => $file) {
+			$html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
+		}
+		// add closing outer wrapper
+		$html .= $wrappers[2];
+		
+		return $html;
+	}
+	
+}
+
+Class PagesPartial extends Partial {
+	
+	var $dir = '../content';
+	var $partial_file = '../templates/partials/pages.html';
+
+	function is_category($dir) {
+		if(is_dir($dir)) {
+			if($dh = opendir($dir)) {
+				while (($file = readdir($dh)) !== false) {
+					if(is_dir($dir.'/'.$file) && !preg_match('/^\./', $file)) return true;
+				}
+				closedir($dh);
+			}
+		}
+		return false;
+	}
+
+	function render($page) {
+		// store reference to current page
+		$this->page = $page;
+		$html = '';
+		// pull out html wrappers from partial file
+		$wrappers = $this->parse($this->partial_file);
+		
+		// collate navigation set
+		if($dh = opendir($this->dir)) {
+			while (($file = readdir($dh)) !== false) {
+				// if file is a folder and is not /index, add it to the navigation list
+				if(!preg_match('/^\./', $file) && !preg_match('/index/', $file) && !preg_match('/^_/', $file)) {
+					// check if this folder contains inner folders - if it does, then it is a category and should be excluded from this list
+					if(!$this->is_category($this->dir.'/'.$file)) {
+						$files[] = $file;
+						$file_name_clean = preg_replace(array('/^\d+?\./', '/\.txt/'), '', $file);
+						// store the url and name of the navigation item
+						$file_vars[] = array(
+							'/@url/' => $this->page->link_path.$file_name_clean.'/',
+							'/@name/' => ucfirst(preg_replace('/-/', ' ', $file_name_clean)),
+						);
+					}
+				}
+			}
+			closedir($dh);
 		}
 		// sort files in reverse-numeric order
 		arsort($files, SORT_NUMERIC);
