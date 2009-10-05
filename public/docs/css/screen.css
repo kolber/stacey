@@ -49,7 +49,6 @@ ul#navigation, ul.projects { list-style: none; padding: 0px; margin: 0px; }
 ul#navigation { margin: 10px 0px 0px 20px; }
 ul#navigation li, ul.projects li { clear: both; }
 ul.projects li { float: left; padding: 0px 0px 8px; }
-ul#navigation ul { display: none; }
 
 p#footer { margin: 0px 0px 0px 260px; display: inline; }
 
