@@ -652,11 +652,13 @@ Class Partial {
 	}
 
 	function parse($file) {
-		$file = file_get_contents($file);
+		$partial = (file_exists($file)) ? file_get_contents($file) : '<p>! '.$file.' not found.</p>';
 		// split the template file by loop code
-		preg_match('/([\S\s]*)foreach[\S\s]*?:([\S\s]*)endforeach;([\S\s]*)/', $file, $matches);
-		// return array containing the markup: before loop, inside loop & after loop (in that order)
-		return array($matches[1], $matches[2], $matches[3]);
+		preg_match('/([\S\s]*)foreach[\S\s]*?:([\S\s]*)endforeach;([\S\s]*)/', $partial, $matches);
+		// if partial file found, return array containing the markup: before loop, inside loop & after loop (in that order)
+		if(count($matches) > 0) return array($matches[1], $matches[2], $matches[3]);
+		// if partial file not found, return warning string
+		else return array($partial, '', '');
 	}
 	
 }
