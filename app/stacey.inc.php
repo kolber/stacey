@@ -199,22 +199,30 @@ Class Renderer {
 		} else {
 			// create new cache object
 			$cache = new Cache($this->page);
-			// check if cache needs to be expired
-			if($cache->check_expired()) {
-				// start output buffer
-				ob_start();
-					// render page
-					$t = new TemplateParser;
-					$c = new ContentParser;
-					echo $t->parse($this->page, $c->parse($this->page));
-					// cache folder is writable, write to it
-					if(is_writable('./cache')) $cache->write_cache();
-					else echo "\n".'<!-- Stacey('.Stacey::$version.'). -->';
-				// end buffer
-				ob_end_flush();
+			// check etags
+			header ('Etag: "'.$cache->hash.'"');
+			if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) == '"'.$cache->hash.'"') {
+				// local cache is still fresh, so return 304
+				header ("HTTP/1.0 304 Not Modified");
+				header ('Content-Length: 0');
 			} else {
-				// else buffer isn't expired, so use cache
-				echo file_get_contents($cache->cachefile)."\n".'<!-- Cached. -->';
+				// check if cache needs to be expired
+				if($cache->check_expired()) {
+					// start output buffer
+					ob_start();
+						// render page
+						$t = new TemplateParser;
+						$c = new ContentParser;
+						echo $t->parse($this->page, $c->parse($this->page));
+						// cache folder is writable, write to it
+						if(is_writable('./cache')) $cache->write_cache();
+						else echo "\n".'<!-- Stacey('.Stacey::$version.'). -->';
+					// end buffer
+					ob_end_flush();
+				} else {
+					// else cache hasn't expired, so use existing cache
+					echo file_get_contents($cache->cachefile)."\n".'<!-- Cached. -->';
+				}
 			}
 		}
 	}
