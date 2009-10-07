@@ -682,6 +682,7 @@ Class CategoryListPartial extends Partial {
 		$html = '';
 		
 		// for each page within this category...
+		$files = array();
 		if(is_dir($this->dir)) {
 		 	if($dh = opendir($this->dir)) {
 		 		while (($file = readdir($dh)) !== false) {
@@ -731,6 +732,8 @@ Class NavigationPartial extends Partial {
 		$wrappers = $this->parse($this->partial_file);
 		
 		// collate navigation set
+		$files = array();
+		$file_vars = array();
 		if($dh = opendir($this->dir)) {
 			while (($file = readdir($dh)) !== false) {
 				// if file is a folder and is not /index, add it to the navigation list
@@ -787,6 +790,8 @@ Class PagesPartial extends Partial {
 		$wrappers = $this->parse($this->partial_file);
 		
 		// collate navigation set
+		$files = array();
+		$file_vars = array();
 		if($dh = opendir($this->dir)) {
 			while (($file = readdir($dh)) !== false) {
 				// if file is a folder and is not /index, add it to the navigation list
@@ -837,9 +842,10 @@ Class ImagesPartial extends Partial {
 		$wrappers = $this->parse($this->partial_file);
 		
 		// loop through directory looking for images
+		$files = array();
+		$file_vars = array();
 		if(is_dir($dir)) {
 		 	if($dh = opendir($dir)) {
-				$files = array();
 		 		while (($file = readdir($dh)) !== false) {
 					// if images isn't a thumb, add it to the files array
 		 			if(!preg_match('/^\./', $file) && preg_match('/\.(gif|jpg|png|jpeg)/i', $file) && !preg_match('/^thumb\./i', $file)) {
