@@ -580,7 +580,7 @@ Class TemplateParser {
 								if(is_dir($dir.'/'.$file.'/'.$inner_file) && !preg_match('/^\./', $inner_file)) {
 									// strip leading digit and dot from filename (1.xx becomes xx)
 									$file_clean = preg_replace('/^\d+?\./', '', $file);
-									$categories[] = array(
+									$categories[$file] = array(
 										'name' => $file,
 										'name_clean' => $file_clean,
 										// look for a partial file matching the categories name, otherwise fall back to using the category partial
@@ -596,6 +596,8 @@ Class TemplateParser {
 				closedir($dh);
 			}
 		}
+		// sort categories in reverse-numeric order
+		krsort($categories);
 		return $categories;
 	}
 	
@@ -609,11 +611,18 @@ Class TemplateParser {
 		// constructs a partial containing all of the top level pages, excluding any categories and the index
 		$p = new PagesPartial;
 		
+		// construct a special variable which will hold all of the category lists
+		$partials['/@Category_Lists/'] = '';
 		// find all categories
 		$categories = $this->find_categories();
 		// category lists will become available as a variable as: '$.projects-folder' => @Projects_Folder
 		foreach($categories as $category) {
-			$partials['/@'.ucfirst(preg_replace('/-(.)/e', "'_'.strtoupper('\\1')", $category['name_clean'])).'/'] = $c->render($this->page, $category['name'], $category['partial_file']);
+			// store the output of the CategoryListPartial
+			$category_list = $c->render($this->page, $category['name'], $category['partial_file']);
+			// create a partial that matches the name of the category
+			$partials['/@'.ucfirst(preg_replace('/-(.)/e', "'_'.strtoupper('\\1')", $category['name_clean'])).'/'] = $category_list;
+			// append to the @Category_Lists variable
+			$partials['/@Category_Lists/'] .= $category_list;
 		}
 		// construct the rest of the special variables
 		$partials['/@Images/'] = $i->render($this->page);
