@@ -2,9 +2,9 @@ page_title: Project Name | Anthony Kolber's Graphic Design Portfolio
 
 page_description: The Project Name project, designed by Anthony Kolber
 
-project_title: The Test Project 7
+title: The Test Project 7
 
-project_date: 2009, Jun–
+date: 2009, Jun–
 
 content: 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
