@@ -191,7 +191,7 @@ Class Renderer {
 	
 	function render() {
 		// if page doesn't contain a content file or have a matching template file, redirect to it or return 404
-		if(!$this->page || !$this->page->content_file || !$this->page->template_file) {
+		if(!$this->page || !$this->page->template_file) {
 			// if a static html page with a name matching the current route exists in the public folder, serve it 
 			if($this->page->public_file) echo file_get_contents($this->page->public_file);
 			// serve 404
@@ -310,8 +310,8 @@ Class Page {
 			$txts = Helpers::list_files('../content/'.$this->name_unclean, '/\.txt$/');
 			// if $txts contains a result, return it
 			if(count($txts) > 0) return '../content/'.$this->name_unclean.'/'.$txts[0];
-			else return false;
-		} else return false;
+			else return '../content/'.$this->name_unclean.'/none';
+		} else return '../content/'.$this->name_unclean.'/none';
 	}
 	
 	function get_public_file() {
@@ -405,9 +405,9 @@ Class PageInCategory extends Page {
 			$txts = Helpers::list_files('../content/'.$this->category_unclean.'/'.$this->name_unclean, '/\.txt$/');
 			// if $txts contains a result, return it
 			if(count($txts) > 0) return '../content/'.$this->category_unclean.'/'.$this->name_unclean.'/'.$txts[0];
-			else return false;
+			else return '../content/'.$this->category_unclean.'/'.$this->name_unclean.'/none';
 		}
-		else return false;
+		else return '../content/'.$this->category_unclean.'/'.$this->name_unclean.'/none';
 	}
 	
 	function get_template_file() {
@@ -445,9 +445,9 @@ Class MockPageInCategory extends PageInCategory {
 			$txts = Helpers::list_files('../content/'.$this->category_unclean.'/'.$this->folder_name, '/\.txt$/');
 			// if $txts contains a result, return it
 			if(count($txts) > 0) return '../content/'.$this->category_unclean.'/'.$this->folder_name.'/'.$txts[0];
-			else return false;
+			else return '../content/'.$this->category_unclean.'/'.$this->folder_name.'/none';
 		}
-		else return false;
+		else return '../content/'.$this->category_unclean.'/'.$this->folder_name.'/none';
 	}
 	
 }
@@ -550,8 +550,8 @@ Class ContentParser {
 	function parse($page) {
 		// store page and parse its content file
 		$this->page = $page;
-		// store contents of content file
-		$text = file_get_contents($this->page->content_file);
+		// store contents of content file (if it exists, otherwise, pass back an empty string)
+		$text = (file_exists($this->page->content_file)) ? file_get_contents($this->page->content_file) : '';
 		// include shared variables for each page
 		$shared = (file_exists('../content/_shared.txt')) ? file_get_contents('../content/_shared.txt') : '';
 		// run preparsing rules to clean up content files (the newlines are added to ensure the first and last rules have their double-newlines to match on)
