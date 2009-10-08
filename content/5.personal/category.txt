@@ -1,6 +1,0 @@
-page_title: Personal Projects on Name's Graphic Design Portfolio
-
-page_description: A collection of Name's personal graphic design work
-
-category_description:
-Personal
