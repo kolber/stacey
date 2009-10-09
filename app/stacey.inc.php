@@ -305,7 +305,7 @@ Class Page {
 		// find the name of the text file
 		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $template_name);
 		// if template exists, return it
-		if(file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
+		if(!empty($template_name) && file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
 		// return content.html as default template (if it exists)
 		elseif(file_exists('../templates/content.html')) return '../templates/content.html';
 		else return false;
@@ -346,7 +346,7 @@ Class Category extends Page {
 		// find the name of the text file
 		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $template_name);
 		// if template exists, return it
-		if(file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
+		if(!empty($template_name) && file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
 		// return category.html as default template (if it exists)
 		elseif(file_exists('../templates/category.html')) return '../templates/category.html';
 		else return false;
@@ -422,7 +422,7 @@ Class PageInCategory extends Page {
 		// find the name of the text file
 		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $template_name);
 		// if template exists, return it
-		if(file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
+		if(!empty($template_name) && file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
 		// return page-in-category.html as default template (if it exists)
 		elseif(file_exists('../templates/page-in-category.html')) return '../templates/page-in-category.html';
 		else return false;
