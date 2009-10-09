@@ -536,7 +536,7 @@ Class ContentParser {
 		}
 		
 		// if the page is a PageInCategory, push pageincategory-specific variables
-		if(get_class($this->page) == 'PageInCategory') {
+		if(get_class($this->page) == 'PageInCategory' || get_class($this->page) == 'MockPageInCategory') {
 			$np = new NextPagePartial;
 			$pp = new PreviousPagePartial;
 			$replacement_pairs['/@Page_Number/'] = $this->page->i;
@@ -897,7 +897,7 @@ Class NextPagePartial extends Partial {
 	
 	function render($page_sibling) {
 		// replace html with @vars
-		$html = preg_replace(array_keys($page_sibling), array_values($page_sibling), file_get_contents($this->partial_file));
+		$html = (count($page_sibling) > 0) ? preg_replace(array_keys($page_sibling), array_values($page_sibling), file_get_contents($this->partial_file)) : '';
 		return $html;
 	}
 }
