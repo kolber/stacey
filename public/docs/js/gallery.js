@@ -53,8 +53,8 @@ Gallery = {
 		this.currentImage = newCount;
 		// update current image display
 		this.imageCountHolder.innerHTML = (newCount + 1) + "/" + this.maxCount;
-		// update url
-		window.location.hash = (newCount + 1);
+		// update url hash
+		//window.location.hash = (newCount + 1);
 	},
 	gotoImage: function(num) {
 		// if not too high
