@@ -138,6 +138,7 @@ Class Renderer {
 	
 	function is_category($name) {
 		// find folder name from $name
+		$dir = '';
 		$folders = Helpers::list_files('../content', '/^\d+?\.[^\.]+$/');
 		foreach($folders as $folder) {
 			if(preg_match('/'.$name.'$/', $folder)) {
@@ -302,6 +303,8 @@ Class Page {
 	}
 	
 	function get_template_file() {
+		// check folder exists, if not, return 404
+		if(!$this->name_unclean) return false;
 		// find the name of the text file
 		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $template_name);
 		// if template exists, return it
@@ -343,6 +346,8 @@ Class Category extends Page {
 	}
 	
 	function get_template_file() {
+		// check folder exists, if not, return 404
+		if(!$this->name_unclean) return false;
 		// find the name of the text file
 		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $template_name);
 		// if template exists, return it
@@ -419,6 +424,8 @@ Class PageInCategory extends Page {
 	}
 	
 	function get_template_file() {
+		// check folder exists, if not, return 404
+		if(!$this->name_unclean) return false;
 		// find the name of the text file
 		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $template_name);
 		// if template exists, return it
