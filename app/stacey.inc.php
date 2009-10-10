@@ -754,9 +754,9 @@ Class NavigationPartial extends Partial {
 		if($dh = opendir($this->dir)) {
 			while (($file = readdir($dh)) !== false) {
 				// if file is a folder and is not /index, add it to the navigation list
-				if(!preg_match('/^\./', $file) && !preg_match('/index/', $file) && !preg_match('/^_/', $file)) {
+				if(!preg_match('/^\./', $file) && !preg_match('/index/', $file) && !preg_match('/^_/', $file) && !preg_match('/\.txt$/', $file)) {
 					$files[] = $file;
-					$file_name_clean = preg_replace(array('/^\d+?\./', '/\.txt/'), '', $file);
+					$file_name_clean = preg_replace('/^\d+?\./', '', $file);
 					// store the url and name of the navigation item
 					$file_vars[] = array(
 						'/@url/' => $this->page->link_path.$file_name_clean.'/',
@@ -812,11 +812,11 @@ Class PagesPartial extends Partial {
 		if($dh = opendir($this->dir)) {
 			while (($file = readdir($dh)) !== false) {
 				// if file is a folder and is not /index, add it to the navigation list
-				if(!preg_match('/^\./', $file) && !preg_match('/index/', $file) && !preg_match('/^_/', $file)) {
+				if(!preg_match('/^\./', $file) && !preg_match('/index/', $file) && !preg_match('/^_/', $file) && !preg_match('/\.txt$/', $file)) {
 					// check if this folder contains inner folders - if it does, then it is a category and should be excluded from this list
 					if(!$this->is_category($this->dir.'/'.$file)) {
 						$files[] = $file;
-						$file_name_clean = preg_replace(array('/^\d+?\./', '/\.txt/'), '', $file);
+						$file_name_clean = preg_replace('/^\d+?\./', '', $file);
 						// store the url and name of the navigation item
 						$file_vars[] = array(
 							'/@url/' => $this->page->link_path.$file_name_clean.'/',
