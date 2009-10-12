@@ -2,7 +2,7 @@
 
 Class Stacey {
 
-	static $version = '1.0b';
+	static $version = '1.0';
 	
 	function __construct($get) {
 		$this->php_fixes();

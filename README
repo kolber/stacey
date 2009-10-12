@@ -1,8 +1,5 @@
-Version 1.0b–
-This is a minor rewrite of the original stacey application.
-Any help beta testing would be much appreciated.
-
 Overview—
+Version 1.0
 Stacey takes static content from .txt files, image files and directory structure and generates a static portfolio website. So, a no-cms, no-database, semi-dynamic website generator.
 If you look in the /content and /templates folders, you should get the general idea of how it all works.
 Or check out http://staceyapp.com for more detailed usage information.
