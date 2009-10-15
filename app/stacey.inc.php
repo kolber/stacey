@@ -266,7 +266,7 @@ Class Page {
 	
 	function store_unclean_names($dir) {
 		// store a list of folder names
-		$this->unclean_names = Helpers::list_files($dir, '/^\d+?\.[^\.]+$/');
+		$this->unclean_names = Helpers::list_files($dir, '/.+/');
 	}
 	
 	function clean_name($name) {
@@ -397,7 +397,7 @@ Class PageInCategory extends Page {
 				// create MockPageInCategory objects so we can access the variables of the pages
 				$previous_page = new MockPageInCategory($this->category, $previous_name);
 				$next_page = new MockPageInCategory($this->category, $next_name);
-				
+				 
 				$c = new ContentParser;
 				return array(
 					array_merge($previous, $c->parse($previous_page)),
@@ -710,7 +710,7 @@ Class CategoryListPartial extends Partial {
 		if(is_dir($this->dir)) {
 		 	if($dh = opendir($this->dir)) {
 		 		while (($file = readdir($dh)) !== false) {
-					if(is_dir($this->dir.'/'.$file) && !preg_match('/^\./', $file)) {
+					if(is_dir($this->dir.'/'.$file) && !preg_match('/^\./', $file) && preg_match('/^\d/', $file)) {
 						// store filename
 						$files[] = $file;
 						// store url and thumb
@@ -761,7 +761,7 @@ Class NavigationPartial extends Partial {
 		if($dh = opendir($this->dir)) {
 			while (($file = readdir($dh)) !== false) {
 				// if file is a folder and is not /index, add it to the navigation list
-				if(!preg_match('/^\./', $file) && !preg_match('/index/', $file) && !preg_match('/^_/', $file) && !preg_match('/\.txt$/', $file)) {
+				if(!preg_match('/^\./', $file) && !preg_match('/index/', $file) && !preg_match('/^_/', $file) && !preg_match('/\.txt$/', $file) && preg_match('/^\d/', $file)) {
 					$files[] = $file;
 					$file_name_clean = preg_replace('/^\d+?\./', '', $file);
 					// store the url and name of the navigation item
@@ -819,7 +819,7 @@ Class PagesPartial extends Partial {
 		if($dh = opendir($this->dir)) {
 			while (($file = readdir($dh)) !== false) {
 				// if file is a folder and is not /index, add it to the navigation list
-				if(!preg_match('/^\./', $file) && !preg_match('/index/', $file) && !preg_match('/^_/', $file) && !preg_match('/\.txt$/', $file)) {
+				if(!preg_match('/^\./', $file) && !preg_match('/index/', $file) && !preg_match('/^_/', $file) && !preg_match('/\.txt$/', $file) && preg_match('/^\d/', $file)) {
 					// check if this folder contains inner folders - if it does, then it is a category and should be excluded from this list
 					if(!$this->is_category($this->dir.'/'.$file)) {
 						$files[] = $file;
