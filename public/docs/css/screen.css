@@ -15,7 +15,7 @@ h1 strong { font-weight: normal; text-transform: none; display: block; letter-sp
 h2 { font-size: 26px; margin: 0px; font-weight: normal; letter-spacing: 0.02em; }
 p.date { font-size: 11px; letter-spacing: 0.03em; }
 a { text-decoration: none; }
-p#gallery-count { text-align: right; }
+p#project-count, p#gallery-count { text-align: right; }
 p#gallery-count span { letter-spacing: 0.08em; }
 
 /* Layout */
@@ -59,7 +59,7 @@ div.description h2 { padding: 0px 0px 15px; }
 div#images { clear: both; padding: 30px 0px 0px 70px; }
 div.description div#images { padding: 0px 0px 0px 0px; }
 div#images img { margin: 0px 0px 10px; }
-p#gallery-count { margin: 2px 20px 0px 0px; }
+p#project-count, p#gallery-count { margin: 2px 20px 0px 0px; }
 p#gallery-count span { margin: -1px 0px 0px; display: block; }
 div#project-navigation { margin: 0px 0px 0px 20px; }
 div#project-navigation p, div#gallery-navigation p { margin: 0px 0px 1px; }
