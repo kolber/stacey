@@ -302,7 +302,7 @@ Class Page {
 		return $image_files;
 	}
 	
-	function get_template_file() {
+	function get_template_file($default_template_name = 'content') {
 		// check folder exists, if not, return 404
 		if(!$this->name_unclean) return false;
 		// find the name of the text file
@@ -310,7 +310,7 @@ Class Page {
 		// if template exists, return it
 		if(!empty($template_name) && file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
 		// return content.html as default template (if it exists)
-		elseif(file_exists('../templates/content.html')) return '../templates/content.html';
+		elseif(file_exists('../templates/'.$default_template_name.'.html')) return '../templates/'.$default_template_name.'.html';
 		else return false;
 	}
 	
@@ -340,21 +340,9 @@ Class Category extends Page {
 		$this->name_unclean = $this->unclean_name($this->name);
 
 		$this->content_file = $this->get_content_file();
-		$this->template_file = $this->get_template_file();
+		$this->template_file = $this->get_template_file('category');
 		$this->public_file = '';
 		$this->link_path = $this->construct_link_path();
-	}
-	
-	function get_template_file() {
-		// check folder exists, if not, return 404
-		if(!$this->name_unclean) return false;
-		// find the name of the text file
-		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $template_name);
-		// if template exists, return it
-		if(!empty($template_name) && file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
-		// return category.html as default template (if it exists)
-		elseif(file_exists('../templates/category.html')) return '../templates/category.html';
-		else return false;
 	}
 	
 }
@@ -375,7 +363,7 @@ Class PageInCategory extends Page {
 		$this->sibling_pages = $this->get_sibling_pages();
 
 		$this->content_file = $this->get_content_file();
-		$this->template_file = $this->get_template_file();
+		$this->template_file = $this->get_template_file('page-in-category');
 		$this->public_file = $this->get_public_file();
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
 		$this->link_path = $this->construct_link_path();
@@ -421,18 +409,6 @@ Class PageInCategory extends Page {
 			else return '../content/'.$this->category_unclean.'/'.$this->name_unclean.'/none';
 		}
 		else return '../content/'.$this->category_unclean.'/'.$this->name_unclean.'/none';
-	}
-	
-	function get_template_file() {
-		// check folder exists, if not, return 404
-		if(!$this->name_unclean) return false;
-		// find the name of the text file
-		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $template_name);
-		// if template exists, return it
-		if(!empty($template_name) && file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
-		// return page-in-category.html as default template (if it exists)
-		elseif(file_exists('../templates/page-in-category.html')) return '../templates/page-in-category.html';
-		else return false;
 	}
 	
 }
