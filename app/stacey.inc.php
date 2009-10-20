@@ -531,6 +531,8 @@ Class ContentParser {
 		$replacement_pairs = array(
 			'/@Images_Count/' => count($this->page->image_files),
 			'/@Pages_Count/' => count($this->page->unclean_names),
+			'/@Year/' => date('Y'),
+			'/@Site_Root\/?/' => $this->page->link_path
 		);
 		
 		// if the page is a Category, push category-specific variables
@@ -643,8 +645,6 @@ Class TemplateParser {
 		$partials['/@Images/'] = $i->render($this->page);
 		$partials['/@Navigation/'] = $n->render($this->page);
 		$partials['/@Pages/'] = $p->render($this->page);
-		$partials['/@Year/'] = date('Y');
-		$partials['/@Site_Root\/?/'] = $this->page->link_path;
 		return $partials;
 	}
 	
