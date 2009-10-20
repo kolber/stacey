@@ -466,12 +466,16 @@ Class ContentParser {
 			'/(<li>.*<\/li>)/',
 			// replace doubled lis
 			'/<\/li><\/li>/',
+			// replace headings h1. h2. etc
+			'/h([0-5])\.\s?(.*)/',
 			// wrap multi-line text in paragraphs
 			'/([^\n]+?)(?=\n)/',
 			'/<p>(.+):(.+)<\/p>/',
 			'/: (.+)(?=\n<p>)/',
 			// replace any keys that got wrapped in ps
 			'/(<p>)([a-z0-9_-]+):(<\/p>)/',
+			// replace any headings that got wrapped in ps
+			'/<p>(<h[0-5]>.*<\/h[0-5]>)<\/p>/'
 		);
 		$replacements = array(
 			// replace inline colons
@@ -491,12 +495,15 @@ Class ContentParser {
 			'<ul>$1</ul>',
 			// replace doubled lis
 			'</li>',
+			// replace headings h1. h2. etc
+			'<h$1>$2</h$1>',
 			// wrap multi-line text in paragraphs
 			'<p>$1</p>',
 			'$1:$2',
 			':<p>$1</p>',
 			// replace any keys that got wrapped in ps
 			'$2:',
+			'$1'
 		);
 		$parsed_text = preg_replace($patterns, $replacements, $text);
 		return $parsed_text;
