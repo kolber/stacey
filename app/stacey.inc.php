@@ -435,7 +435,6 @@ Class MockPageInCategory extends PageInCategory {
 	var $folder_name;
 	
 	function __construct($category, $folder_name) {
-		$this->folder_name = $folder_name;
 		$this->store_unclean_names('../content/');
 		$this->category_unclean = $this->unclean_name($category);
 		$this->store_unclean_names('../content/'.$this->category_unclean);
@@ -444,18 +443,6 @@ Class MockPageInCategory extends PageInCategory {
 		$this->content_file = $this->get_content_file();
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file)); 
 		$this->link_path = $this->construct_link_path();
-	}
-
-	function get_content_file() {
-		// check folder exists
-		if($this->folder_name && $this->category_unclean && file_exists('../content/'.$this->category_unclean.'/'.$this->folder_name)) {
-			// look for a .txt file
-			$txts = Helpers::list_files('../content/'.$this->category_unclean.'/'.$this->folder_name, '/\.txt$/');
-			// if $txts contains a result, return it
-			if(count($txts) > 0) return '../content/'.$this->category_unclean.'/'.$this->folder_name.'/'.$txts[0];
-			else return '../content/'.$this->category_unclean.'/'.$this->folder_name.'/none';
-		}
-		else return '../content/'.$this->category_unclean.'/'.$this->folder_name.'/none';
 	}
 	
 }
