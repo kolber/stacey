@@ -171,7 +171,7 @@ Class Renderer {
 			$path = explode('/', key($get));
 			// if key contains more than one /, return a 404 as the app doesn't handle more than 2 levels of depth
 			if(count($path) > 2) return key($get);
-			else return new PageInCategory($path[0], $path[1]);
+			else return new PageInCategory($path[1], $path[0]);
 		}
 		// if key contains no slashes, it must be a page or a category
 		else {
@@ -231,6 +231,10 @@ Class Renderer {
 
 Class Page {
 	var $name;
+	var $name_unclean;
+
+	var $category;
+	var $category_unclean;
 	
 	var $content_file;
 	var $template_file;
@@ -238,16 +242,21 @@ Class Page {
 	var $layout_file;
 	
 	var $i;
-	var $name_unclean;
 	var $unclean_names = array();
 	var $image_files = array();
-	var $link_path;
+	var $sibling_pages;
 	
-	var $content_path = '../content/';
+	var $link_path;
+	var $content_path;
+	
 	var $default_template = 'content';
 	var $default_layout = 'layout';
 	
-	function __construct($name = 'index') {
+	function __construct($name = 'index', $category = '') {
+		$this->category = $category;
+		$this->category_unclean = $this->unclean_name($this->category,'../content/');
+		$this->content_path = ($category == '') ? '../content/' : '../content/'.$this->category_unclean.'/';
+		
 		$this->name = $name;
 		$this->name_unclean = $this->unclean_name($this->name, $this->content_path);
 		$this->unclean_names = $this->list_folders($this->content_path);
@@ -258,6 +267,8 @@ Class Page {
 		$this->public_file = $this->get_public_file();
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
 		$this->link_path = $this->construct_link_path();
+		
+		$this->sibling_pages = $this->get_sibling_pages();
 	}
 	
 	function construct_link_path() {
@@ -351,31 +362,6 @@ Class Page {
 		else return false;
 	}
 	
-}
-
-Class Category extends Page {
-	var $default_template = 'category';
-}
-
-Class PageInCategory extends Page {
-	
-	var $category;
-	var $category_unclean;
-	var $sibling_pages;
-	var $default_template = 'page-in-category';
-	
-	function __construct($category, $name) {
-		$this->category = $category;
-		$this->category_unclean = $this->unclean_name($this->category,'../content/');
-		
-		$this->content_path = '../content/'.$this->category_unclean.'/';
-		parent::__construct($name);
-
-
-		$this->sibling_pages = $this->get_sibling_pages();
-		
-	}
-	
 	function get_sibling_pages() {
 		// if current page is a MockPageInCategory, escape this function (to prevent infinite loop)
 		if(get_class($this) == 'MockPageInCategory') return array(array(), array());
@@ -406,7 +392,14 @@ Class PageInCategory extends Page {
 		return array(array(), array());
 	}
 	
-	
+}
+
+Class Category extends Page {
+	var $default_template = 'category';
+}
+
+Class PageInCategory extends Page {
+	var $default_template = 'page-in-category';
 }
 
 Class MockPageInCategory extends PageInCategory {
