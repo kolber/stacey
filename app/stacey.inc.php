@@ -243,14 +243,18 @@ Class Page {
 	var $image_files = array();
 	var $link_path;
 	
+	var $content_base = '../content/';
+	var $default_template = 'content';
+	var $default_layout = 'layout';
+	
 	function __construct($name = 'index') {
 		$this->name = $name;
-		$this->store_unclean_names('../content/');
-		$this->name_unclean = $this->unclean_name($this->name);
-
+		$this->name_unclean = $this->unclean_name($this->name, $this->content_base);
+		$this->unclean_names = $this->list_folders($this->content_base);
+		
 		$this->content_file = $this->get_content_file();
-		$this->template_file = $this->get_template_file();
-		$this->layout_file = $this->get_layout_file();
+		$this->template_file = $this->get_template_file($this->default_template);
+		$this->layout_file = $this->get_layout_file($this->default_layout);
 		$this->public_file = $this->get_public_file();
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
 		$this->link_path = $this->construct_link_path();
@@ -266,19 +270,19 @@ Class Page {
 		return $link_path;
 	}
 	
-	function store_unclean_names($dir) {
-		// store a list of folder names
-		$this->unclean_names = Helpers::list_files($dir, '/^\d+?\.[^\.]+$/');
+	function list_folders($dir) {
+		// return a list of folder names
+		return Helpers::list_files($dir, '/^\d+?\.[^\.]+$/');
 	}
 	
 	function clean_name($name) {
 		// strip leading digit and dot from filename (1.xx becomes xx)
 		return preg_replace('/^\d+?\./', '', $name);
 	}
-
-	function unclean_name($name) {
+	
+	function unclean_name($name, $dir) {
 		// loop through each unclean page name looking for a match for $name
-		foreach($this->unclean_names as $key => $file) {
+		foreach($this->list_folders($dir) as $key => $file) {
 			if(preg_match('/'.$name.'$/', $file)) {
 				// store current number of this page
 				$this->i = ($key + 1);
@@ -304,7 +308,7 @@ Class Page {
 		return $image_files;
 	}
 	
-	function get_template_file($default_template_name = 'content') {
+	function get_template_file($default_template) {
 		// check folder exists, if not, return 404
 		if(!$this->name_unclean) return false;
 		// find the name of the text file
@@ -312,11 +316,11 @@ Class Page {
 		// if template exists, return it
 		if(!empty($template_name) && file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
 		// return content.html as default template (if it exists)
-		elseif(file_exists('../templates/'.$default_template_name.'.html')) return '../templates/'.$default_template_name.'.html';
+		elseif(file_exists('../templates/'.$default_template.'.html')) return '../templates/'.$default_template.'.html';
 		else return false;
 	}
 	
-	function get_layout_file($default_layout = 'layout') {
+	function get_layout_file($default_layout) {
 		$layout_dir = '../templates/layouts/';
 		// check folder exists, if not, return 404
 		if(!$this->name_unclean) return false;
@@ -349,18 +353,7 @@ Class Page {
 }
 
 Class Category extends Page {
-	function __construct($name) {
-		$this->name = $name;
-		$this->store_unclean_names('../content/');
-		$this->name_unclean = $this->unclean_name($this->name);
-
-		$this->content_file = $this->get_content_file();
-		$this->template_file = $this->get_template_file('category');
-		$this->layout_file = $this->get_layout_file();
-		$this->public_file = '';
-		$this->link_path = $this->construct_link_path();
-	}
-	
+	var $default_template = 'category';
 }
 
 Class PageInCategory extends Page {
@@ -368,22 +361,19 @@ Class PageInCategory extends Page {
 	var $category;
 	var $category_unclean;
 	var $sibling_pages;
+	var $default_template = 'page-in-category';
 	
 	function __construct($category, $name) {
-		$this->name = $name;
 		$this->category = $category;
-		$this->store_unclean_names('../content/');
-		$this->category_unclean = $this->unclean_name($this->category);
-		$this->store_unclean_names('../content/'.$this->category_unclean);
-		$this->name_unclean = $this->unclean_name($this->name);
-		$this->sibling_pages = $this->get_sibling_pages();
+		$this->category_unclean = $this->unclean_name($this->category,'../content/');
+		
+		$this->content_base = '../content/'.$this->category_unclean;
+		
+		parent::__construct($name);
 
-		$this->content_file = $this->get_content_file();
-		$this->template_file = $this->get_template_file('page-in-category');
-		$this->layout_file = $this->get_layout_file();
-		$this->public_file = $this->get_public_file();
-		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
-		$this->link_path = $this->construct_link_path();
+
+		$this->sibling_pages = $this->get_sibling_pages();
+		
 	}
 	
 	function get_sibling_pages() {
@@ -432,13 +422,9 @@ Class PageInCategory extends Page {
 
 Class MockPageInCategory extends PageInCategory {
 	
-	var $folder_name;
-	
 	function __construct($category, $folder_name) {
-		$this->store_unclean_names('../content/');
-		$this->category_unclean = $this->unclean_name($category);
-		$this->store_unclean_names('../content/'.$this->category_unclean);
-		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+?\./', '', $folder_name));
+		$this->category_unclean = $this->unclean_name($category, '../content/');
+		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+?\./', '', $folder_name), '../content/'.$this->category_unclean);
 		
 		$this->content_file = $this->get_content_file();
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file)); 
