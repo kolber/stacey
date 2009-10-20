@@ -235,6 +235,7 @@ Class Page {
 	var $content_file;
 	var $template_file;
 	var $public_file;
+	var $layout_file;
 	
 	var $i;
 	var $name_unclean;
@@ -249,6 +250,7 @@ Class Page {
 
 		$this->content_file = $this->get_content_file();
 		$this->template_file = $this->get_template_file();
+		$this->layout_file = $this->get_layout_file();
 		$this->public_file = $this->get_public_file();
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
 		$this->link_path = $this->construct_link_path();
@@ -314,6 +316,19 @@ Class Page {
 		else return false;
 	}
 	
+	function get_layout_file($default_layout = 'layout') {
+		$layout_dir = '../templates/layouts/';
+		// check folder exists, if not, return 404
+		if(!$this->name_unclean) return false;
+		// find the name of the text file
+		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $layout_name);
+		// if template exists, return it
+		if(!empty($layout_name) && file_exists($layout_dir.$layout_name[1].'.html')) return $layout_dir.$layout_name[1].'.html';
+		// return content.html as default template (if it exists)
+		elseif(file_exists($layout_dir.$default_layout.'.html')) return $layout_dir.$default_layout.'.html';
+		else return false;
+	}
+
 	function get_content_file() {
 		// check folder exists
 		if($this->name_unclean && file_exists('../content/'.$this->name_unclean)) {
@@ -341,6 +356,7 @@ Class Category extends Page {
 
 		$this->content_file = $this->get_content_file();
 		$this->template_file = $this->get_template_file('category');
+		$this->layout_file = $this->get_layout_file();
 		$this->public_file = '';
 		$this->link_path = $this->construct_link_path();
 	}
@@ -364,6 +380,7 @@ Class PageInCategory extends Page {
 
 		$this->content_file = $this->get_content_file();
 		$this->template_file = $this->get_template_file('page-in-category');
+		$this->layout_file = $this->get_layout_file();
 		$this->public_file = $this->get_public_file();
 		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
 		$this->link_path = $this->construct_link_path();
@@ -627,6 +644,7 @@ Class TemplateParser {
 		$partials['/@Navigation/'] = $n->render($this->page);
 		$partials['/@Pages/'] = $p->render($this->page);
 		$partials['/@Year/'] = date('Y');
+		$partials['/@Site_Root\/?/'] = $this->page->link_path;
 		return $partials;
 	}
 	
@@ -635,12 +653,13 @@ Class TemplateParser {
 		$this->page = $page;
 		// create all the replacement pairs that rely on partials
 		$this->replacement_pairs = array_merge($rules, $this->create_replacement_partials());
-		// store template file content
-		$text = file_get_contents($this->page->template_file);
 		// sort keys by length, to ensure replacements are made in the correct order (ie. @page does not partially replace @page_name)
 		uksort($this->replacement_pairs, array('Helpers', 'sort_by_length'));
+		// merge the template into the layout file
+		$text = preg_replace(array('/@Yield/'), file_get_contents($this->page->template_file), file_get_contents($this->page->layout_file));
 		// run replacements on the template
 		return preg_replace(array_keys($this->replacement_pairs), array_values($this->replacement_pairs), $text);
+
 	}
 }
 
