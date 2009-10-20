@@ -268,7 +268,7 @@ Class Page {
 	
 	function store_unclean_names($dir) {
 		// store a list of folder names
-		$this->unclean_names = Helpers::list_files($dir, '/.+/');
+		$this->unclean_names = Helpers::list_files($dir, '/^\d+?\.[^\.]+$/');
 	}
 	
 	function clean_name($name) {
