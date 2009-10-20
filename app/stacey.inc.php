@@ -243,14 +243,14 @@ Class Page {
 	var $image_files = array();
 	var $link_path;
 	
-	var $content_base = '../content/';
+	var $content_path = '../content/';
 	var $default_template = 'content';
 	var $default_layout = 'layout';
 	
 	function __construct($name = 'index') {
 		$this->name = $name;
-		$this->name_unclean = $this->unclean_name($this->name, $this->content_base);
-		$this->unclean_names = $this->list_folders($this->content_base);
+		$this->name_unclean = $this->unclean_name($this->name, $this->content_path);
+		$this->unclean_names = $this->list_folders($this->content_path);
 		
 		$this->content_file = $this->get_content_file();
 		$this->template_file = $this->get_template_file($this->default_template);
@@ -335,13 +335,14 @@ Class Page {
 
 	function get_content_file() {
 		// check folder exists
-		if($this->name_unclean && file_exists('../content/'.$this->name_unclean)) {
+		if($this->name_unclean && file_exists($this->content_path.$this->name_unclean)) {
 			// look for a .txt file
-			$txts = Helpers::list_files('../content/'.$this->name_unclean, '/\.txt$/');
+			$txts = Helpers::list_files($this->content_path.$this->name_unclean, '/\.txt$/');
 			// if $txts contains a result, return it
-			if(count($txts) > 0) return '../content/'.$this->name_unclean.'/'.$txts[0];
-			else return '../content/'.$this->name_unclean.'/none';
-		} else return '../content/'.$this->name_unclean.'/none';
+			if(count($txts) > 0) return $this->content_path.$this->name_unclean.'/'.$txts[0];
+		}
+		// return if we didnt find anything
+		return $this->content_path.$this->name_unclean.'/none';
 	}
 	
 	function get_public_file() {
@@ -367,8 +368,7 @@ Class PageInCategory extends Page {
 		$this->category = $category;
 		$this->category_unclean = $this->unclean_name($this->category,'../content/');
 		
-		$this->content_base = '../content/'.$this->category_unclean;
-		
+		$this->content_path = '../content/'.$this->category_unclean.'/';
 		parent::__construct($name);
 
 
@@ -406,17 +406,6 @@ Class PageInCategory extends Page {
 		return array(array(), array());
 	}
 	
-	function get_content_file() {
-		// check folder exists
-		if($this->name_unclean && $this->category_unclean && file_exists('../content/'.$this->category_unclean.'/'.$this->name_unclean)) {
-			// look for a .txt file
-			$txts = Helpers::list_files('../content/'.$this->category_unclean.'/'.$this->name_unclean, '/\.txt$/');
-			// if $txts contains a result, return it
-			if(count($txts) > 0) return '../content/'.$this->category_unclean.'/'.$this->name_unclean.'/'.$txts[0];
-			else return '../content/'.$this->category_unclean.'/'.$this->name_unclean.'/none';
-		}
-		else return '../content/'.$this->category_unclean.'/'.$this->name_unclean.'/none';
-	}
 	
 }
 
@@ -424,6 +413,8 @@ Class MockPageInCategory extends PageInCategory {
 	
 	function __construct($category, $folder_name) {
 		$this->category_unclean = $this->unclean_name($category, '../content/');
+		$this->content_path = '../content/'.$this->category_unclean.'/';
+		
 		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+?\./', '', $folder_name), '../content/'.$this->category_unclean);
 		
 		$this->content_file = $this->get_content_file();
