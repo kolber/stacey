@@ -265,7 +265,7 @@ Class Page {
 		$this->template_file = $this->get_template_file($this->default_template);
 		$this->layout_file = $this->get_layout_file($this->default_layout);
 		$this->public_file = $this->get_public_file();
-		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file));
+		$this->image_files = $this->get_images();
 		$this->link_path = $this->construct_link_path();
 		
 		$this->sibling_pages = $this->get_sibling_pages();
@@ -304,7 +304,9 @@ Class Page {
 		return false;
 	}
 	
-	function get_images($dir) {
+	function get_images() {
+		$dir = preg_replace('/\/[^\/]+$/', '', $this->content_file);
+		
 		$image_files = array();
 		if(is_dir($dir)) {
 		 	if($dh = opendir($dir)) {
@@ -818,40 +820,26 @@ Class ImagesPartial extends Partial {
 		// store reference to current page
 		$this->page = $page;
 		
-		// strip out the name of the content file (ie content.txt) to create the path to the folder
+		// strip out the name of the content file (ie content.txt) and create the path to the folder
 		$dir = preg_replace('/\/[^\/]+$/', '', $this->page->content_file);
+		$dir = $this->page->link_path.preg_replace('/\.\.\//', '', $dir);
+		
 		$html = '';
 		// pull out html wrappers from partial file
 		$wrappers = $this->parse($this->partial_file);
-		
-		// loop through directory looking for images
-		$files = array();
-		$file_vars = array();
-		if(is_dir($dir)) {
-		 	if($dh = opendir($dir)) {
-		 		while (($file = readdir($dh)) !== false) {
-					// if images isn't a thumb, add it to the files array
-		 			if(!preg_match('/^\./', $file) && preg_match('/\.(gif|jpg|png|jpeg)/i', $file) && !preg_match('/^thumb\./i', $file)) {
-						$files[] = $file;
-						$file_vars[] = array(
-							// store url to this image, appending the correct link path
-							'/@url/' => $this->page->link_path.preg_replace('/\.\.\//', '', $dir).'/'.$file,
-						);
-					}
-				}
-				closedir($dh);
-			}
+		$files = $this->page->image_files;
 			
-			if(count($files) > 0) {
-				// sort files in reverse-numeric order
-				arsort($files, SORT_NUMERIC);
-				// add opening outer wrapper
-				$html .= $wrappers[0];
-				// loop through inner wrapper, replacing any variables contained within
-				foreach($files as $key => $file) $html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
-				// add closing outer wrapper
-				$html .= $wrappers[2];
+		if(count($files) > 0) {
+			// sort files in reverse-numeric order
+			arsort($files, SORT_NUMERIC);
+			// add opening outer wrapper
+			$html .= $wrappers[0];
+			// loop through inner wrapper, replacing any variables contained within
+			foreach($files as $key => $file) {
+				$html .= preg_replace('/@url/', $dir.'/'.$file, $wrappers[1]);
 			}
+			// add closing outer wrapper
+			$html .= $wrappers[2];
 		}
 		return $html;
 	}
