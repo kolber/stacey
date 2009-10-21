@@ -667,18 +667,15 @@ Class CategoryListPartial extends Partial {
 		$files = Helpers::list_files($this->dir, '/^\d+?\./');
 		foreach($files as $key => $file) {
 			// for each page within this category...
-			if(is_dir($this->dir.'/'.$file)) {
-				$vars = array(
-					'/@url/' => $this->page->link_path.preg_replace('/^\d+?\./', '', $dir).'/'.preg_replace('/^\d+?\./', '', $file).'/',
-					'/@thumb/' => $this->check_thumb($this->dir, $file)
-				);
-				// create a MockPageInCategory to give us access to all the variables inside this PageInCategory
-				$c = new ContentParser;
-				$category_page = new MockPageInCategory($dir, $file);
-				$vars = array_merge($vars, $c->parse($category_page));
-			}
-			
-			$html .= preg_replace(array_keys($vars), array_values($vars), $wrappers[1]);
+			$vars = array(
+				'/@url/' => $this->page->link_path.preg_replace('/^\d+?\./', '', $dir).'/'.preg_replace('/^\d+?\./', '', $file).'/',
+				'/@thumb/' => $this->check_thumb($this->dir, $file)
+			);
+			// create a MockPageInCategory to give us access to all the variables inside this PageInCategory
+			$c = new ContentParser;
+			$category_page = new MockPageInCategory($dir, $file);
+			$vars = array_merge($vars, $c->parse($category_page));
+			$html .= preg_replace(array_keys($vars), array_values($vars), $wrappers[1]);			
 		}
 		// add closing outer wrapper
 		$html .= $wrappers[2];
@@ -803,19 +800,15 @@ Class ImagesPartial extends Partial {
 		// pull out html wrappers from partial file
 		$wrappers = $this->parse($this->partial_file);
 		$files = $this->page->image_files;
-			
-		if(count($files) > 0) {
-			// sort files in reverse-numeric order
-			arsort($files, SORT_NUMERIC);
-			// add opening outer wrapper
-			$html .= $wrappers[0];
-			// loop through inner wrapper, replacing any variables contained within
-			foreach($files as $key => $file) {
-				$html .= preg_replace('/@url/', $dir.'/'.$file, $wrappers[1]);
-			}
-			// add closing outer wrapper
-			$html .= $wrappers[2];
+		
+		// add opening outer wrapper
+		$html .= $wrappers[0];
+		// loop through inner wrapper, replacing any variables contained within
+		foreach($files as $key => $file) {
+			$html .= preg_replace('/@url/', $dir.'/'.$file, $wrappers[1]);
 		}
+		// add closing outer wrapper
+		$html .= $wrappers[2];
 		return $html;
 	}
 
