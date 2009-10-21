@@ -745,38 +745,29 @@ Class PagesPartial extends Partial {
 		$html = '';
 		// pull out html wrappers from partial file
 		$wrappers = $this->parse($this->partial_file);
-		
-		// collate navigation set
-		$files = array();
-		$file_vars = array();
-		if($dh = opendir($this->dir)) {
-			while (($file = readdir($dh)) !== false) {
-				// if file is a folder and is not /index, add it to the navigation list
-				if(!preg_match('/^\./', $file) && !preg_match('/index/', $file) && !preg_match('/^_/', $file) && !preg_match('/\.txt$/', $file) && preg_match('/^\d/', $file)) {
-					// check if this folder contains inner folders - if it does, then it is a category and should be excluded from this list
-					if(!$this->is_category($this->dir.'/'.$file)) {
-						$files[] = $file;
-						$file_name_clean = preg_replace('/^\d+?\./', '', $file);
-						// store the url and name of the navigation item
-						$file_vars[] = array(
-							'/@url/' => $this->page->link_path.$file_name_clean.'/',
-							'/@name/' => ucfirst(preg_replace('/-/', ' ', $file_name_clean)),
-						);
-					}
-				}
-			}
-			closedir($dh);
-		}
-		// sort files in reverse-numeric order
-		arsort($files, SORT_NUMERIC);
 		// add opening outer wrapper
 		$html .= $wrappers[0];
 		
+		// collate navigation set
+		$files = Helpers::list_files($this->dir, '/^\d+?\./');
 		foreach($files as $key => $file) {
-			$html .= preg_replace(array_keys($file_vars[$key]), array_values($file_vars[$key]), $wrappers[1]);
+			// if file is not a category and is not the index page, add it to the pages list
+			if (!preg_match('/index/', $file) && !$this->is_category($this->dir.'/'.$file)) {
+				$file_name_clean = preg_replace('/^\d+?\./', '', $file);
+				// store the url and name of the navigation item
+				$replacements = array(
+					'/@url/' => $this->page->link_path.$file_name_clean.'/',
+					'/@name/' => ucfirst(preg_replace('/-/', ' ', $file_name_clean)),
+				);
+
+				$html .= preg_replace(array_keys($replacements), array_values($replacements), $wrappers[1]);
+			}
 		}
 		// add closing outer wrapper
 		$html .= $wrappers[2];
+		
+		return $html;
+
 		
 		return $html;
 	}
