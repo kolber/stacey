@@ -486,14 +486,19 @@ Class ContentParser {
 	}
 	
 	function create_replacement_rules($text) {
+		$np = new NextPagePartial;
+		$pp = new PreviousPagePartial;
+		
 		// push additional useful values to the replacement pairs
 		$replacement_pairs = array(
 			'/@Images_Count/' => count($this->page->image_files),
 			'/@Pages_Count/' => count($this->page->unclean_names),
+			'/@Page_Number/' => $this->page->i,
 			'/@Year/' => date('Y'),
-			'/@Site_Root\/?/' => $this->page->link_path
+			'/@Site_Root\/?/' =>  $this->page->link_path,
+			'/@Previous_Page/' => $pp->render($this->page->sibling_pages[0]),
+			'/@Next_Page/' => $np->render($this->page->sibling_pages[1])
 		);
-		
 		// if the page is a Category, push category-specific variables
 		if(get_class($this->page) == 'Category') {
 			$c = new CategoryListPartial;
@@ -501,15 +506,6 @@ Class ContentParser {
 			$partial_file = file_exists('../templates/partials/'.$this->page->name.'.html') ? '../templates/partials/'.$this->page->name.'.html' : '../templates/partials/category-list.html';
 			// create a dynamic category list variable
 			$replacement_pairs['/@Category_List/'] = $c->render($this->page, $this->page->name_unclean, $partial_file);
-		}
-		
-		// if the page is a PageInCategory, push pageincategory-specific variables
-		if(get_class($this->page) == 'PageInCategory' || get_class($this->page) == 'MockPageInCategory') {
-			$np = new NextPagePartial;
-			$pp = new PreviousPagePartial;
-			$replacement_pairs['/@Page_Number/'] = $this->page->i;
-			$replacement_pairs['/@Previous_Page/'] = $pp->render($this->page->sibling_pages[0]);
-			$replacement_pairs['/@Next_Page/'] = $np->render($this->page->sibling_pages[1]);
 		}
 		
 		// pull out each key/value pair from the content file
@@ -618,7 +614,6 @@ Class TemplateParser {
 		$text = preg_replace(array('/@Yield/'), file_get_contents($this->page->template_file), file_get_contents($this->page->layout_file));
 		// run replacements on the template
 		return preg_replace(array_keys($this->replacement_pairs), array_values($this->replacement_pairs), $text);
-
 	}
 }
 
