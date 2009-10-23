@@ -316,6 +316,7 @@ Class Page {
 					}
 				}
 				closedir($dh);
+				arsort($image_files);
 			}
 		}
 		return $image_files;
