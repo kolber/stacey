@@ -337,7 +337,7 @@ Class Page {
 			// look for a .txt file
 			$txts = Helpers::list_files($this->content_path.$this->name_unclean, '/\.txt$/');
 			// if $txts contains a result, return it
-			if(count($txts) > 0) return $this->content_path.$this->name_unclean.'/'.$txts[0];
+			if(!empty($txts)) return $this->content_path.$this->name_unclean.'/'.$txts[0];
 		}
 		// return if we didnt find anything
 		return $this->content_path.$this->name_unclean.'/none';
@@ -624,7 +624,7 @@ Class Partial {
 		// split the template file by loop code
 		preg_match('/([\S\s]*)foreach[\S\s]*?:([\S\s]*)endforeach;([\S\s]*)/', $partial, $matches);
 		// if partial file found, return array containing the markup: before loop, inside loop & after loop (in that order)
-		if(count($matches) > 0) return array($matches[1], $matches[2], $matches[3]);
+		if(!empty($matches)) return array($matches[1], $matches[2], $matches[3]);
 		// if partial file not found, return warning string
 		else return array($partial, '', '');
 	}
@@ -795,7 +795,7 @@ Class NextPagePartial extends Partial {
 	
 	function render($page_sibling) {
 		// replace html with @vars
-		$html = (count($page_sibling) > 0) ? preg_replace(array_keys($page_sibling), array_values($page_sibling), file_get_contents($this->partial_file)) : '';
+		$html = (!empty($page_sibling)) ? preg_replace(array_keys($page_sibling), array_values($page_sibling), file_get_contents($this->partial_file)) : '';
 		return $html;
 	}
 }
