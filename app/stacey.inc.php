@@ -605,6 +605,7 @@ Class TemplateParser {
 Class Partial {
 	
 	var $page;
+	var $partial_file;
 	
 	function check_thumb($dir, $file) {
 		if($dh = opendir($dir.'/'.$file)) {
@@ -619,8 +620,8 @@ Class Partial {
 		return '';
 	}
 
-	function parse($file) {
-		$partial = (file_exists($file)) ? file_get_contents($file) : '<p>! '.$file.' not found.</p>';
+	function get_partial() {
+		$partial = (file_exists($this->partial_file)) ? file_get_contents($this->partial_file) : '<p>! '.$this->partial_file.' not found.</p>';
 		// split the template file by loop code
 		preg_match('/([\S\s]*)foreach[\S\s]*?:([\S\s]*)endforeach;([\S\s]*)/', $partial, $matches);
 		// if partial file found, return array containing the markup: before loop, inside loop & after loop (in that order)
@@ -634,7 +635,6 @@ Class Partial {
 Class CategoryListPartial extends Partial {
 	
 	var $dir;
-	var $partial_file;
 
 	function render($page, $dir, $partial_file) {
 		// store reference to current page
@@ -643,7 +643,7 @@ Class CategoryListPartial extends Partial {
 		$this->partial_file = $partial_file;
 		$this->dir = '../content/'.$dir;
 		// pull out html wrappers from partial file
-		$wrappers = $this->parse($this->partial_file);
+		$wrappers = $this->get_partial();
 		$html = '';
 		
 		// add opening outer wrapper
@@ -679,7 +679,7 @@ Class NavigationPartial extends Partial {
 		$this->page = $page;
 		$html = '';
 		// pull out html wrappers from partial file
-		$wrappers = $this->parse($this->partial_file);
+		$wrappers = $this->get_partial();
 		
 		// add opening outer wrapper
 		$html .= $wrappers[0];
@@ -729,7 +729,7 @@ Class PagesPartial extends Partial {
 		$this->page = $page;
 		$html = '';
 		// pull out html wrappers from partial file
-		$wrappers = $this->parse($this->partial_file);
+		$wrappers = $this->get_partial();
 		// add opening outer wrapper
 		$html .= $wrappers[0];
 		
@@ -774,7 +774,7 @@ Class ImagesPartial extends Partial {
 		
 		$html = '';
 		// pull out html wrappers from partial file
-		$wrappers = $this->parse($this->partial_file);
+		$wrappers = $this->get_partial();
 		$files = $this->page->image_files;
 		
 		// add opening outer wrapper
@@ -794,8 +794,9 @@ Class NextPagePartial extends Partial {
 	var $partial_file = '../templates/partials/next-page.html';
 	
 	function render($page_sibling) {
+		$partial = (file_exists($this->partial_file)) ? file_get_contents($this->partial_file) : '';
 		// replace html with @vars
-		$html = (!empty($page_sibling)) ? preg_replace(array_keys($page_sibling), array_values($page_sibling), file_get_contents($this->partial_file)) : '';
+		$html = (!empty($page_sibling)) ? preg_replace(array_keys($page_sibling), array_values($page_sibling), $partial) : '';
 		return $html;
 	}
 }
