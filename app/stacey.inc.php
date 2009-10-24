@@ -239,7 +239,6 @@ Class Page {
 	var $content_file;
 	var $template_file;
 	var $public_file;
-	var $layout_file;
 	
 	var $i;
 	var $unclean_names = array();
@@ -250,7 +249,6 @@ Class Page {
 	var $content_path;
 	
 	var $default_template = 'content';
-	var $default_layout = 'layout';
 	
 	function __construct($name = 'index', $category = '') {
 		$this->category = $category;
@@ -263,7 +261,6 @@ Class Page {
 		
 		$this->content_file = $this->get_content_file();
 		$this->template_file = $this->get_template_file($this->default_template);
-		$this->layout_file = $this->get_layout_file($this->default_layout);
 		$this->public_file = $this->get_public_file();
 		$this->image_files = $this->get_images();
 		$this->link_path = $this->construct_link_path();
@@ -331,19 +328,6 @@ Class Page {
 		if(!empty($template_name) && file_exists('../templates/'.$template_name[1].'.html')) return '../templates/'.$template_name[1].'.html';
 		// return content.html as default template (if it exists)
 		elseif(file_exists('../templates/'.$default_template.'.html')) return '../templates/'.$default_template.'.html';
-		else return false;
-	}
-	
-	function get_layout_file($default_layout) {
-		$layout_dir = '../templates/layouts/';
-		// check folder exists, if not, return 404
-		if(!$this->name_unclean) return false;
-		// find the name of the text file
-		preg_match('/\/([^\/]+?)\.txt/', $this->content_file, $layout_name);
-		// if template exists, return it
-		if(!empty($layout_name) && file_exists($layout_dir.$layout_name[1].'.html')) return $layout_dir.$layout_name[1].'.html';
-		// return content.html as default template (if it exists)
-		elseif(file_exists($layout_dir.$default_layout.'.html')) return $layout_dir.$default_layout.'.html';
 		else return false;
 	}
 
@@ -611,8 +595,8 @@ Class TemplateParser {
 		$this->replacement_pairs = array_merge($rules, $this->create_replacement_partials());
 		// sort keys by length, to ensure replacements are made in the correct order (ie. @page does not partially replace @page_name)
 		uksort($this->replacement_pairs, array('Helpers', 'sort_by_length'));
-		// merge the template into the layout file
-		$text = preg_replace(array('/@Yield/'), file_get_contents($this->page->template_file), file_get_contents($this->page->layout_file));
+		// store template file content
+		$text = file_get_contents($this->page->template_file);
 		// run replacements on the template
 		return preg_replace(array_keys($this->replacement_pairs), array_values($this->replacement_pairs), $text);
 	}
