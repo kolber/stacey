@@ -59,6 +59,16 @@ Class Helpers {
 		return $files;
 	}
 	
+	static function list_folders($dir, $regex) {
+		$dirs = array();
+		foreach(glob($dir."/*", GLOB_ONLYDIR) as $dir) {
+			preg_match('/\/([^\/]+?)$/', $dir, $slug);
+			if(preg_match($regex, $slug[1])) $dirs[] = $slug[1];
+		}
+		if(!empty($dirs)) rsort($dirs);
+		return $dirs;
+	}
+	
 }
 
 Class Cache {
@@ -139,20 +149,11 @@ Class Renderer {
 	function is_category($name) {
 		// find folder name from $name
 		$dir = '';
-		$folders = Helpers::list_files('../content', '/^\d+?\.[^\.]+$/');
-		foreach($folders as $folder) {
-			if(preg_match('/'.$name.'$/', $folder)) {
-				$dir = '../content/'.$folder;
-				break;
-			}
-		}
 		// check if this folder contains inner folders - if it does, then it is a category
-		if(is_dir($dir)) {
-			if($dh = opendir($dir)) {
-				while (($file = readdir($dh)) !== false) {
-					if(is_dir($dir.'/'.$file) && !preg_match('/^\./', $file)) return true;
-				}
-				closedir($dh);
+		foreach(Helpers::list_folders('../content', '/.*/') as $folder) {
+			if(preg_match('/'.$name.'$/', $folder)) {
+				$inner_folders = Helpers::list_folders('../content/'.$folder, '/.*/');
+				if(!empty($inner_folders)) return true;
 			}
 		}
 		// if the folder doesn't contain any inner folders, then it is not a category
