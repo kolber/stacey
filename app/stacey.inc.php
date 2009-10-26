@@ -45,16 +45,17 @@ Class Helpers {
 	}
 
 	static function list_files($dir, $regex, $folders_only = false) {
-		$dirs = array();		
+		$files = array();		
 		$glob = ($folders_only) ? glob($dir."/*", GLOB_ONLYDIR) : glob($dir."/*");
 		// loop through each glob result and push it to $dirs if it matches the passed regexp 
-		foreach($glob as $dir) {
-			preg_match('/\/([^\/]+?)$/', $dir, $slug);
-			if(preg_match($regex, $slug[1])) $dirs[] = $slug[1];
+		foreach($glob as $file) {
+			// strip out just the filename
+			preg_match('/\/([^\/]+?)$/', $file, $slug);
+			if(preg_match($regex, $slug[1])) $files[] = $slug[1];
 		}
 		// sort list in reverse-numeric order
-		rsort($dirs, SORT_NUMERIC);
-		return $dirs;
+		rsort($files, SORT_NUMERIC);
+		return $files;
 	}
 	
 	static function is_category($name, $dir = '../content') {
