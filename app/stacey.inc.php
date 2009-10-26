@@ -502,34 +502,21 @@ Class TemplateParser {
 	function find_categories() {
 		$dir = '../content/';
 		$categories = array();
+	
 		// loop through each top-level folder to check if it contains other folders (in which case it is a category);
-		if(is_dir($dir)) {
-			if($dh = opendir($dir)) {
-				while (($file = readdir($dh)) !== false) {
-					if(is_dir($dir.'/'.$file) && !preg_match('/^\./', $file)) {
-						if($idh = opendir($dir.'/'.$file)) {
-							while (($inner_file = readdir($idh)) !== false) {
-								if(is_dir($dir.'/'.$file.'/'.$inner_file) && !preg_match('/^\./', $inner_file)) {
-									// strip leading digit and dot from filename (1.xx becomes xx)
-									$file_clean = preg_replace('/^\d+?\./', '', $file);
-									$categories[$file] = array(
-										'name' => $file,
-										'name_clean' => $file_clean,
-										// look for a partial file matching the categories name, otherwise fall back to using the category partial
-										'partial_file' => file_exists('../templates/partials/'.$file_clean.'.html') ? '../templates/partials/'.$file_clean.'.html' : '../templates/partials/category-list.html'
-									);
-									break;
-								}
-							}
-							closedir($idh);
-						}
-					}
+		foreach(Helpers::list_files($dir, '/.*/', true) as $folder) {
+				$inner_folders = Helpers::list_files('../content/'.$folder, '/.*/', true);
+				if(!empty($inner_folders)) {
+					// strip leading digit and dot from filename (1.xx becomes xx)
+					$folder_clean = preg_replace('/^\d+?\./', '', $folder);
+					$categories[$folder] = array(
+						'name' => $folder,
+						'name_clean' => $folder_clean,
+						// look for a partial file matching the categories name, otherwise fall back to using the category partial
+						'partial_file' => file_exists('../templates/partials/'.$folder_clean.'.html') ? '../templates/partials/'.$file_clean.'.html' : '../templates/partials/category-list.html'
+					);
 				}
-				closedir($dh);
-			}
 		}
-		// sort categories in reverse-numeric order
-		krsort($categories);
 		return $categories;
 	}
 	
