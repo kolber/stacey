@@ -284,21 +284,13 @@ Class Page {
 	}
 	
 	function get_images() {
+		// get containing directory by stripping the content file path
 		$dir = preg_replace('/\/[^\/]+$/', '', $this->content_file);
-		
-		$image_files = array();
-		if(is_dir($dir)) {
-		 	if($dh = opendir($dir)) {
-		 		while (($file = readdir($dh)) !== false) {
-		 			if(!preg_match('/^\./', $file) && preg_match('/\.(gif|jpg|png|jpeg)/i', $file) && !preg_match('/thumb\./i', $file)) {
-						$image_files[] = $file;
-					}
-				}
-				closedir($dh);
-				arsort($image_files);
-			}
-		}
-		return $image_files;
+		// store a list of all image files
+		$images = Helpers::list_files($dir, '/\.(gif|jpg|png|jpeg)/i');
+		// remove any thumbnails from the array
+		foreach($images as $key => $image) if(preg_match('/thumb\./i', $image)) unset($images[$key]);
+		return $images;
 	}
 	
 	function get_template_file($default_template) {
@@ -590,16 +582,8 @@ Class Partial {
 	var $partial_file;
 	
 	function check_thumb($dir, $file) {
-		if($dh = opendir($dir.'/'.$file)) {
-			while (($inner_file = readdir($dh)) !== false) {
-				// check for an image named thumb
-				if(!preg_match('/^\./', $inner_file) && preg_match('/thumb\.(gif|jpg|png|jpeg)/i', $inner_file, $file_type)) {
-					return preg_replace('/\.\.\//', $this->page->link_path, $dir).'/'.$file.'/thumb.'.$file_type[1];
-				}
-			}
-			closedir($dh);
-		}
-		return '';
+		$thumbs = Helpers::list_files($dir.'/'.$file, '/thumb\.(gif|jpg|png|jpeg)/i');
+		return (!empty($thumbs)) ? $dir.'/'.$file.'/'.$thumbs[0]  : '';
 	}
 
 	function get_partial() {
