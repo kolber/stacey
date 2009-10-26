@@ -43,25 +43,9 @@ Class Helpers {
 		if($a == $b) return 0;
 		return (strlen($a) > strlen($b) ? -1 : 1);
 	}
-	
-	static function list_files($dir, $regex) {
-		if(!is_dir($dir)) return false;
-		if(!$dh = opendir($dir)) return false;
-		$files = array();
-		// if file matches regex (and doesn't begin with a .), push it to the files array
-		while (($file = readdir($dh)) !== false) {
-			if(!preg_match('/^\./', $file) && preg_match($regex, $file)) $files[] = $file;
-		}
-		closedir($dh);
-		// sort list of files reverse-numerically (10, 9, 8, etc)
-		rsort($files, SORT_NUMERIC);
-		// return list of files
-		return $files;
-	}
-	
-	static function list_folders($dir, $regex, $folders_only = false) {
-		$dirs = array();
-		
+
+	static function list_files($dir, $regex, $folders_only = false) {
+		$dirs = array();		
 		$glob = ($folders_only) ? glob($dir."/*", GLOB_ONLYDIR) : glob($dir."/*");
 		// loop through each glob result and push it to $dirs if it matches the passed regexp 
 		foreach($glob as $dir) {
@@ -69,15 +53,15 @@ Class Helpers {
 			if(preg_match($regex, $slug[1])) $dirs[] = $slug[1];
 		}
 		// sort list in reverse-numeric order
-		rsort($dirs);
+		rsort($dirs, SORT_NUMERIC);
 		return $dirs;
 	}
 	
 	static function is_category($name, $dir = '../content') {
 		// check if this folder contains inner folders - if it does, then it is a category
-		foreach(Helpers::list_folders($dir, '/.*/', true) as $folder) {
+		foreach(Helpers::list_files($dir, '/.*/', true) as $folder) {
 			if(preg_match('/'.$name.'$/', $folder)) {
-				$inner_folders = Helpers::list_folders('../content/'.$folder, '/.*/', true);
+				$inner_folders = Helpers::list_files('../content/'.$folder, '/.*/', true);
 				if(!empty($inner_folders)) return true;
 			}
 		}
@@ -260,7 +244,7 @@ Class Page {
 		
 		$this->name = $name;
 		$this->name_unclean = $this->unclean_name($this->name, $this->content_path);
-		$this->unclean_names = Helpers::list_folders($this->content_path, '/.*/', true);
+		$this->unclean_names = Helpers::list_files($this->content_path, '/.*/', true);
 		
 		$this->content_file = $this->get_content_file();
 		$this->template_file = $this->get_template_file($this->default_template);
@@ -288,7 +272,7 @@ Class Page {
 	
 	function unclean_name($name, $dir) {
 		// loop through each unclean page name looking for a match for $name
-		foreach(Helpers::list_folders($dir, '/.*/', true) as $key => $file) {
+		foreach(Helpers::list_files($dir, '/.*/', true) as $key => $file) {
 			if(preg_match('/'.$name.'$/', $file)) {
 				// store current number of this page
 				$this->i = ($key + 1);
@@ -647,7 +631,7 @@ Class CategoryListPartial extends Partial {
 		// add opening outer wrapper
 		$html .= $wrappers[0];
 		
-		$files = Helpers::list_folders($this->dir, '/^\d+?\./');
+		$files = Helpers::list_files($this->dir, '/^\d+?\./', true);
 		foreach($files as $key => $file) {
 			// for each page within this category...
 			$vars = array(
@@ -683,7 +667,7 @@ Class NavigationPartial extends Partial {
 		$html .= $wrappers[0];
 		
 		// collate navigation set
-		$files = Helpers::list_folders($this->dir, '/^\d+?\./');
+		$files = Helpers::list_files($this->dir, '/^\d+?\./', true);
 		foreach($files as $key => $file) {
 			// if file is not the index, add it to the navigation list
 			if (!preg_match('/index/', $file)) {
@@ -720,7 +704,7 @@ Class PagesPartial extends Partial {
 		$html .= $wrappers[0];
 		
 		// collate navigation set
-		$files = Helpers::list_folders($this->dir, '/^\d+?\./');
+		$files = Helpers::list_files($this->dir, '/^\d+?\./', true);
 		foreach($files as $key => $file) {
 			// if file is not a category and is not the index page, add it to the pages list
 			if (!preg_match('/index/', $file) && !Helpers::is_category($file, $this->dir)) {
