@@ -73,6 +73,18 @@ Class Helpers {
 		return $dirs;
 	}
 	
+	static function is_category($name, $dir = '../content') {
+		// check if this folder contains inner folders - if it does, then it is a category
+		foreach(Helpers::list_folders($dir, '/.*/', true) as $folder) {
+			if(preg_match('/'.$name.'$/', $folder)) {
+				$inner_folders = Helpers::list_folders('../content/'.$folder, '/.*/', true);
+				if(!empty($inner_folders)) return true;
+			}
+		}
+		// if the folder doesn't contain any inner folders, then it is not a category
+		return false;
+	}
+	
 }
 
 Class Cache {
@@ -150,20 +162,6 @@ Class Renderer {
 		$this->page = $this->handle_routes($get);
 	}
 	
-	function is_category($name) {
-		// find folder name from $name
-		$dir = '';
-		// check if this folder contains inner folders - if it does, then it is a category
-		foreach(Helpers::list_folders('../content', '/.*/') as $folder) {
-			if(preg_match('/'.$name.'$/', $folder)) {
-				$inner_folders = Helpers::list_folders('../content/'.$folder, '/.*/');
-				if(!empty($inner_folders)) return true;
-			}
-		}
-		// if the folder doesn't contain any inner folders, then it is not a category
-		return false;
-	}
-	
 	function handle_routes($get) {
 		// if key is empty, we're looking for the index page
 		if(key($get) == '') {
@@ -181,7 +179,7 @@ Class Renderer {
 		// if key contains no slashes, it must be a page or a category
 		else {
 			// check whether we're looking for a category or a page
-			if($this->is_category(key($get))) return new Category(key($get));
+			if(Helpers::is_category(key($get))) return new Category(key($get));
 			else return new Page(key($get));
 		}
 	}
@@ -712,18 +710,6 @@ Class PagesPartial extends Partial {
 	var $dir = '../content';
 	var $partial_file = '../templates/partials/pages.html';
 
-	function is_category($dir) {
-		if(is_dir($dir)) {
-			if($dh = opendir($dir)) {
-				while (($file = readdir($dh)) !== false) {
-					if(is_dir($dir.'/'.$file) && !preg_match('/^\./', $file)) return true;
-				}
-				closedir($dh);
-			}
-		}
-		return false;
-	}
-
 	function render($page) {
 		// store reference to current page
 		$this->page = $page;
@@ -737,7 +723,7 @@ Class PagesPartial extends Partial {
 		$files = Helpers::list_folders($this->dir, '/^\d+?\./');
 		foreach($files as $key => $file) {
 			// if file is not a category and is not the index page, add it to the pages list
-			if (!preg_match('/index/', $file) && !$this->is_category($this->dir.'/'.$file)) {
+			if (!preg_match('/index/', $file) && !Helpers::is_category($file, $this->dir)) {
 				$file_name_clean = preg_replace('/^\d+?\./', '', $file);
 				// store the url and name of the navigation item
 				$replacements = array(
