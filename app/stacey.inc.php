@@ -59,13 +59,17 @@ Class Helpers {
 		return $files;
 	}
 	
-	static function list_folders($dir, $regex) {
+	static function list_folders($dir, $regex, $folders_only = false) {
 		$dirs = array();
-		foreach(glob($dir."/*", GLOB_ONLYDIR) as $dir) {
+		
+		$glob = ($folders_only) ? glob($dir."/*", GLOB_ONLYDIR) : glob($dir."/*");
+		// loop through each glob result and push it to $dirs if it matches the passed regexp 
+		foreach($glob as $dir) {
 			preg_match('/\/([^\/]+?)$/', $dir, $slug);
 			if(preg_match($regex, $slug[1])) $dirs[] = $slug[1];
 		}
-		if(!empty($dirs)) rsort($dirs);
+		// sort list in reverse-numeric order
+		rsort($dirs);
 		return $dirs;
 	}
 	
@@ -258,7 +262,7 @@ Class Page {
 		
 		$this->name = $name;
 		$this->name_unclean = $this->unclean_name($this->name, $this->content_path);
-		$this->unclean_names = $this->list_folders($this->content_path);
+		$this->unclean_names = Helpers::list_folders($this->content_path, '/.*/', true);
 		
 		$this->content_file = $this->get_content_file();
 		$this->template_file = $this->get_template_file($this->default_template);
@@ -279,11 +283,6 @@ Class Page {
 		return $link_path;
 	}
 	
-	function list_folders($dir) {
-		// return a list of folder names
-		return Helpers::list_files($dir, '/^\d+?\.[^\.]+$/');
-	}
-	
 	function clean_name($name) {
 		// strip leading digit and dot from filename (1.xx becomes xx)
 		return preg_replace('/^\d+?\./', '', $name);
@@ -291,7 +290,7 @@ Class Page {
 	
 	function unclean_name($name, $dir) {
 		// loop through each unclean page name looking for a match for $name
-		foreach($this->list_folders($dir) as $key => $file) {
+		foreach(Helpers::list_folders($dir, '/.*/', true) as $key => $file) {
 			if(preg_match('/'.$name.'$/', $file)) {
 				// store current number of this page
 				$this->i = ($key + 1);
@@ -650,7 +649,7 @@ Class CategoryListPartial extends Partial {
 		// add opening outer wrapper
 		$html .= $wrappers[0];
 		
-		$files = Helpers::list_files($this->dir, '/^\d+?\./');
+		$files = Helpers::list_folders($this->dir, '/^\d+?\./');
 		foreach($files as $key => $file) {
 			// for each page within this category...
 			$vars = array(
@@ -686,7 +685,7 @@ Class NavigationPartial extends Partial {
 		$html .= $wrappers[0];
 		
 		// collate navigation set
-		$files = Helpers::list_files($this->dir, '/^\d+?\./');
+		$files = Helpers::list_folders($this->dir, '/^\d+?\./');
 		foreach($files as $key => $file) {
 			// if file is not the index, add it to the navigation list
 			if (!preg_match('/index/', $file)) {
@@ -735,7 +734,7 @@ Class PagesPartial extends Partial {
 		$html .= $wrappers[0];
 		
 		// collate navigation set
-		$files = Helpers::list_files($this->dir, '/^\d+?\./');
+		$files = Helpers::list_folders($this->dir, '/^\d+?\./');
 		foreach($files as $key => $file) {
 			// if file is not a category and is not the index page, add it to the pages list
 			if (!preg_match('/index/', $file) && !$this->is_category($this->dir.'/'.$file)) {
