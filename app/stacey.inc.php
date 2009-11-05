@@ -221,6 +221,9 @@ Class Page {
 	var $i;
 	var $unclean_names = array();
 	var $image_files = array();
+	var $video_files = array();
+	var $html_files = array();
+	var $swf_files = array();
 	var $sibling_pages;
 	
 	var $link_path;
@@ -240,7 +243,10 @@ Class Page {
 		$this->content_file = $this->get_content_file();
 		$this->template_file = $this->get_template_file($this->default_template);
 		$this->public_file = $this->get_public_file();
-		$this->image_files = $this->get_images();
+		$this->image_files = $this->get_assets('/\.(gif|jpg|png|jpeg)/i');
+		$this->video_files = $this->get_assets('/\.(mov|mp4)/i');
+		$this->html_files = $this->get_assets('/\.(html|htm)/i');
+		$this->swf_files = $this->get_assets('/\.swf/i');
 		$this->link_path = $this->construct_link_path();
 		
 		$this->sibling_pages = $this->get_sibling_pages();
@@ -274,14 +280,14 @@ Class Page {
 		return false;
 	}
 	
-	function get_images() {
+	function get_assets($regex = '/.*/') {
 		// get containing directory by stripping the content file path
 		$dir = preg_replace('/\/[^\/]+$/', '', $this->content_file);
 		// store a list of all image files
-		$images = Helpers::list_files($dir, '/\.(gif|jpg|png|jpeg)/i');
+		$files = Helpers::list_files($dir, $regex);
 		// remove any thumbnails from the array
-		foreach($images as $key => $image) if(preg_match('/thumb\./i', $image)) unset($images[$key]);
-		return $images;
+		foreach($files as $key => $file) if(preg_match('/thumb\./i', $file)) unset($files[$key]);
+		return $files;
 	}
 	
 	function get_template_file($default_template) {
@@ -363,7 +369,7 @@ Class MockPageInCategory extends PageInCategory {
 		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+?\./', '', $folder_name), '../content/'.$this->category_unclean);
 		
 		$this->content_file = $this->get_content_file();
-		$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file)); 
+		//$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file)); 
 		$this->link_path = $this->construct_link_path();
 	}
 	
