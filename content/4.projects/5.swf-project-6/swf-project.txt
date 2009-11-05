@@ -1,8 +1,8 @@
-page_title: Project Name | Anthony Kolber's Graphic Design Portfolio
+page_title: The SWF Project 6 | Anthony Kolber's Graphic Design Portfolio
 
 page_description: The Project Name project, designed by Anthony Kolber
 
-title: The Test Project 7
+title: The SWF Project 6
 
 date: 2009, Jun–
 

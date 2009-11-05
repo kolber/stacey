@@ -1,4 +1,4 @@
-page_title: Project Name 2 | Anthony Kolber's Graphic Design Portfolio
+page_title: The Test Project 3 | Anthony Kolber's Graphic Design Portfolio
 
 page_description: The Project Name project, designed by Anthony Kolber
 
