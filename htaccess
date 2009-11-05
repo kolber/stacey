@@ -22,3 +22,6 @@ RewriteRule ^$ app/ [L]
 # Rewrite any file calls to the public directory
 RewriteCond %{REQUEST_URI} !(app|public|content)/(.*)$
 RewriteRule ^(.+) public/$1 [L]
+
+# RewriteCond %{REQUEST_URI} content/(.*).txt$
+# RewriteRule - / [R,L]
