@@ -1,8 +1,10 @@
 foreach(@Video):
-<object width="@width" height="@height" codebase="http://www.apple.com/qtactivex/qtplugin.cab">
-	<param name="src" value="@url">
-	<param name="autoplay" value="false">
-	<param name="controller" value="true">
-	<embed src="@url" width="@width" height="@width" autoplay="true" controller="false" pluginspage="http://www.apple.com/quicktime/download/"></embed>
-</object>
+<div class="media">
+	<object width="@width" height="@height" codebase="http://www.apple.com/qtactivex/qtplugin.cab">
+		<param name="src" value="@url">
+		<param name="autoplay" value="false">
+		<param name="controller" value="true">
+		<embed src="@url" width="@width" height="@height" autoplay="false" controller="true" pluginspage="http://www.apple.com/quicktime/download/"></embed>
+	</object>
+</div>
 endforeach;
