@@ -505,7 +505,7 @@ Class TemplateParser {
 						'name' => $folder,
 						'name_clean' => $folder_clean,
 						// look for a partial file matching the categories name, otherwise fall back to using the category partial
-						'partial_file' => file_exists('../templates/partials/'.$folder_clean.'.html') ? '../templates/partials/'.$file_clean.'.html' : '../templates/partials/category-list.html'
+						'partial_file' => file_exists('../templates/partials/'.$folder_clean.'.html') ? '../templates/partials/'.$folder_clean.'.html' : '../templates/partials/category-list.html'
 					);
 				}
 		}
@@ -562,7 +562,7 @@ Class Partial {
 	
 	static function check_thumb($dir, $file) {
 		$thumbs = Helpers::list_files($dir.'/'.$file, '/thumb\.(gif|jpg|png|jpeg)/i');
-		return (!empty($thumbs)) ? $dir.'/'.$file.'/'.$thumbs[0]  : '';
+		return (!empty($thumbs)) ? $dir.'/'.$file.'/'.$thumbs[0] : '';
 	}
 
 	static function get_partial($partial_file) {
@@ -601,7 +601,7 @@ Class CategoryList extends Partial {
 			// for each page within this category...
 			$vars = array(
 				'/@url/' => $path.'/'.preg_replace('/^\d+?\./', '', $file).'/',
-				'/@thumb/' => self::check_thumb($dir, $file)
+				'/@thumb/' => 'content/'.self::check_thumb($dir, $file)
 			);
 			// create a MockPageInCategory to give us access to all the variables inside this PageInCategory
 			$c = new ContentParser;
