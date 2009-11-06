@@ -369,7 +369,6 @@ Class MockPageInCategory extends PageInCategory {
 		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+?\./', '', $folder_name), '../content/'.$this->category_unclean);
 		
 		$this->content_file = $this->get_content_file();
-		//$this->image_files = $this->get_images(preg_replace('/\/[^\/]+$/', '', $this->content_file)); 
 		$this->link_path = $this->construct_link_path();
 	}
 	
@@ -519,13 +518,18 @@ Class TemplateParser {
 	function create_replacement_partials() {
 		// constructs a partial for each category within the content folder
 		$c = new CategoryListPartial;
-		// constructs a partial containing each image on the page
+		// contruct a partial containing any images from within the folder
 		$i = new ImagesPartial;
 		// constructs a partial containing all of the top level pages & categories, excluding the index
 		$n = new NavigationPartial;
 		// constructs a partial containing all of the top level pages, excluding any categories and the index
 		$p = new PagesPartial;
-		
+		// contruct a partial containing any videos from within the folder
+		$v = new VideoPartial;
+		// contruct a partial containing any html includes from within the folder
+		$h = new HtmlPartial;
+		// contruct a partial containing any swf includes from within the folder
+		$s = new SwfPartial;
 		// construct a special variable which will hold all of the category lists
 		$partials['/@Category_Lists/'] = '';
 		// find all categories
@@ -540,9 +544,18 @@ Class TemplateParser {
 			$partials['/@Category_Lists/'] .= $category_list;
 		}
 		// construct the rest of the special variables
-		$partials['/@Images/'] = $i->render($this->page);
 		$partials['/@Navigation/'] = $n->render($this->page);
 		$partials['/@Pages/'] = $p->render($this->page);
+		
+		// construct asset variables
+		$partials['/@Images/'] = $i->render($this->page);
+		$partials['/@Video/'] = $v->render($this->page);
+		$partials['/@Html/'] = $h->render($this->page);
+		$partials['/@Swfs/'] = $s->render($this->page);
+		$partials['/@Media/'] = $partials['/@Images/'].$partials['/@Video/'].$partials['/@Swfs/'].$partials['/@Html/'];
+#		echo '<pre>';
+#		var_dump($partials['/@Media/']);
+#		echo '</pre>';
 		return $partials;
 	}
 	
@@ -723,6 +736,116 @@ Class ImagesPartial extends Partial {
 		}
 		// add closing outer wrapper
 		$html .= $wrappers[2];
+		return $html;
+	}
+
+}
+
+Class VideoPartial extends Partial {
+
+	var $dir;
+	var $partial_file = '../templates/partials/video.html';
+
+	function render($page) {
+		// store reference to current page
+		$this->page = $page;
+		
+		// strip out the name of the content file (ie content.txt) and create the path to the folder
+		$dir = preg_replace('/\/[^\/]+$/', '', $this->page->content_file);
+		$dir = $this->page->link_path.preg_replace('/\.\.\//', '', $dir);
+		
+		$html = '';
+		// pull out html wrappers from partial file
+		$wrappers = $this->get_partial();
+		$files = $this->page->video_files;
+		
+		// add opening outer wrapper
+		$html .= $wrappers[0];
+		// loop through inner wrapper, replacing any variables contained within
+		foreach($files as $key => $file) {
+			// pull dimensions from file name (if they exist)
+			if(preg_match('/(\d+?)x(\d+?)\./', $file, $matches)) $dimensions = array('width' => $matches[1], 'height' => $matches[2]);
+			else $dimensions = array('width' => '', 'height' => '');
+			$html .= preg_replace(array(
+				'/@url/',
+				'/@width/',
+				'/@height/'
+			), array(
+				$dir.'/'.$file,
+				$dimensions['width'],
+				$dimensions['height']
+			), $wrappers[1]);
+		}
+		// add closing outer wrapper
+		$html .= $wrappers[2];
+		return $html;
+	}
+
+}
+
+Class SwfPartial extends Partial {
+
+	var $dir;
+	var $partial_file = '../templates/partials/swf.html';
+
+	function render($page) {
+		// store reference to current page
+		$this->page = $page;
+		
+		// strip out the name of the content file (ie content.txt) and create the path to the folder
+		$dir = preg_replace('/\/[^\/]+$/', '', $this->page->content_file);
+		$dir = $this->page->link_path.preg_replace('/\.\.\//', '', $dir);
+		
+		$html = '';
+		// pull out html wrappers from partial file
+		$wrappers = $this->get_partial();
+		$files = $this->page->swf_files;
+		
+		// add opening outer wrapper
+		$html .= $wrappers[0];
+		// loop through inner wrapper, replacing any variables contained within
+		foreach($files as $key => $file) {
+			// pull dimensions from file name (if they exist)
+			if(preg_match('/(\d+?)x(\d+?)\./', $file, $matches)) $dimensions = array('width' => $matches[1], 'height' => $matches[2]);
+			else $dimensions = array('width' => '', 'height' => '');
+			$html .= preg_replace(array(
+				'/@url/',
+				'/@width/',
+				'/@height/'
+			), array(
+				$dir.'/'.$file,
+				$dimensions['width'],
+				$dimensions['height']
+			), $wrappers[1]);
+		}
+		// add closing outer wrapper
+		$html .= $wrappers[2];
+		return $html;
+	}
+
+}
+
+Class HtmlPartial extends Partial {
+
+	var $dir;
+	var $partial_file = '';
+
+	function render($page) {
+		// store reference to current page
+		$this->page = $page;
+		
+		// strip out the name of the content file (ie content.txt) and create the path to the folder
+		$dir = preg_replace('/\/[^\/]+$/', '', $this->page->content_file);
+		
+		$html = '';
+		
+		$files = $this->page->html_files;
+		
+		// loop through inner wrapper, replacing any variables contained within
+		foreach($files as $key => $file) {
+			if(is_readable($dir.'/'.$file)) $html .= file_get_contents($dir.'/'.$file);
+		}
+		// add closing outer wrapper
 		return $html;
 	}
 
