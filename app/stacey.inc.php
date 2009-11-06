@@ -365,10 +365,15 @@ Class MockPageInCategory extends PageInCategory {
 	function __construct($category, $folder_name) {
 		$this->category_unclean = $this->unclean_name($category, '../content/');
 		$this->content_path = '../content/'.$this->category_unclean.'/';
-		
 		$this->name_unclean = $this->unclean_name(preg_replace('/^\d+?\./', '', $folder_name), '../content/'.$this->category_unclean);
 		
+		$this->unclean_names = Helpers::list_files($this->content_path, '/.*/', true);
 		$this->content_file = $this->get_content_file();
+		
+		$this->image_files = $this->get_assets('/\.(gif|jpg|png|jpeg)/i');
+		$this->video_files = $this->get_assets('/\.(mov|mp4)/i');
+		$this->html_files = $this->get_assets('/\.(html|htm)/i');
+		$this->swf_files = $this->get_assets('/\.swf/i');
 		$this->link_path = $this->construct_link_path();
 	}
 	
