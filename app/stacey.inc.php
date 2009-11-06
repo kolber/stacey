@@ -450,6 +450,11 @@ Class ContentParser {
 		// push additional useful values to the replacement pairs
 		$replacement_pairs = array(
 			'/@Images_Count/' => count($this->page->image_files),
+			'/@Video_Count/' => count($this->page->video_files),
+			'/@Html_Count/' => count($this->page->html_files),
+			'/@Swfs_Count/' => count($this->page->swf_files),
+			'/@Media_Count/' => count($this->page->image_files) + count($this->page->video_files) + count($this->page->html_files) + count($this->page->swf_files),
+			
 			'/@Pages_Count/' => count($this->page->unclean_names),
 			'/@Page_Number/' => $this->page->i,
 			'/@Year/' => date('Y'),
