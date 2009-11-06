@@ -2,7 +2,7 @@
 
 Class Stacey {
 
-	static $version = '1.0';
+	static $version = '1.1';
 	
 	function __construct($get) {
 		$this->php_fixes();
@@ -601,7 +601,7 @@ Class CategoryList extends Partial {
 			// for each page within this category...
 			$vars = array(
 				'/@url/' => $path.'/'.preg_replace('/^\d+?\./', '', $file).'/',
-				'/@thumb/' => 'content/'.self::check_thumb($dir, $file)
+				'/@thumb/' => $page->link_path.'content/'.self::check_thumb($dir, $file)
 			);
 			// create a MockPageInCategory to give us access to all the variables inside this PageInCategory
 			$c = new ContentParser;
