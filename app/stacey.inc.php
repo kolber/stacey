@@ -606,7 +606,7 @@ Class CategoryList extends Partial {
 			// create a MockPageInCategory to give us access to all the variables inside this PageInCategory
 			$c = new ContentParser;
 			$category_page = new MockPageInCategory(preg_replace('/\.\.\/content\//', '', $dir), $file);
-			$vars = array_merge($replacements, $c->parse($category_page));
+			$replacements = array_merge($replacements, $c->parse($category_page));
 			$html .= preg_replace(array_keys($replacements), array_values($replacements), $loop_html);
 		}
 		
