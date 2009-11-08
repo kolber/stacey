@@ -446,15 +446,15 @@ Class ContentParser {
 			'/@Page_Number/' => $this->page->i,
 			'/@Year/' => date('Y'),
 			'/@Site_Root\/?/' =>  $this->page->link_path,
-			'/@Previous_Page/' => Partial::render($this->page, null, '../templates/partials/previous-page.html', 'PreviousPage'),
-			'/@Next_Page/' => Partial::render($this->page, null, '../templates/partials/next-page.html', 'NextPage')
+			'/@Previous_Page/' => Partial::render($this->page, null, '../templates/partials/previous-page.html', null, 'PreviousPage'),
+			'/@Next_Page/' => Partial::render($this->page, null, '../templates/partials/next-page.html', null, 'NextPage')
 		);
 		// if the page is a Category, push category-specific variables
 		if(get_class($this->page) == 'Category' || get_class($this->page) == 'PageInCategory') {
 			// look for a partial file matching the categories name, otherwise fall back to using the category partial
 			$partial_file = file_exists('../templates/partials/'.$this->page->name.'.html') ? '../templates/partials/'.$this->page->name.'.html' : '../templates/partials/category-list.html';
 			// create a dynamic category list variable
-			$replacement_pairs['/@Category_List/'] = Partial::render($this->page, $this->page->name_unclean, $partial_file, 'CategoryList');
+			$replacement_pairs['/@Category_List/'] = Partial::render($this->page, $this->page->name_unclean, $partial_file, null, 'CategoryList');
 		}
 		
 		// pull out each key/value pair from the content file
@@ -517,22 +517,25 @@ Class TemplateParser {
 		$categories = $this->find_categories();
 		// category lists will become available as a variable as: '$.projects-folder' => @Projects_Folder
 		foreach($categories as $category) {
+			// create new category
+			$c = new ContentParser;
+			$replacements = $c->parse(new Category($category['name_clean']));
 			// store the output of the CategoryListPartial
-			$category_list = Partial::render($this->page, $category['name'], $category['partial_file'], 'CategoryList');
+			$category_list = Partial::render($this->page, $category['name'], $category['partial_file'], $replacements, 'CategoryList');
 			// create a partial that matches the name of the category
 			$partials['/@'.ucfirst(preg_replace('/-(.)/e', "'_'.strtoupper('\\1')", $category['name_clean'])).'/'] = $category_list;
 			// append to the @Category_Lists variable
 			$partials['/@Category_Lists/'] .= $category_list;
 		}
 		// construct the rest of the special variables
-		$partials['/@Navigation/'] = Partial::render($this->page, '../content/', '../templates/partials/navigation.html', 'Navigation');
-		$partials['/@Pages/'] = Partial::render($this->page, '../content/', '../templates/partials/pages.html', 'Pages');
+		$partials['/@Navigation/'] = Partial::render($this->page, '../content/', '../templates/partials/navigation.html', null, 'Navigation');
+		$partials['/@Pages/'] = Partial::render($this->page, '../content/', '../templates/partials/pages.html', null, 'Pages');
 		
 		// construct asset variables
-		$partials['/@Images/'] = Partial::render($this->page, null, '../templates/partials/images.html', 'Images');
-		$partials['/@Video/'] = Partial::render($this->page, null, '../templates/partials/video.html', 'Video');
-		$partials['/@Html/'] = Partial::render($this->page, null, null, 'Html');
-		$partials['/@Swfs/'] = Partial::render($this->page, null, '../templates/partials/swf.html', 'Swf');
+		$partials['/@Images/'] = Partial::render($this->page, null, '../templates/partials/images.html', null, 'Images');
+		$partials['/@Video/'] = Partial::render($this->page, null, '../templates/partials/video.html', null, 'Video');
+		$partials['/@Html/'] = Partial::render($this->page, null, null, null, 'Html');
+		$partials['/@Swfs/'] = Partial::render($this->page, null, '../templates/partials/swf.html', null, 'Swf');
 		$partials['/@Media/'] = $partials['/@Images/'].$partials['/@Video/'].$partials['/@Swfs/'].$partials['/@Html/'];
 
 		return $partials;
@@ -572,16 +575,16 @@ Class Partial {
 		else return array('', $partial, '');
 	}
 	
-	static function render($page, $dir, $partial_file, $partial_type) {
+	static function render($page, $dir, $partial_file, $replacements, $partial_type) {
 		// get partial file contents if a partial file was passed through
 		$wrappers = ($partial_file) ? self::get_partial($partial_file) : array('', '', '');
 		$html = '';
 		// add outer wrapper
-		$html .= $wrappers[0];
+		$html .= ($replacements) ? preg_replace(array_keys($replacements), array_values($replacements), $wrappers[0]): $wrappers[0];
 		// if a partial is passed through, then we want to process any loops inside it
 		$html .= call_user_func_array($partial_type.'::parse_loop', array($page, '../content/'.$dir, $wrappers[1]));
 		// add closing wrapper
-		$html .= $wrappers[2];
+		$html .= ($replacements) ? preg_replace(array_keys($replacements), array_values($replacements), $wrappers[2]): $wrappers[2];
 		return $html;
 		
 	}
