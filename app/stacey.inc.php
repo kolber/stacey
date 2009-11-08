@@ -599,15 +599,15 @@ Class CategoryList extends Partial {
 		$html = '';
 		foreach($files as $key => $file) {
 			// for each page within this category...
-			$vars = array(
+			$replacements = array(
 				'/@url/' => $path.'/'.preg_replace('/^\d+?\./', '', $file).'/',
 				'/@thumb/' => $page->link_path.'content/'.self::check_thumb($dir, $file)
 			);
 			// create a MockPageInCategory to give us access to all the variables inside this PageInCategory
 			$c = new ContentParser;
 			$category_page = new MockPageInCategory(preg_replace('/\.\.\/content\//', '', $dir), $file);
-			$vars = array_merge($vars, $c->parse($category_page));
-			$html .= preg_replace(array_keys($vars), array_values($vars), $loop_html);
+			$vars = array_merge($replacements, $c->parse($category_page));
+			$html .= preg_replace(array_keys($replacements), array_values($replacements), $loop_html);
 		}
 		
 		return $html;
@@ -699,17 +699,15 @@ Class Video extends Partial {
 			// pull dimensions from file name (if they exist)
 			if(preg_match('/(\d+?)x(\d+?)\./', $file, $matches)) $dimensions = array('width' => $matches[1], 'height' => $matches[2]);
 			else $dimensions = array('width' => '', 'height' => '');
-			$html .= preg_replace(array(
-				'/@url/',
-				'/@width/',
-				'/@height/'
-			), array(
-				$dir.'/'.$file,
-				$dimensions['width'],
-				$dimensions['height']
-			), $loop_html);
-		}
 		
+			$replacements = array(
+				'/@url/' => $dir.'/'.$file,
+				'/@width/' => $dimensions['width'],
+				'/@height/' => $dimensions['height']
+			);
+		
+			$html .= preg_replace(array_keys($replacements), array_values($replacements), $loop_html);
+		}
 		return $html;
 	}
 
@@ -727,15 +725,13 @@ Class Swf extends Partial {
 			// pull dimensions from file name (if they exist)
 			if(preg_match('/(\d+?)x(\d+?)\./', $file, $matches)) $dimensions = array('width' => $matches[1], 'height' => $matches[2]);
 			else $dimensions = array('width' => '', 'height' => '');
-			$html .= preg_replace(array(
-				'/@url/',
-				'/@width/',
-				'/@height/'
-			), array(
-				$dir.'/'.$file,
-				$dimensions['width'],
-				$dimensions['height']
-			), $loop_html);
+			$replacements = array(
+				'/@url/' => $dir.'/'.$file,
+				'/@width/' => $dimensions['width'],
+				'/@height/' => $dimensions['height']
+			);
+		
+			$html .= preg_replace(array_keys($replacements), array_values($replacements), $loop_html);
 		}			
 		return $html;
 	}
