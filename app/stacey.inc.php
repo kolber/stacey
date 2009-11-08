@@ -237,7 +237,7 @@ Class Page {
 		$this->content_file = $this->get_content_file();
 		$this->template_file = $this->get_template_file($this->default_template);
 		$this->image_files = $this->get_assets('/\.(gif|jpg|png|jpeg)/i');
-		$this->video_files = $this->get_assets('/\.(mov|mp4)/i');
+		$this->video_files = $this->get_assets('/\.(mov|mp4|m4v)/i');
 		$this->html_files = $this->get_assets('/\.(html|htm)/i');
 		$this->swf_files = $this->get_assets('/\.swf/i');
 		$this->link_path = $this->construct_link_path();
