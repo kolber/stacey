@@ -148,7 +148,7 @@ Class Renderer {
 			// explode key, [0] => category, [1] => name
 			$path = explode('/', key($get));
 			// if key contains more than one /, return a 404 as the app doesn't handle more than 2 levels of depth
-			if(count($path) > 2) return key($get);
+			if(count($path) > 2) return false;
 			else return new PageInCategory($path[1], $path[0]);
 		}
 		// if key contains no slashes, it must be a page or a category
@@ -166,42 +166,37 @@ Class Renderer {
 		if(file_exists('../public/404.html')) echo file_get_contents('../public/404.html');
 		// otherwise, use this text as a default
 		else echo '<h1>404</h1><h2>Page could not be found.</h2><p>Unfortunately, the page you were looking for does not exist here.</p>';
+		return false;
 	}
 	
 	function render() {
 		// if page doesn't contain a content file or have a matching template file, redirect to it or return 404
-		if(!$this->page || !$this->page->template_file) {
-			// if a static html page with a name matching the current route exists in the public folder, serve it 
-			if($this->page->public_file) echo file_get_contents($this->page->public_file);
-			// serve 404
-			else $this->render_404();
+		if(!$this->page || !$this->page->template_file) return $this->render_404();
+		// create new cache object
+		$cache = new Cache($this->page);
+		// check etags
+		header ('Etag: "'.$cache->hash.'"');
+		if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) == '"'.$cache->hash.'"') {
+			// local cache is still fresh, so return 304
+			header ("HTTP/1.0 304 Not Modified");
+			header ('Content-Length: 0');
 		} else {
-			// create new cache object
-			$cache = new Cache($this->page);
-			// check etags
-			header ('Etag: "'.$cache->hash.'"');
-			if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) == '"'.$cache->hash.'"') {
-				// local cache is still fresh, so return 304
-				header ("HTTP/1.0 304 Not Modified");
-				header ('Content-Length: 0');
+			// check if cache needs to be expired
+			if($cache->check_expired()) {
+				// start output buffer
+				ob_start();
+					// render page
+					$t = new TemplateParser;
+					$c = new ContentParser;
+					echo $t->parse($this->page, $c->parse($this->page));
+					// cache folder is writable, write to it
+					if(is_writable('./cache')) $cache->write_cache();
+					else echo "\n".'<!-- Stacey('.Stacey::$version.'). -->';
+				// end buffer
+				ob_end_flush();
 			} else {
-				// check if cache needs to be expired
-				if($cache->check_expired()) {
-					// start output buffer
-					ob_start();
-						// render page
-						$t = new TemplateParser;
-						$c = new ContentParser;
-						echo $t->parse($this->page, $c->parse($this->page));
-						// cache folder is writable, write to it
-						if(is_writable('./cache')) $cache->write_cache();
-						else echo "\n".'<!-- Stacey('.Stacey::$version.'). -->';
-					// end buffer
-					ob_end_flush();
-				} else {
-					// else cache hasn't expired, so use existing cache
-					echo file_get_contents($cache->cachefile)."\n".'<!-- Cached. -->';
-				}
+				// else cache hasn't expired, so use existing cache
+				echo file_get_contents($cache->cachefile)."\n".'<!-- Cached. -->';
 			}
 		}
 	}
@@ -216,7 +211,6 @@ Class Page {
 	
 	var $content_file;
 	var $template_file;
-	var $public_file;
 	
 	var $i;
 	var $unclean_names = array();
@@ -242,7 +236,6 @@ Class Page {
 		
 		$this->content_file = $this->get_content_file();
 		$this->template_file = $this->get_template_file($this->default_template);
-		$this->public_file = $this->get_public_file();
 		$this->image_files = $this->get_assets('/\.(gif|jpg|png|jpeg)/i');
 		$this->video_files = $this->get_assets('/\.(mov|mp4)/i');
 		$this->html_files = $this->get_assets('/\.(html|htm)/i');
@@ -312,12 +305,6 @@ Class Page {
 		}
 		// return if we didnt find anything
 		return $this->content_path.$this->name_unclean.'/none';
-	}
-	
-	function get_public_file() {
-		// see if a static html file with $name exists in the public folder
-		if(file_exists('../public/'.$this->name.'.html')) return '../public/'.$this->name.'.html';
-		else return false;
 	}
 	
 	function get_sibling_pages() {
