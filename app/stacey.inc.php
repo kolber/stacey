@@ -673,7 +673,13 @@ Class Images extends Partial {
 		
 		$files = $page->image_files;
 		foreach($files as $key => $file) {
-			$html .= preg_replace('/@url/', $dir.'/'.$file, $loop_html);
+			$name = preg_replace(array('/\.[\w\d]+?$/', '/^\d+?\./'), '', $file);
+			$replacements = array(
+				'/@url/' => $dir.'/'.$file,
+				'/@name/' => ucfirst(preg_replace('/-/', ' ', $name)),
+			);
+			
+			$html .= preg_replace(array_keys($replacements), array_values($replacements), $loop_html);
 		}
 		
 		return $html;
