@@ -582,7 +582,7 @@ Class Partial {
 		// add outer wrapper
 		$html .= ($replacements) ? preg_replace(array_keys($replacements), array_values($replacements), $wrappers[0]): $wrappers[0];
 		// if a partial is passed through, then we want to process any loops inside it
-		$html .= call_user_func_array($partial_type.'::parse_loop', array($page, '../content/'.$dir, $wrappers[1]));
+		eval('$html .= '.$partial_type.'::parse_loop($page, "../content/$dir", $wrappers[1]);');
 		// add closing wrapper
 		$html .= ($replacements) ? preg_replace(array_keys($replacements), array_values($replacements), $wrappers[2]): $wrappers[2];
 		return $html;
