@@ -1,46 +1,46 @@
 /*
- *	
- *	Stacey Generator
- *	----------------
  *
- *	This text file is used to generate a site structure into your /content folder
+ *  Stacey Generator
+ *  ----------------
  *
- *	It should follow this format:
- *	
- *	Index			  (template: index.html)
- *	Projects 		  (template: category.html)
- *   - Child Page 	  (template: page-in-category.html)
- *   - Child Page 2   (template: page-in-category.html)
- *	About			  (template: content.html)
+ *  This text file is used to generate a site structure into your /content folder
  *
- * Which would create this folder structure:
+ *  It should follow this format:
  *
- *	/content/3.index.txt
- *	/content/2.projects/category.txt
+ *  Index           (template: index.html)
+ *  Projects        (template: category.html)
+ *  - Child Page    (template: page-in-category.html)
+ *  - Child Page 2  (template: page-in-category.html)
+ *  About           (template: content.html)
+ *
+ *  Which would create this folder structure:
+ *
+ *  /content/3.index.txt
+ *  /content/2.projects/category.txt
  *  /content/2.projects/2.child-page/page-in-category.txt
  *  /content/2.projects/1.child-page-2/page-in-category.txt
- *	/content/1.about/content.txt
+ *  /content/1.about/content.txt
  *
  *
- *	WARNING
- *	Any files which already exist within /content will be deleted
- *	For security reasons, the /app/generate/generate.txt file should be renamed to _generate.txt once it has been run and your content structure has been created
+ *  WARNING
+ *  Any files which already exist within /content will be deleted
+ *  For security reasons, the /app/generate/generate.txt file should be renamed to _generate.txt once it has been run and your content structure has been created
  *
- *	
+ *
  */
 
-Projects 		(template: category.html)
- - The Test Project 1 		  (template: project.html)
- - Movie Project 2 			  (template: video-project.html)
- - The Test Project 3 		  (template: project.html)
- - Youtube Project 4— 		  (template: html-project.html)
- - The Vimeo Project 5 		  (template: html-project.html)
- - The SWF Project 6 		  (template: swf-project.html)
- - The Mixed Media Project 7  (template: media-project.html)
- - The Test Project 8 		  (template: project.html)
- - Project 9 				  (template: project.html)
- - The Test Project 10		  (template: project.html)
-	
-About 			(template: content.html)
-Contact Me		(template: content.html)
-Index 			(template: index.html)
+Projects     (template: category.html)
+ - The Test Project 1     (template: project.html)
+ - Movie Project 2        (template: video-project.html)
+ - The Test Project 3     (template: project.html)
+ - Youtube Project 4—     (template: html-project.html)
+ - The Vimeo Project 5    (template: html-project.html)
+ - The SWF Project 6      (template: swf-project.html)
+ - Mixed Media Project 7  (template: media-project.html)
+ - The Test Project 8     (template: project.html)
+ - Project 9              (template: project.html)
+ - The Test Project 10    (template: project.html)
+
+About       (template: content.html)
+Contact Me  (template: content.html)
+Index       (template: index.html)
