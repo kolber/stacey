@@ -4,13 +4,23 @@
  *	----------------
  *
  *	This text file is used to generate a site structure into your /content folder
- *	Keep in mind that stacey will only allow for two levels of depth (ie. /content/projects/project)
- *	It should follow this format: 
+ *
+ *	It should follow this format:
  *	
- *	project-url/project.txt: Project Page Name
- *  - child-page-url/project.txt: Child Page
- *	index/index.txt
- *	
+ *	Index			  (template: index.html)
+ *	Projects 		  (template: category.html)
+ *   - Child Page 	  (template: page-in-category.html)
+ *   - Child Page 2   (template: page-in-category.html)
+ *	About			  (template: content.html)
+ *
+ * Which would create this folder structure:
+ *
+ *	/content/3.index.txt
+ *	/content/2.projects/category.txt
+ *  /content/2.projects/2.child-page/page-in-category.txt
+ *  /content/2.projects/1.child-page-2/page-in-category.txt
+ *	/content/1.about/content.txt
+ *
  *
  *	WARNING
  *	Any files which already exist within /content will be deleted
@@ -19,22 +29,18 @@
  *	
  */
 
-projects/category.txt
-- project-1/project.txt: The Test Project 1
-- project-name-2/project.txt: ..Project 2
-- project-name-3/project.txt: The Test Project 3
-- project-name-4/project.txt: Test Project 4—
-- project-name-5/project.txt: The Test Project 5
-- project-name-6/project.txt: The Longer Project Name 6
-- project-name-7/project.txt: The Test Project 7
-- project-name-8/project.txt: The Test Project 8
-- project-name-9/project.txt: Project 9
-- project-name-10/project.txt: The Test Project 10
-
-/* Another comment */
-
-about/content.txt: About
-
-contact-me/content.txt: Contact details
-
-index/index.txt
+Projects 		(template: category.html)
+ - The Test Project 1 		  (template: project.html)
+ - Movie Project 2 			  (template: video-project.html)
+ - The Test Project 3 		  (template: project.html)
+ - Youtube Project 4— 		  (template: html-project.html)
+ - The Vimeo Project 5 		  (template: html-project.html)
+ - The SWF Project 6 		  (template: swf-project.html)
+ - The Mixed Media Project 7  (template: media-project.html)
+ - The Test Project 8 		  (template: project.html)
+ - Project 9 				  (template: project.html)
+ - The Test Project 10		  (template: project.html)
+	
+About 			(template: content.html)
+Contact Me		(template: content.html)
+Index 			(template: index.html)
