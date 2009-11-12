@@ -45,9 +45,10 @@ Class Helpers {
 	}
 
 	static function list_files($dir, $regex, $folders_only = false) {
-		$files = array();		
+		$files = array();
 		$glob = ($folders_only) ? glob($dir."/*", GLOB_ONLYDIR) : glob($dir."/*");
-		// loop through each glob result and push it to $dirs if it matches the passed regexp 
+		if(!$glob) return array();
+		// loop through each glob result and push it to $dirs if it matches the passed regexp
 		foreach($glob as $file) {
 			// strip out just the filename
 			preg_match('/\/([^\/]+?)$/', $file, $slug);
