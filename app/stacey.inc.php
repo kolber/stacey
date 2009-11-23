@@ -2,7 +2,7 @@
 
 Class Stacey {
 
-	static $version = '1.1';
+	static $version = '1.2';
 	
 	function __construct($get) {
 		$this->php_fixes();
@@ -47,6 +47,7 @@ Class Helpers {
 	static function list_files($dir, $regex, $folders_only = false) {
 		$files = array();
 		$glob = ($folders_only) ? glob($dir."/*", GLOB_ONLYDIR) : glob($dir."/*");
+		// if glob returns false, pass back an empty array
 		if(!$glob) return array();
 		// loop through each glob result and push it to $dirs if it matches the passed regexp
 		foreach($glob as $file) {
