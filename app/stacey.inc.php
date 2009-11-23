@@ -118,10 +118,10 @@ Class Cache {
 	}
 	
 	function collate_files($dir) {
-		if(!isset($files_modified)) $files_modified = '';
-		foreach(Helpers::list_files($dir, '/.*/') as $file) {
+		$files_modified = '';
+		foreach(Helpers::list_files($dir, '/.*/', false) as $file) {
 			$files_modified .= $file.':'.filemtime($dir.'/'.$file);
-			if(is_dir($dir.'/'.$file)) $this->collate_files($dir.'/'.$file);
+			if(is_dir($dir.'/'.$file)) $files_modified .= $this->collate_files($dir.'/'.$file);
 		}
 		return $files_modified;
 	}
