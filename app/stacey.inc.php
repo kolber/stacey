@@ -113,8 +113,10 @@ Class Cache {
 		$content = $this->collate_files('../content/');
 		// create a collection of every file inside the templates folder
 		$templates = $this->collate_files('../templates/');
+		// create a collection of every file inside the public folder
+		$public = $this->collate_files('../public/');
 		// create an md5 of the two collections
-		return $this->hash = md5($content.$templates);
+		return $this->hash = md5($content.$templates.$public);
 	}
 	
 	function collate_files($dir) {
