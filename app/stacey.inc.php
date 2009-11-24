@@ -385,7 +385,7 @@ Class ContentParser {
 			'/-/',
 			'/\\\x02/',
 			// automatically link http:// websites
-			'/(?<![">])\bhttp&#58;\/\/([\S]+\.[\S]*\.?[A-Za-z0-9]{2,4})/',
+			'/(?<![">])\bhttp&#58;\/\/([\S]+\.[\S]*\.?[A-Za-z0-9]{2,4}(?:\S+)?)/',
 			// automatically link email addresses
 			'/(?<![;>])\b([A-Za-z0-9.-]+)@([A-Za-z0-9.-]+\.[A-Za-z]{2,4})/',
 			// convert lists
