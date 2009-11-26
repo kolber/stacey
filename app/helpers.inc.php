@@ -63,7 +63,7 @@ Class Helpers {
 		if(!preg_match('/index/', $file_path)) {
 			$link_path .= '../';
 			preg_match_all('/\//', $file_path, $slashes);
-			for($i = 2; $i < count($slashes[0]); $i++) $link_path .= '../';
+			for($i = 1; $i < count($slashes[0]); $i++) $link_path .= '../';
 		}
 		return $link_path;
 	}

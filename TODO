@@ -1,6 +1,5 @@
 ## pre-release
 - Add $parents var
-- When 3 levels deep, relative navigation breaks
 - 404 exception not caught
 ## release
 - Speed up partial parser
