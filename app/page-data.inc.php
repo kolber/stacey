@@ -59,8 +59,8 @@ Class PageData {
 		# $next_sibling / $previous_sibling
 			$neighboring_siblings = self::extract_closest_siblings($page->data['$siblings'], $page->file_path);
 			if(!empty($neighboring_siblings)) {
-				$page->setNextSibling(array($neighboring_siblings[0]));
-				$page->setPreviousSibling(array($neighboring_siblings[1]));
+				$page->setPreviousSibling(array($neighboring_siblings[0]));
+				$page->setNextSibling(array($neighboring_siblings[1]));
 			}
 		# @siblings_count
 		$page->siblings_count = strval(count($page->data['$siblings']));
