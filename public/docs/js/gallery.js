@@ -7,7 +7,7 @@ Gallery = {
 	nextButton: null,
 	prevButoon: null,
 	init: function(imageHolder, imageWrapperWidth, imageCountHolder, nextButton, prevButton, descriptionHolder, descriptionWidth) {
-		# set custom variables
+		// set custom variables
 		this.imageHolder = imageHolder;
 		this.imageWrapperWidth = imageWrapperWidth;
 		this.imageCountHolder = imageCountHolder;
@@ -17,18 +17,18 @@ Gallery = {
 		this.descriptionHolder = descriptionHolder;
 		this.descriptionWidth = descriptionWidth;
 		
-		# check if a specific image has been specified in the URL
+		// check if a specific image has been specified in the URL
 		if(document.URL.match(/#[0-9]+/)) {
 			this.gotoImage(new Number(new String(document.URL.match(/#[0-9]+/)).replace("#", "")) - 1);
 		} else {
-			# write maxCount
+			// write maxCount
 			this.updateCount(0);
 		} 
-		# 
+		// 
 		this.attachEvents();
 	},
 	attachEvents: function() {
-		# write next/prev functions
+		// write next/prev functions
 		this.nextButton.click(function() {
 			Gallery.next();
 			this.blur();
@@ -41,23 +41,23 @@ Gallery = {
 		});
 	},
 	next: function() {
-		# show next image
+		// show next image
 		this.gotoImage(this.currentImage + 1);
 	},
 	previous: function() {
-		# show previous image
+		// show previous image
 		this.gotoImage(this.currentImage - 1);
 	},
 	updateCount: function(newCount) {
-		# set current image
+		// set current image
 		this.currentImage = newCount;
-		# update current image display
+		// update current image display
 		this.imageCountHolder.innerHTML = (newCount + 1) + "/" + this.maxCount;
-		# update url hash
+		// update url hash
 		//window.location.hash = (newCount + 1);
 	},
 	gotoImage: function(num) {
-		# if not too high
+		// if not too high
 		if(num >= this.maxCount) {
 			num = 0;
 		} else if(num < 0) {
@@ -65,7 +65,7 @@ Gallery = {
 		}
 		//animate
 		this.animateContainers(num);
-		# update count
+		// update count
 		this.updateCount(num);
 	},
 	animateContainers: function(num) {
@@ -73,7 +73,7 @@ Gallery = {
 			marginLeft: (num * this.imageWrapperWidth) * -1 + "px"
 		}, { duration: 600, queue: false });
 		
-		# skip attempt to animate description holder if it does not exist
+		// skip attempt to animate description holder if it does not exist
 		if(!this.descriptionHolder) return;
 		
 		this.descriptionHolder.animate({
