@@ -5,11 +5,12 @@ Class PageData {
 	static function extract_closest_siblings($siblings, $file_path) {
 		# flip keys/values
 		$siblings = array_flip($siblings);
-		# store keys as array
-		$keys = array_keys($siblings);
-		$keyIndexes = array_flip($keys);
-		$neighbors = array();
+		
 		if(!empty($siblings)) {
+			# store keys as array
+			$keys = array_keys($siblings);
+			$keyIndexes = array_flip($keys);
+			$neighbors = array();
 			# previous sibling
 			if(isset($keys[$keyIndexes[$file_path] - 1])) $neighbors[] = $keys[$keyIndexes[$file_path] - 1];
 			else $neighbors[] = $keys[count($keys) - 1];
@@ -17,7 +18,32 @@ Class PageData {
 			if(isset($keys[$keyIndexes[$file_path] + 1])) $neighbors[] = $keys[$keyIndexes[$file_path] + 1];
 			else $neighbors[] = $keys[0];
 		}
-		return $neighbors;
+		return !empty($neighbors) ? $neighbors : array(array(), array());
+	}
+	
+	static function get_parent($file_path) {
+		$split_path = explode("/", $file_path);
+		array_pop($split_path);
+		$parent_path = array(implode("/", $split_path));
+		$parent_path_clean = (count($split_path) < 3) ? array('./content') : $parent_path;
+		return $parent_path_clean;
+	}
+	
+	static function get_thumbnail($file_path) {
+		$thumbnails = array_keys(Helpers::list_files($file_path, '/thumb\.(gif|jpg|png|jpeg)/i', false));
+		$relative_path = preg_replace('/^\.\//', Helpers::relative_root_path($file_path.'/'), $file_path);
+		return (!empty($thumbnails)) ? $relative_path.'/'.$thumbnails[0] : false;
+	}
+	
+	static function get_index($siblings, $file_path) {
+		$count = 0;
+		if(!empty($siblings)) {
+			foreach($siblings as $sibling) {
+				$count++;
+				if($sibling == $file_path) return strval($count);
+			}
+		}
+		return strval($count);
 	}
 	
 	static function create_helper_vars($page) {
@@ -30,45 +56,29 @@ Class PageData {
 		$page->page_name = ucfirst(preg_replace('/[-_](.)/e', "' '.strtoupper('\\1')", $page->data['@slug']));
 		# @root_path
 		$page->root_path = Helpers::relative_root_path($page->file_path.'/');
-		# @thumbnail
-			$thumbnails = array_keys(Helpers::list_files($page->file_path, '/thumb\.(gif|jpg|png|jpeg)/i', false));
-			$relative_path = preg_replace('/^\.\//', Helpers::relative_root_path($page->file_path.'/'), $page->file_path);
-		$page->thumb = (!empty($thumbnails)) ? $relative_path.'/'.$thumbnails[0] : false;
+#		# @thumbnail
+		$page->thumb = self::get_thumbnail($page->file_path);
 		# @current_year
 		$page->current_year = date('Y');
 		
 		# $root
 		$page->setRoot(Helpers::list_files('./content', '/\d+?\.(?!index)/', true));
-		# $parent
-			$split_path = explode("/", $page->file_path);
-			array_pop($split_path);
-			$parent_path = array(implode("/", $split_path));
-			$parent_path_clean = (count($split_path) < 3) ? array() : $parent_path;
-		$page->setParent($parent_path_clean);
-#
-#	Not yet set
-#
-		# $parents
-#		var_dump($parent_path_clean);
-#		echo '<br>';
-
-		$page->setParents($split_path);
+#		# $parent
+			$parent_path = self::get_parent($page->file_path);
+		$page->setParent($parent_path);
+#		# $parents
+#		$page->setParents();
 		
 		# $siblings
 		$page->setSiblings(Helpers::list_files($parent_path[0], '/.+/', true));
 		# $next_sibling / $previous_sibling
 			$neighboring_siblings = self::extract_closest_siblings($page->data['$siblings'], $page->file_path);
-			if(!empty($neighboring_siblings)) {
-				$page->setPreviousSibling(array($neighboring_siblings[0]));
-				$page->setNextSibling(array($neighboring_siblings[1]));
-			}
+		$page->setPreviousSibling(array($neighboring_siblings[0]));
+		$page->setNextSibling(array($neighboring_siblings[1]));
 		# @siblings_count
 		$page->siblings_count = strval(count($page->data['$siblings']));
-#
-#	Not yet set
-#
 		# @index
-		$page->index = '0';
+		$page->index = self::get_index($page->data['$siblings'], $page->file_path);
 		
 		# $children
 		$page->setChildren(Helpers::list_files($page->file_path, '/.+/', true));
