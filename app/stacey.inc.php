@@ -56,9 +56,12 @@ Class Stacey {
 		$this->php_fixes();
 		# it's easier to handle some redirection through php rather than relying on a more complex .htaccess file to do all the work
 		if($this->handle_redirects()) return;
-		
+
 		# create new page object
 		$page = new Page(key($get));
+		
+# return a 404 if a matching folder doesn't exist
+		if(!file_exists($page->file_path)) throw new Exception('404. Page does not exist.');
 		
 #		echo '<pre>';
 #		var_dump($page->data);

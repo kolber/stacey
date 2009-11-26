@@ -14,9 +14,6 @@ Class Page {
 		$this->url_path = ($url) ? $url : 'index';
 		$this->file_path = Helpers::url_to_file_path($this->url_path);
 		
-		# if file doesn't exist, throw a 404
-		if(!file_exists($this->file_path)) throw new Exception('404. Page does not exist.');
-		
 		$this->template_name = $this->content_file();
 		
 		# create/set all content variables
