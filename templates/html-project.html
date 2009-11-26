@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>@page_title</title>
+		<meta name="description" content="@page_description">
+		<link rel="stylesheet" href="@root_path/docs/css/screen.css" type="text/css" media="screen"> 
+	</head>
+	<body>
+		<div id="container">
+			<h1 class="col three">
+				<a href="@root_path">@name</a>
+				<strong>@profession</strong>
+			</h1>
+			<em class="col three">@email</em>
+			<hr>
+			:navigation
+			<div id="content" class="col eight">
+				<p class="date col one">@date</p>
+				<div class="description col six">
+					<h2 class="col six"><a href="@root_path">@title</a></h2>
+					@content
+				</div>
+				<hr>
+				<p id="project-count" class="col one"><em>&#8470;</em> @index/@siblings_count</p>
+				<div class="col four">
+					:next_page
+					:previous_page
+				</div>
+			</div>
+			<hr>
+			<p id="footer" class="col six">&copy; Copyright @name @current_year<br>
+				<em>Content managed by <a href="http://www.staceyapp.com">stacey</a></em></p>
+		</div>
+	</body>
+</html>

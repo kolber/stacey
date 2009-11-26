@@ -1,0 +1,73 @@
+/* Colours */
+
+body, a { color: #222; }
+em, em a, strong, p.date, div#project-navigation p { color: #999; }
+h2 a { border-bottom: 2px solid #999; }
+a { border-bottom: 1px solid #999; }
+
+/* Typography */
+
+body { font-family: "Times New Roman", times, serif; line-height: 1.3; }
+ul li, p, em, div.description { font-size: 13px; font-style: normal; }
+h1 { font-size: 13px; font-weight: normal; }
+h1 strong { font-weight: normal; text-transform: none; display: block; letter-spacing: 0px; }
+h2 { font-size: 26px; margin: 0px; font-weight: normal; letter-spacing: 0.02em; }
+p.date { font-size: 11px; letter-spacing: 0.03em; }
+a { text-decoration: none; }
+p#project-count, p#gallery-count { text-align: right; }
+p#gallery-count span { letter-spacing: 0.08em; }
+
+/* Layout */
+
+body { padding: 10px 0px 40px; text-align: center; }
+div#container { margin: 0px auto; width: 860px; padding: 5px 20px; text-align: left; /*background: url('/images/grid-bg.gif') 20px 0px;*/ }
+
+.col { float: left; margin: 0px 0px 0px 20px; padding: 0px; }
+.col .col { margin: 0px; }
+
+.one { width: 60px; }
+.two { width: 140px; }
+.three { width: 220px; }
+.four { width: 300px; }
+.five { width: 380px; }
+.six { width: 460px; }
+.seven { width: 540px; }
+.eight { width: 620px; }
+.nine { width: 700px; }
+.ten { width: 780px; }
+.eleven { width: 860px; }
+.twelve { width: 940px; }
+
+p { margin: 0px 0px 5px; }
+
+hr { display: block; clear: both; margin: 0px 0px 45px; padding: 0px; height: 0px; overflow: hidden; visibility: hidden; }
+.col hr { margin: 0px 0px 15px; }
+
+ul li { margin: 0px 0px 3px; }
+ul#navigation, ul.projects { list-style: none; padding: 0px; margin: 0px; }
+ul#navigation { margin: 10px 0px 0px 20px; }
+ul#navigation li, ul.projects li { clear: both; }
+ul#navigation ol { display: none; }
+ul.projects li { float: left; padding: 0px 0px 8px; }
+
+p#footer { margin: 0px 0px 0px 260px; display: inline; }
+
+p.date { text-align: right; padding: 14px 20px 0px 0px; }
+div.description p { clear: both; }
+div.description h2 { padding: 0px 0px 15px; }
+
+div#images, div#media { clear: both; padding: 30px 0px 0px 70px; }
+div.media { margin: 0px 0px 10px; }
+div#media div#images { padding: 0px; }
+div.description div#images { padding: 0px 0px 0px 0px; }
+div#images img { margin: 0px 0px 10px; }
+p#project-count, p#gallery-count { margin: 2px 20px 0px 0px; }
+p#gallery-count span { margin: -1px 0px 0px; display: block; }
+div#project-navigation { margin: 0px 0px 0px 20px; }
+div#project-navigation p, div#gallery-navigation p { margin: 0px 0px 1px; }
+
+div#image-wrapper { overflow: hidden; width: 560px; }
+div#image-wrapper div#image-holder { width: 100000000px; }
+div#image-wrapper div#image-holder div.image { float: left; width: 560px; }
+
+img.project-thumb { padding: 0px 10px 5px 0px; float: left; display: none; }
