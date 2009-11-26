@@ -60,9 +60,9 @@ Class Stacey {
 		# create new page object
 		$page = new Page(key($get));
 		
-		#		echo '<pre>';
-		#		var_dump($page->data);
-		#		echo '</pre>';
+#		echo '<pre>';
+#		var_dump($page->data);
+#		echo '</pre>';
 		
 		# render page
 		$this->render($page);

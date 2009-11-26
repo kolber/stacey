@@ -1,5 +1,4 @@
 ## pre-release
-- if no $children? do
 - Add/test $parent & $parents vars
 - Add @index var
 - 404 exception not caught

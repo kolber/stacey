@@ -18,20 +18,29 @@ Class TemplateParser {
 	
 	static function parse_if($data, $template) {
 		# match any inner if statements
-		preg_match('/([\S\s]*?)if\s+?([\$\@].+?)\?\s+?do([\S\s]+?)endif([\S\s]*)$/', $template, $template_parts);
+		preg_match('/([\S\s]*?)if\s*?(no)?\s*?([\$\@].+?)\?\s+?do([\S\s]+?)endif([\S\s]*)$/', $template, $template_parts);
 		
 		if(!empty($template_parts)) {
 			# Run the replacements on the pre-"if" part of the partial
 			$template = self::parse($data, $template_parts[1]);
 			
-			# if the condition is true
-			if(isset($data[$template_parts[2]]) && !empty($data[$template_parts[2]]) && ($data[$template_parts[2]])) {
-				# parse the block inside the if statement
-				$template .= $template_parts[3];
+			# if statment expects a false result
+			if($template_parts[2]) {
+				if(isset($data[$template_parts[3]]) && (empty($data[$template_parts[3]]) || !$data[$template_parts[3]])) {
+					# parse the block inside the if statement
+					$template .= $template_parts[4];
+				}
+			} 
+			# if statment expects a true result
+			else {
+				if(isset($data[$template_parts[3]]) && !empty($data[$template_parts[3]]) && ($data[$template_parts[3]])) {
+					# parse the block inside the if statement
+					$template .= $template_parts[4];
+				}
 			}
 			
 			# run the replacements on the post-"if" part of the partial
-			$template .= self::parse($data, $template_parts[4]);
+			$template .= self::parse($data, $template_parts[5]);
 			
 		}
 		return $template;
