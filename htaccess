@@ -7,18 +7,16 @@ RewriteEngine on
 ErrorDocument 404 /404.html
 
 # Add a trailing slash to directories
-RewriteCond %{REQUEST_URI} !app/(.*)$
 RewriteCond %{REQUEST_URI} !(\.)
 RewriteCond %{REQUEST_URI} !(.*)/$
 RewriteRule ([^/]+)$ $1/ [L]
 
-# Rewrite any calls to /* to the app
+# Rewrite any calls to /* to the index.php file
 RewriteCond %{REQUEST_URI} app/$
 RewriteRule ^app - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)/$ app/?$1 [L]
-RewriteRule ^$ app/ [L]
+RewriteRule ^(.*)/$ index.php?$1 [L]
 		
 # Rewrite any file calls to the public directory
 RewriteCond %{REQUEST_FILENAME} !-f
