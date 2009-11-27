@@ -1,6 +1,6 @@
 <ul id="navigation" class="col two">
-	foreach $root do
-		if no $children? do
+	foreach $root
+		if !$children
 			<li>
 				<a href="@url">@page_name</a>
 			</li>

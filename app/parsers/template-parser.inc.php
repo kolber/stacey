@@ -18,7 +18,7 @@ Class TemplateParser {
 	
 	static function parse_if($data, $template) {
 		# match any inner if statements
-		preg_match('/([\S\s]*?)if\s*?(no)?\s*?([\$\@].+?)\?\s+?do([\S\s]+?)endif([\S\s]*)$/', $template, $template_parts);
+		preg_match('/([\S\s]*?)if\s*?(!)?\s*?([\$\@].+?)\s+?([\S\s]+?)endif([\S\s]*)$/', $template, $template_parts);
 		
 		if(!empty($template_parts)) {
 			# Run the replacements on the pre-"if" part of the partial
@@ -48,7 +48,7 @@ Class TemplateParser {
 	
 	static function parse_foreach($data, $template) {
 		# split out the partial into the parts Before, Inside, and After the foreach loop
-		preg_match('/([\S\s]*?)foreach[\s]+?([\$\@].+?)[\s]+?do([\S\s]+)endforeach([\S\s]*)$/', $template, $template_parts);
+		preg_match('/([\S\s]*?)foreach[\s]+?([\$\@].+?)\s+?([\S\s]+)endforeach([\S\s]*)$/', $template, $template_parts);
 		if(!empty($template_parts)) {
 			# run the replacements on the pre-"foreach" part of the partial
 			$template = self::parse($data, $template_parts[1]);
