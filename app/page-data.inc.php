@@ -31,7 +31,7 @@ Class PageData {
 	
 	static function get_thumbnail($file_path) {
 		$thumbnails = array_keys(Helpers::list_files($file_path, '/thumb\.(gif|jpg|png|jpeg)/i', false));
-		$relative_path = preg_replace('/^\.\//', Helpers::relative_root_path($file_path.'/'), $file_path);
+		$relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $file_path);
 		return (!empty($thumbnails)) ? $relative_path.'/'.$thumbnails[0] : false;
 	}
 	
@@ -48,14 +48,14 @@ Class PageData {
 	
 	static function create_helper_vars($page) {
 		# @url
-		$page->url = Helpers::relative_root_path($page->file_path.'/').$page->url_path;
+		$page->url = Helpers::relative_root_path().$page->url_path.'/';
 		# @slug
 			$split_url = explode("/", $page->url_path);
 		$page->slug = $split_url[count($split_url) - 1];
 		# @name
 		$page->page_name = ucfirst(preg_replace('/[-_](.)/e', "' '.strtoupper('\\1')", $page->data['@slug']));
 		# @root_path
-		$page->root_path = Helpers::relative_root_path($page->file_path.'/');
+		$page->root_path = Helpers::relative_root_path();
 #		# @thumbnail
 		$page->thumb = self::get_thumbnail($page->file_path);
 		# @current_year

@@ -12,7 +12,7 @@ Class Asset {
 	}
 	
 	function construct_link_path($file_path) {
-		return preg_replace('/^\.\//', Helpers::relative_root_path($file_path), $file_path);
+		return preg_replace('/^\.\//', Helpers::relative_root_path(), $file_path);
 	}
 	
 	function set_default_data($file_path) {

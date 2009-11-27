@@ -58,12 +58,12 @@ Class Helpers {
 		return $files;
 	}
 	
-	static function relative_root_path($file_path) {
+	static function relative_root_path() {
+	  global $current_page_file_path;
 		$link_path = '';
-		if(!preg_match('/index/', $file_path)) {
-			$link_path .= '../';
-			preg_match_all('/\//', $file_path, $slashes);
-			for($i = 1; $i < count($slashes[0]); $i++) $link_path .= '../';
+		if(!preg_match('/index/', $current_page_file_path)) {
+			$slashes = explode('/', $current_page_file_path);
+			for($i = 2; $i < count($slashes); $i++) $link_path .= '../';
 		}
 		return $link_path;
 	}

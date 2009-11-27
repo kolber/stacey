@@ -52,17 +52,24 @@ Class Stacey {
 	}
 	
 	function __construct($get) {
-		#  
+		# sometimes when PHP release a new version, they do silly things - this function is here to fix them
 		$this->php_fixes();
 		# it's easier to handle some redirection through php rather than relying on a more complex .htaccess file to do all the work
 		if($this->handle_redirects()) return;
+    
+    # store file path for this current page
+    $file_path = Helpers::url_to_file_path(key($get));
+
+    # return a 404 if a matching folder doesn't exist
+		if($file_path != '' && !file_exists($file_path)) throw new Exception('404. Page does not exist.');
+
+    # register global for the path to the page which is currently being loaded
+		global $current_page_file_path;
+		$current_page_file_path = $file_path;
 
 		# create new page object
 		$page = new Page(key($get));
-		
-# return a 404 if a matching folder doesn't exist
-		if(!file_exists($page->file_path)) throw new Exception('404. Page does not exist.');
-		
+
 #		echo '<pre>';
 #		var_dump($page->data);
 #		echo '</pre>';
