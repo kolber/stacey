@@ -94,7 +94,8 @@ Class PageData {
 		$page->setParents(self::get_parents($page->file_path, $page->url_path));
 		
 		# $siblings
-		$page->setSiblings(Helpers::list_files($parent_path[0], '/.+/', true));
+		$parent_path = !empty($parent_path[0]) ? $parent_path[0] : './content';
+		$page->setSiblings(Helpers::list_files($parent_path, '/.+/', true));
 		# $next_sibling / $previous_sibling
 			$neighboring_siblings = self::extract_closest_siblings($page->data['$siblings'], $page->file_path);
 		$page->setPreviousSibling(array($neighboring_siblings[0]));
