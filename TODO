@@ -1,5 +1,6 @@
 - Add $parents var
 - 404 exception not caught
 - Speed up partial parser
-- _lge images?
-- loop through and create $.pdf, $.doc variables automatically?
+- _lge & _thumb images?
+
+- loop through and create $.pdf, $.doc, etc. variables automatically?
