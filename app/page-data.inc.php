@@ -3,14 +3,15 @@
 Class PageData {
 	
 	static function extract_closest_siblings($siblings, $file_path) {
-		# flip keys/values
-		$siblings = array_flip($siblings);
+
+		$neighbors = array();
 		
 		if(!empty($siblings)) {
+		  # flip keys/values
+  		$siblings = array_flip($siblings);
 			# store keys as array
 			$keys = array_keys($siblings);
 			$keyIndexes = array_flip($keys);
-			$neighbors = array();
 			# previous sibling
 			if(isset($keys[$keyIndexes[$file_path] - 1])) $neighbors[] = $keys[$keyIndexes[$file_path] - 1];
 			else $neighbors[] = $keys[count($keys) - 1];
@@ -22,15 +23,31 @@ Class PageData {
 	}
 	
 	static function get_parent($file_path) {
-		$split_path = explode("/", $file_path);
+		$split_path = explode('/', $file_path);
+		# drop the last folder from the file path
 		array_pop($split_path);
-		$parent_path = array(implode("/", $split_path));
-		$parent_path_clean = (count($split_path) < 3) ? array('./content') : $parent_path;
-		return $parent_path_clean;
+		$parent_path = array(implode('/', $split_path));
+		return $parent_path;
+	}
+	
+	static function get_parents($file_path) {
+		$split_path = explode('/', $file_path);
+		# drop the last folder from split file path and push it into the $parents array
+		while(count($split_path) > 3) {
+		  array_pop($split_path);
+		  $parents[] = implode('/', $split_path);
+		}
+		# add index to the array
+		$parents[] = 'index';
+		# reverse array to emulate anchestor structure
+		$parents = array_reverse($parents);
+		
+		return $parents;
 	}
 	
 	static function get_thumbnail($file_path) {
 		$thumbnails = array_keys(Helpers::list_files($file_path, '/thumb\.(gif|jpg|png|jpeg)/i', false));
+		# replace './content' with relative path back to the root of the app
 		$relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $file_path);
 		return (!empty($thumbnails)) ? $relative_path.'/'.$thumbnails[0] : false;
 	}
@@ -56,18 +73,18 @@ Class PageData {
 		$page->page_name = ucfirst(preg_replace('/[-_](.)/e', "' '.strtoupper('\\1')", $page->data['@slug']));
 		# @root_path
 		$page->root_path = Helpers::relative_root_path();
-#		# @thumbnail
+		# @thumbnail
 		$page->thumb = self::get_thumbnail($page->file_path);
 		# @current_year
 		$page->current_year = date('Y');
 		
 		# $root
 		$page->setRoot(Helpers::list_files('./content', '/\d+?\.(?!index)/', true));
-#		# $parent
+		# $parent
 			$parent_path = self::get_parent($page->file_path);
 		$page->setParent($parent_path);
-#		# $parents
-#		$page->setParents();
+		# $parents
+		$page->setParents(self::get_parents($page->file_path));
 		
 		# $siblings
 		$page->setSiblings(Helpers::list_files($parent_path[0], '/.+/', true));
