@@ -58,17 +58,19 @@ Class Stacey {
 		if($this->handle_redirects()) return;
     
     # store file path for this current page
-    $file_path = Helpers::url_to_file_path(key($get));
+    $key = key($get);
+    $route = isset($key) ? $key : 'index';
+    $file_path = Helpers::url_to_file_path($route);
 
     # return a 404 if a matching folder doesn't exist
-		if($file_path != '' && !file_exists($file_path)) throw new Exception('404. Page does not exist.');
+		if(!file_exists($file_path)) throw new Exception('404. Page does not exist.');
 
     # register global for the path to the page which is currently being loaded
 		global $current_page_file_path;
 		$current_page_file_path = $file_path;
 
 		# create new page object
-		$page = new Page(key($get));
+		$page = new Page($route);
 
 #		echo '<pre>';
 #		var_dump($page->data);
