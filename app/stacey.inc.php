@@ -72,12 +72,24 @@ Class Stacey {
 		# create new page object
 		$page = new Page($route);
 
+		# render page
+		$this->render($page);
+
+#
+#
+# Testing data
+#
+#
+
+#    $page = new Page('index');
+#    $page = new Page('contact-me');
+#    $page = new Page('projects/project-name-10');
+#    $page = new Page('projects/movie-project-2/sub-movie-project');
+#    $page = new Page('projects/movie-project-2/sub-movie-project/sub-sub-movie-project/sub-sub-movie-project/sub-sub-movie-project');
 #		echo '<pre>';
 #		var_dump($page->data);
 #		echo '</pre>';
 		
-		# render page
-		$this->render($page);
 	}
 	
 }

@@ -22,7 +22,11 @@ Class PageData {
 		return !empty($neighbors) ? $neighbors : array(array(), array());
 	}
 	
-	static function get_parent($file_path) {
+	static function get_parent($file_path, $url) {
+	  # the index page has no parents, so return false
+    if($url == 'index') return false;
+
+	  # split file path by slashes
 		$split_path = explode('/', $file_path);
 		# drop the last folder from the file path
 		array_pop($split_path);
@@ -30,7 +34,11 @@ Class PageData {
 		return $parent_path;
 	}
 	
-	static function get_parents($file_path) {
+	static function get_parents($file_path, $url) {
+	  # the index page has no parents, so return false
+	  if($url == 'index') return false;
+	  
+	  # split file path by slashes
 		$split_path = explode('/', $file_path);
 		$parents = array();
 		# drop the last folder from split file path and push it into the $parents array
@@ -80,10 +88,10 @@ Class PageData {
 		# $root
 		$page->setRoot(Helpers::list_files('./content', '/\d+?\.(?!index)/', true));
 		# $parent
-			$parent_path = self::get_parent($page->file_path);
+			$parent_path = self::get_parent($page->file_path, $page->url_path);
 		$page->setParent($parent_path);
 		# $parents
-		$page->setParents(self::get_parents($page->file_path));
+		$page->setParents(self::get_parents($page->file_path, $page->url_path));
 		
 		# $siblings
 		$page->setSiblings(Helpers::list_files($parent_path[0], '/.+/', true));
