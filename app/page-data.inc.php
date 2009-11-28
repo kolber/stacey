@@ -32,13 +32,12 @@ Class PageData {
 	
 	static function get_parents($file_path) {
 		$split_path = explode('/', $file_path);
+		$parents = array();
 		# drop the last folder from split file path and push it into the $parents array
-		while(count($split_path) > 3) {
+		while(count($split_path) > 2) {
 		  array_pop($split_path);
 		  $parents[] = implode('/', $split_path);
 		}
-		# add index to the array
-		$parents[] = 'index';
 		# reverse array to emulate anchestor structure
 		$parents = array_reverse($parents);
 		
