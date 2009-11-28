@@ -71,6 +71,17 @@ Class PageData {
 		return strval($count);
 	}
 	
+	static function get_file_types($assets) {
+	  $file_types = array();
+		# create an array for each file extension
+		foreach($assets as $filename => $file_path) {
+		  preg_match('/(?<!thumb)\.(?!txt)([\w\d]{3,4})$/', $filename, $ext);
+		  # return an hash containing arrays grouped by file extension
+		  if(isset($ext[1])) $file_types[$ext[1]][$filename] = $file_path;
+		}
+		return $file_types;
+	}
+	
 	static function create_helper_vars($page) {
 		# @url
 		$page->url = Helpers::relative_root_path().$page->url_path.'/';
@@ -111,17 +122,11 @@ Class PageData {
 		$page->setImages(Helpers::list_files($page->file_path, '/(?<!thumb)\.(gif|jpg|png|jpeg)/i', false));
 		# $video
 		$page->setVideo(Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)/i', false));
-		# $html
-		$page->setHtml(Helpers::list_files($page->file_path, '/\.(html|htm)/i', false));
-		# $swfs
-		$page->setSwfs(Helpers::list_files($page->file_path, '/\.swf/i', false));
-		# $media
-		$page->setMedia(Helpers::list_files($page->file_path, '/(?<!thumb)\.(gif|jpg|png|jpeg|swf|htm|html|mov|mp4|m4v)/i', false));
 
-		# $.swf
-		# $.doc
-		# $.pdf
-		# etc.
+		# $swf, $html, $doc, $pdf, $mp3, etc.
+		# create a variable for each file type included within the page's folder (excluding .txt files)
+		$assets = self::get_file_types(Helpers::list_files($page->file_path, '/\.[\w\d]{3,4}$/', false));
+		foreach($assets as $asset_type => $asset_files) eval('$page->set'.ucfirst($asset_type).'($asset_files);');
 	}
 	
 	static function create($page) {
