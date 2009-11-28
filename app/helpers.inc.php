@@ -19,7 +19,8 @@ Class Helpers {
 	}
 	
 	static function file_path_to_url($file_path) {
-		return preg_replace(array('/\d+?\./', '/\.\/content(\/)?/'), '', $file_path);
+	  $url = preg_replace(array('/\d+?\./', '/\.\/content(\/)?/'), '', $file_path);
+		return $url ? $url : 'index';
 	}
 	
 	static function url_to_file_path($url) {
