@@ -5,6 +5,10 @@ Class AssetFactory {
 	static $store;
 
 	static function create($file_path) {
+    
+    # if the file path isn't passed through as a string, return an empty data array
+    if(!is_string($file_path)) return array();
+    
 		# split by file extension
 		preg_match('/\.([\w\d]{3,4})$/', $file_path, $split_path);
 		

@@ -29,7 +29,7 @@ Class Helpers {
 		$url_parts = explode('/', $url);
 		foreach($url_parts as $u) {
 				# Look for a folder at the current $path
-				$matches = array_keys(Helpers::list_files($file_path, '/^\d+?\.'.$u.'$/', true));
+				$matches = array_keys(Helpers::list_files($file_path, '/^(\d+?\.)?'.$u.'$/', true));
 				# No matches means a bad url
 				if(empty($matches)) return false; 
 				else $file_path .=  '/'.$matches[0];

@@ -6,12 +6,13 @@ Class PageData {
 
 		$neighbors = array();
 		
-		if(!empty($siblings)) {
-		  # flip keys/values
-  		$siblings = array_flip($siblings);
-			# store keys as array
-			$keys = array_keys($siblings);
-			$keyIndexes = array_flip($keys);
+		# flip keys/values
+		$siblings = array_flip($siblings);
+		# store keys as array
+		$keys = array_keys($siblings);
+		$keyIndexes = array_flip($keys);
+		
+		if(!empty($siblings) && isset($siblings[$file_path])) {
 			# previous sibling
 			if(isset($keys[$keyIndexes[$file_path] - 1])) $neighbors[] = $keys[$keyIndexes[$file_path] - 1];
 			else $neighbors[] = $keys[count($keys) - 1];
@@ -19,7 +20,7 @@ Class PageData {
 			if(isset($keys[$keyIndexes[$file_path] + 1])) $neighbors[] = $keys[$keyIndexes[$file_path] + 1];
 			else $neighbors[] = $keys[0];
 		}
-		return !empty($neighbors) ? $neighbors : array(array(), array());
+		return !empty($neighbors) ? $neighbors : array(false, false);
 	}
 	
 	static function get_parent($file_path, $url) {
@@ -86,16 +87,15 @@ Class PageData {
 		$page->current_year = date('Y');
 		
 		# $root
-		$page->setRoot(Helpers::list_files('./content', '/\d+?\.(?!index)/', true));
+		$page->setRoot(Helpers::list_files('./content', '/^\d+?\./', true));
 		# $parent
 			$parent_path = self::get_parent($page->file_path, $page->url_path);
 		$page->setParent($parent_path);
 		# $parents
 		$page->setParents(self::get_parents($page->file_path, $page->url_path));
-		
 		# $siblings
 		$parent_path = !empty($parent_path[0]) ? $parent_path[0] : './content';
-		$page->setSiblings(Helpers::list_files($parent_path, '/.+/', true));
+		$page->setSiblings(Helpers::list_files($parent_path, '/^\d+?\./', true));
 		# $next_sibling / $previous_sibling
 			$neighboring_siblings = self::extract_closest_siblings($page->data['$siblings'], $page->file_path);
 		$page->setPreviousSibling(array($neighboring_siblings[0]));
@@ -103,10 +103,10 @@ Class PageData {
 		# @siblings_count
 		$page->siblings_count = strval(count($page->data['$siblings']));
 		# @index
-		$page->index = self::get_index($page->data['$siblings'], $page->file_path);
-		
+		$page->index = self::get_index($page->data['$siblings'], $page->file_path);		
 		# $children
-		$page->setChildren(Helpers::list_files($page->file_path, '/.+/', true));
+		$page->setChildren(Helpers::list_files($page->file_path, '/^\d+?\./', true));
+		
 		# $images
 		$page->setImages(Helpers::list_files($page->file_path, '/(?<!thumb)\.(gif|jpg|png|jpeg)/i', false));
 		# $video
