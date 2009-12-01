@@ -9,7 +9,7 @@ if(phpversion() < 5) {
 # require helpers class so we can use rglob
 require_once './app/helpers.inc.php';
 # include any php files which sit in the app folder
-foreach(Helpers::rglob('./app/**.php') as $include) include_once $include;
+foreach(Helpers::rglob('./app/**.inc.php') as $include) include_once $include;
 
 try {
   
