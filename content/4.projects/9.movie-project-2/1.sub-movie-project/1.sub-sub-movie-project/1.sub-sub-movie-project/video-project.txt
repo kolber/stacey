@@ -1,6 +1,6 @@
-page_title: Sub-Movie Project | Anthony Kolber's Graphic Design Portfolio
+page_title: Sub-Movie Project | Ñame's Graphic Design Portfolio
 
-page_description: Sub-Movie Project, designed by Anthony Kolber
+page_description: Sub-Movie Project, designed by Ñame 
 
 title: Sub-Movie Project
 
