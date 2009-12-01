@@ -4,7 +4,7 @@ Class AssetFactory {
 	
 	static $store;
 
-	static function create($file_path) {
+	static function &create($file_path) {
     
     # if the file path isn't passed through as a string, return an empty data array
     if(!is_string($file_path)) return array();
@@ -40,9 +40,9 @@ Class AssetFactory {
 		}
 	}
 
-	static function get($key) {
+	static function &get($key) {
 		# if object doesn't exist, create it
-		if(!isset(self::$store[$key])) self::$store[$key] = self::create($key);
+		if(!isset(self::$store[$key])) self::$store[$key] =& self::create($key);
 		return self::$store[$key];
 	}
 

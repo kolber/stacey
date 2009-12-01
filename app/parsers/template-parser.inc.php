@@ -59,7 +59,7 @@ Class TemplateParser {
 			if($pages) {
 				foreach($pages as $data_item) {
 					# transform data_item into its appropriate Object
-					$data_object = AssetFactory::get($data_item);
+					$data_object =& AssetFactory::get($data_item);
 					# recursively parse the inside part of the foreach loop
 					$template .= self::parse($data_object, $template_parts[3]);
 				}
