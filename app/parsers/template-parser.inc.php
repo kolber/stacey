@@ -9,9 +9,9 @@ Class TemplateParser {
 	
 	static function parse($data, $template) {
 		# parse template
-		$template = self::parse_foreach($data, $template);
-		$template = self::parse_if($data, $template);
-		$template = self::parse_includes($data, $template);
+		if(preg_match('/foreach[\s]+?[\$\@].+?\s+?/', $template)) $template = self::parse_foreach($data, $template);
+		if(preg_match('/if\s*?!?\s*?[\$\@].+?\s+?/', $template)) $template = self::parse_if($data, $template);
+		if(preg_match('/:([\w\d_]+?)(\.html)?\b/', $template)) $template = self::parse_includes($data, $template);
 		$template = self::parse_vars($data, $template);
 		return $template;
 	}
