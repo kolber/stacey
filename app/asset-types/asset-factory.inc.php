@@ -10,9 +10,9 @@ Class AssetFactory {
     if(!is_string($file_path)) return array();
     
 		# split by file extension
-		preg_match('/\.([\w\d]{3,4})$/', $file_path, $split_path);
+		preg_match('/\.([\w\d]+?)$/', $file_path, $split_path);
 		
-		if(isset($split_path[1])) {
+		if(isset($split_path[1]) && !is_dir($file_path)) {
 			switch(strtolower($split_path[1])) {
 				case 'mov';
 				case 'mp4';
