@@ -71,11 +71,11 @@ Class PageData {
 		return strval($count);
 	}
 	
-	static function get_file_types($assets) {
+	static function get_file_types($file_path) {
 	  $file_types = array();
 		# create an array for each file extension
-		foreach($assets as $filename => $file_path) {
-		  preg_match('/(?<!thumb)\.(?!txt)([\w\d]{3,4})$/', $filename, $ext);
+		foreach(Helpers::list_files($file_path, '/\.[\w\d]+?$/', false) as $filename => $file_path) {
+		  preg_match('/(?<!thumb)\.(?!txt)([\w\d]+?)$/', $filename, $ext);
 		  # return an hash containing arrays grouped by file extension
 		  if(isset($ext[1])) $file_types[$ext[1]][$filename] = $file_path;
 		}
@@ -125,7 +125,7 @@ Class PageData {
 
 		# $swf, $html, $doc, $pdf, $mp3, etc.
 		# create a variable for each file type included within the page's folder (excluding .txt files)
-		$assets = self::get_file_types(Helpers::list_files($page->file_path, '/\.[\w\d]{3,4}$/', false));
+		$assets = self::get_file_types($page->file_path);
 		foreach($assets as $asset_type => $asset_files) eval('$page->set'.ucfirst($asset_type).'($asset_files);');
 	}
 	
