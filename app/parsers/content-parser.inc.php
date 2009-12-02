@@ -13,7 +13,7 @@ Class ContentParser {
 			'/-/',
 			'/\\\x02/',
 			# automatically link http:// websites
-			'/(?<![">])\bhttps?&#58;\/\/([\S]+\.[\S]*\.?[A-Za-z0-9]{2,4}(?:\S+)?)/',
+			'/(?<![">])\bhttps?&#58;\/\/([-A-Za-z0-9+&@#\/%\?\=~_\(\)|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|])/',
 			# automatically link email addresses
 			'/(?<![;>])\b([A-Za-z0-9.-]+)@([A-Za-z0-9.-]+\.[A-Za-z]{2,4})/',
 			# convert lists
