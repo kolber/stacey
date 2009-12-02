@@ -66,7 +66,7 @@ Class Helpers {
 			$slashes = explode('/', $current_page_file_path);
 			for($i = 2; $i < count($slashes); $i++) $link_path .= '../';
 		}
-		return $link_path;
+		return empty($link_path) ? './' : $link_path;
 	}
 	
 }
