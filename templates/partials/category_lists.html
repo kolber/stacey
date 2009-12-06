@@ -1,11 +1,11 @@
-foreach $root
-	if $children
+foreach $root do
+	if $children do
 		<ul class="projects">
-			foreach $children
+			foreach $children do
 				<li class="col seven">
 					<p class="date col one">@date</p>
 					<h2 class="col five">
-						if @thumb <img src="@thumb" class="project-thumb" alt=""> endif
+						if @thumb do <img src="@thumb" class="project-thumb" alt=""> endif
 						<a href="@url">@title</a>
 					</h2>
 			endforeach
