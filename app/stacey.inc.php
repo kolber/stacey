@@ -6,13 +6,13 @@ Class Stacey {
 	
 	function handle_redirects() {
 		# rewrite any calls to /index or /app back to /
-		if(preg_match('/index|app\/?$/', $_SERVER['REQUEST_URI'])) {
+		if(preg_match('/index|app\/?$/u', $_SERVER['REQUEST_URI'])) {
 			header('HTTP/1.1 301 Moved Permanently');
 			header('Location: ../');
 			return true;
 		}
 		# add trailing slash if required
-		if(!preg_match('/\/$/', $_SERVER['REQUEST_URI'])) {
+		if(!preg_match('/\/$/u', $_SERVER['REQUEST_URI'])) {
 			header('HTTP/1.1 301 Moved Permanently');
 			header('Location:'.$_SERVER['REQUEST_URI'].'/');
 			return true;
@@ -33,6 +33,8 @@ Class Stacey {
 			header ('Content-Length: 0');
 			return false;
 		} else {
+		  # return utf-8 charset header
+		  header ("Content-type: text/html; charset=utf-8");
 			return true;
 		}
 	}

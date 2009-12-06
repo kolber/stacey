@@ -1,1 +1,8 @@
+- add support for
+  'projects/project-1' do
+    @url
+  end
+  
+- convert all to if @var 'do'
+  
 - _lge & _thumb images?

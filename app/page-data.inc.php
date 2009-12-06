@@ -54,9 +54,9 @@ Class PageData {
 	}
 	
 	static function get_thumbnail($file_path) {
-		$thumbnails = array_keys(Helpers::list_files($file_path, '/thumb\.(gif|jpg|png|jpeg)/i', false));
+		$thumbnails = array_keys(Helpers::list_files($file_path, '/thumb\.(gif|jpg|png|jpeg)/iu', false));
 		# replace './content' with relative path back to the root of the app
-		$relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $file_path);
+		$relative_path = preg_replace('/^\.\//u', Helpers::relative_root_path(), $file_path);
 		return (!empty($thumbnails)) ? $relative_path.'/'.$thumbnails[0] : false;
 	}
 	
@@ -74,8 +74,8 @@ Class PageData {
 	static function get_file_types($file_path) {
 	  $file_types = array();
 		# create an array for each file extension
-		foreach(Helpers::list_files($file_path, '/\.[\w\d]+?$/', false) as $filename => $file_path) {
-		  preg_match('/(?<!thumb)\.(?!txt)([\w\d]+?)$/', $filename, $ext);
+		foreach(Helpers::list_files($file_path, '/\.[\w\d]+?$/u', false) as $filename => $file_path) {
+		  preg_match('/(?<!thumb)\.(?!txt)([\w\d]+?)$/u', $filename, $ext);
 		  # return an hash containing arrays grouped by file extension
 		  if(isset($ext[1])) $file_types[$ext[1]][$filename] = $file_path;
 		}
@@ -89,7 +89,7 @@ Class PageData {
 			$split_url = explode("/", $page->url_path);
 		$page->slug = $split_url[count($split_url) - 1];
 		# @page_name
-		$page->page_name = ucfirst(preg_replace('/[-_](.)/e', "' '.strtoupper('\\1')", $page->data['@slug']));
+		$page->page_name = ucfirst(preg_replace('/[-_](.)/eu', "' '.strtoupper('\\1')", $page->data['@slug']));
 		# @root_path
 		$page->root_path = Helpers::relative_root_path();
 		# @thumb
@@ -98,7 +98,7 @@ Class PageData {
 		$page->current_year = date('Y');
 		
 		# $root
-		$page->setRoot(Helpers::list_files('./content', '/^\d+?\./', true));
+		$page->setRoot(Helpers::list_files('./content', '/^\d+?\./u', true));
 		# $parent
 			$parent_path = self::get_parent($page->file_path, $page->url_path);
 		$page->setParent($parent_path);
@@ -106,7 +106,7 @@ Class PageData {
 		$page->setParents(self::get_parents($page->file_path, $page->url_path));
 		# $siblings
 		$parent_path = !empty($parent_path[0]) ? $parent_path[0] : './content';
-		$page->setSiblings(Helpers::list_files($parent_path, '/^\d+?\./', true));
+		$page->setSiblings(Helpers::list_files($parent_path, '/^\d+?\./u', true));
 		# $next_sibling / $previous_sibling
 			$neighboring_siblings = self::extract_closest_siblings($page->data['$siblings'], $page->file_path);
 		$page->setPreviousSibling(array($neighboring_siblings[0]));
@@ -116,12 +116,12 @@ Class PageData {
 		# @index
 		$page->index = self::get_index($page->data['$siblings'], $page->file_path);		
 		# $children
-		$page->setChildren(Helpers::list_files($page->file_path, '/^\d+?\./', true));
+		$page->setChildren(Helpers::list_files($page->file_path, '/^\d+?\./u', true));
 		
 		# $images
-		$page->setImages(Helpers::list_files($page->file_path, '/(?<!thumb)\.(gif|jpg|png|jpeg)/i', false));
+		$page->setImages(Helpers::list_files($page->file_path, '/(?<!thumb)\.(gif|jpg|png|jpeg)/iu', false));
 		# $video
-		$page->setVideo(Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)/i', false));
+		$page->setVideo(Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)/iu', false));
 
 		# $swf, $html, $doc, $pdf, $mp3, etc.
 		# create a variable for each file type included within the page's folder (excluding .txt files)
@@ -139,7 +139,7 @@ Class PageData {
 		$parsed_text = ContentParser::parse("\n\n".$text."\n\n".$shared."\n\n");
 		
 		# pull out each key/value pair from the content file
-		preg_match_all('/[\w\d_-]+?:[\S\s]*?\n\n/', $parsed_text, $matches);
+		preg_match_all('/[\w\d_-]+?:[\S\s]*?\n\n/u', $parsed_text, $matches);
 		foreach($matches[0] as $match) {
 			$colon_split = explode(':', $match);
 			# store page variables within Page::data

@@ -19,7 +19,7 @@ Class Helpers {
 	}
 	
 	static function file_path_to_url($file_path) {
-	  $url = preg_replace(array('/\d+?\./', '/\.\/content(\/)?/'), '', $file_path);
+	  $url = preg_replace(array('/\d+?\./u', '/\.\/content(\/)?/u'), '', $file_path);
 		return $url ? $url : 'index';
 	}
 	
@@ -29,7 +29,7 @@ Class Helpers {
 		$url_parts = explode('/', $url);
 		foreach($url_parts as $u) {
 				# Look for a folder at the current $path
-				$matches = array_keys(Helpers::list_files($file_path, '/^(\d+?\.)?'.$u.'$/', true));
+				$matches = array_keys(Helpers::list_files($file_path, '/^(\d+?\.)?'.$u.'$/u', true));
 				# No matches means a bad url
 				if(empty($matches)) return false; 
 				else $file_path .=  '/'.$matches[0];
@@ -39,7 +39,7 @@ Class Helpers {
 	
 	static function has_children($dir) {
 		# check if this folder contains inner folders - if it does, then it is a category
-		$inner_folders = Helpers::list_files($dir, '/.*/', true);
+		$inner_folders = Helpers::list_files($dir, '/.*/u', true);
 		return !empty($inner_folders);
 	}
 
@@ -51,7 +51,7 @@ Class Helpers {
 		$files = array();
 		foreach($glob as $file) {
 			# strip out just the filename
-			preg_match('/\/([^\/]+?)$/', $file, $slug);
+			preg_match('/\/([^\/]+?)$/u', $file, $slug);
 			if(preg_match($regex, $slug[1])) $files[$slug[1]] = $file;
 		}
 		# sort list in reverse-numeric order
@@ -62,7 +62,7 @@ Class Helpers {
 	static function relative_root_path() {
 	  global $current_page_file_path;
 		$link_path = '';
-		if(!preg_match('/index/', $current_page_file_path)) {
+		if(!preg_match('/index/u', $current_page_file_path)) {
 			$slashes = explode('/', $current_page_file_path);
 			for($i = 2; $i < count($slashes); $i++) $link_path .= '../';
 		}

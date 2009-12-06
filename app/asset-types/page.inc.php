@@ -32,9 +32,9 @@ Class Page {
 	}
 	
 	function __call($name, $arguments) {
-		if(preg_match('/set(.*)/', $name, $name)) {
+		if(preg_match('/set(.*)/u', $name, $name)) {
 			# convert multiple words to underscores -- a function call of setCategoryList will create the array index $category_list
-			$var_name = strtolower(preg_replace('/(?<=.)([A-Z])/', '_\1', $name[1]));
+			$var_name = strtolower(preg_replace('/(?<=.)([A-Z])/u', '_\1', $name[1]));
 			# save into cash_data array
 			$this->data['$'.$var_name] = $arguments[0];
 		}
@@ -46,9 +46,9 @@ Class Page {
 	}
 	
 	function content_file() {
-		$txts = array_keys(Helpers::list_files($this->file_path, '/\.txt$/'));
+		$txts = array_keys(Helpers::list_files($this->file_path, '/\.txt$/u'));
 		# return first matched .txt file
-		return (!empty($txts)) ? preg_replace('/\.txt$/', '', $txts[0]) : false;
+		return (!empty($txts)) ? preg_replace('/\.txt$/u', '', $txts[0]) : false;
 	}
 	
 }

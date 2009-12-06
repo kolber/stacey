@@ -2,7 +2,7 @@ page_title: Ñame's Graphic Design Portfolio
 
 page_description: A collection of Ñame's graphic design work
 
-title: About Name
+title: About Ñame
 
 content: 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas et mauris eu magna convallis cursus. Pellentesque a justo nisl. Duis vel velit at libero ultricies consectetur. Ut sem libero, ornare in ullamcorper eget, molestie sit amet tellus. Aenean auctor porttitor consectetur. Aliquam erat volutpat. Vestibulum vulputate, erat a eleifend consequat, ipsum augue tincidunt sem, ac aliquet nibh magna nec nulla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Vestibulum mattis tellus nec tortor blandit a tempor odio mollis. 
