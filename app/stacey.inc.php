@@ -25,6 +25,11 @@ Class Stacey {
 		if(function_exists('date_default_timezone_set')) date_default_timezone_set('Australia/Melbourne');
 	}
 	
+	function custom_headers() {
+	  # set utf-8 charset header
+	  header ("Content-type: text/html; charset=utf-8");
+	}
+	
 	function etag_expired($cache) {
 		header ('Etag: "'.$cache->hash.'"');
 		if(isset($_SERVER['HTTP_IF_NONE_MATCH']) && stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) == '"'.$cache->hash.'"') {
@@ -33,14 +38,14 @@ Class Stacey {
 			header ('Content-Length: 0');
 			return false;
 		} else {
-		  # return utf-8 charset header
-		  header ("Content-type: text/html; charset=utf-8");
 			return true;
 		}
 	}
 	
 	function render($page) {
 		$cache = new Cache($page);
+		# set any custom headers
+		$this->custom_headers();
 		# if etag is still fresh, return 304 and don't render anything
 		if(!$this->etag_expired($cache)) return;
 		# if cache has expired
