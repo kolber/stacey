@@ -7,7 +7,8 @@ Class AssetFactory {
 	static function &create($file_path) {
     
     # if the file path isn't passed through as a string, return an empty data array
-    if(!is_string($file_path)) return array();
+    $data = array();
+    if(!is_string($file_path)) return $data;
     
 		# split by file extension
 		preg_match('/\.([\w\d]+?)$/u', $file_path, $split_path);
