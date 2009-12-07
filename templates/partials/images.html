@@ -1,9 +1,5 @@
-if $images do
-<div id="images">
-	foreach $images do
-		<div class="image">
-			<img src="@url" alt="@name.">
-		</div>
-	endforeach
-</div>
-endif
+foreach $images do
+	<div class="image">
+		<img src="@url" alt="@name.">
+	</div>
+endforeach

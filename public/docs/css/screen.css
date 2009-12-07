@@ -56,11 +56,10 @@ p.date { text-align: right; padding: 14px 20px 0px 0px; }
 div.description p { clear: both; }
 div.description h2 { padding: 0px 0px 15px; }
 
-div#images, div#media { clear: both; padding: 30px 0px 0px 70px; }
+div#media { clear: both; padding: 30px 0px 0px 70px; }
 div.media { margin: 0px 0px 10px; }
-div#media div#images { padding: 0px; }
 div.description div#images { padding: 0px 0px 0px 0px; }
-div#images img { margin: 0px 0px 10px; }
+div#media img { margin: 0px 0px 10px; }
 p#project-count, p#gallery-count { margin: 2px 20px 0px 0px; }
 p#gallery-count span { margin: -1px 0px 0px; display: block; }
 div#project-navigation { margin: 0px 0px 0px 20px; }

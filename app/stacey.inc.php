@@ -50,9 +50,10 @@ Class Stacey {
 		if(!$this->etag_expired($cache)) return;
 		# if cache has expired
 		if($cache->expired()) {
-			## render page & create new cache
+			# render page & create new cache
 			echo $cache->create($page);
 		} else {
+		  # render the existing cache
 			echo $cache->render();
 		}
 		
@@ -81,21 +82,6 @@ Class Stacey {
 
 		# render page
 		$this->render($page);
-
-#
-#
-# Testing data
-#
-#
-
-#    $page = new Page('index');
-#    $page = new Page('contact-me');
-#    $page = new Page('projects/project-name-10');
-#    $page = new Page('projects/movie-project-2/sub-movie-project');
-#    $page = new Page('projects/movie-project-2/sub-movie-project/sub-sub-movie-project/sub-sub-movie-project/sub-sub-movie-project');
-#		echo '<pre>';
-#		var_dump($page->data);
-#		echo '</pre>';
 		
 	}
 	

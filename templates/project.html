@@ -28,7 +28,7 @@
 					:next_page
 					:previous_page
 				</div>
-				:images
+				:media
 			</div>
 			<hr>
 			<p id="footer" class="col six">&copy; Copyright @name @current_year<br>
@@ -36,7 +36,7 @@
 		</div>
 		<script type="text/javascript" charset="utf-8">
 			// hide all images except the first on load
-			var imgs = document.getElementById('images').getElementsByTagName('div');
+			var imgs = document.getElementById('media').getElementsByTagName('img');
 			for (var i = 1; i < imgs.length; i++) imgs[i].style.display = 'none';
 		</script>
 		<script src="@root_path/docs/js/jquery-1.3.2.js" type="text/javascript" charset="utf-8"></script>
