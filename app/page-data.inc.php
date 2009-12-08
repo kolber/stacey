@@ -3,9 +3,7 @@
 Class PageData {
 	
 	static function extract_closest_siblings($siblings, $file_path) {
-
 		$neighbors = array();
-		
 		# flip keys/values
 		$siblings = array_flip($siblings);
 		# store keys as array
@@ -65,6 +63,7 @@ Class PageData {
 		if(!empty($siblings)) {
 			foreach($siblings as $sibling) {
 				$count++;
+				# return current count value
 				if($sibling == $file_path) return strval($count);
 			}
 		}
@@ -82,7 +81,7 @@ Class PageData {
 		return $file_types;
 	}
 	
-	static function create_helper_vars($page) {
+	static function create_vars($page) {
 		# @url
 		$page->url = Helpers::relative_root_path().$page->url_path.'/';
 		# @slug
@@ -97,7 +96,14 @@ Class PageData {
 		# @current_year
 		$page->current_year = date('Y');
 		
-		# $root
+		# @siblings_count
+		$page->siblings_count = strval(count($page->data['$siblings']));
+		# @index
+		$page->index = self::get_index($page->data['$siblings'], $page->file_path);
+	}
+	
+	static function create_collections($page) {
+	  # $root
 		$page->setRoot(Helpers::list_files('./content', '/^\d+?\./u', true));
 		# $parent
 			$parent_path = self::get_parent($page->file_path, $page->url_path);
@@ -111,14 +117,12 @@ Class PageData {
 			$neighboring_siblings = self::extract_closest_siblings($page->data['$siblings'], $page->file_path);
 		$page->setPreviousSibling(array($neighboring_siblings[0]));
 		$page->setNextSibling(array($neighboring_siblings[1]));
-		# @siblings_count
-		$page->siblings_count = strval(count($page->data['$siblings']));
-		# @index
-		$page->index = self::get_index($page->data['$siblings'], $page->file_path);		
 		# $children
 		$page->setChildren(Helpers::list_files($page->file_path, '/^\d+?\./u', true));
-		
-		# $images
+	}
+	
+	static function create_asset_collections($page) {
+	  # $images
 		$page->setImages(Helpers::list_files($page->file_path, '/(?<!thumb)\.(gif|jpg|png|jpeg)/iu', false));
 		# $video
 		$page->setVideo(Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)/iu', false));
@@ -146,8 +150,10 @@ Class PageData {
 			$page->$colon_split[0] = trim($colon_split[1]);
 		}
 		
-		# create each of the page-specfic helper vars
-		self::create_helper_vars($page);
+		# create each of the page-specfic helper variables
+		self::create_collections($page);
+		self::create_vars($page);
+		self::create_asset_collections($page);
 		
 	}
 	
