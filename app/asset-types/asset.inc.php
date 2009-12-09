@@ -5,6 +5,7 @@ Class Asset {
 	var $data;
 	var $link_path;
 	var $file_name;
+	static $identifiers;
 	
 	function __construct($file_path) {
 		# create and store data required for this asset

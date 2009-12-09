@@ -1,6 +1,8 @@
 <?php
 
 Class Html extends Asset {
+  
+  static $identifiers = array('html', 'htm');
 	
 	function __construct($file_path) {
 		# create and store data required for this asset
