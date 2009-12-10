@@ -10,11 +10,27 @@ Class TemplateParser {
 	
 	static function parse($data, $template) {
 		# parse template
+		if(preg_match('/get[\s]+?"\/?(.*?)\/?"/u', $template)) $template = self::parse_get($data, $template);
 		if(preg_match('/foreach[\s]+?[\$\@].+?\s+?do/u', $template)) $template = self::parse_foreach($data, $template);
 		if(preg_match('/if\s*?!?\s*?[\$\@].+?\s+?do/u', $template)) $template = self::parse_if($data, $template);
 		if(preg_match('/:([\w\d_]+?)(\.html)?\b/u', $template)) $template = self::parse_includes($data, $template);
 		$template = self::parse_vars($data, $template);
 		return $template;
+	}
+	
+	static function parse_get(&$data, $template) {
+	  # match any gets
+	  preg_match('/get[\s]+?"\/?(.*?)\/?"/u', $template, $template_parts);
+
+	  if(!empty($template_parts)) {
+	    # strip out the get line
+	    $template = str_replace($template_parts[0], '', $template);
+	    # turn route into file path
+	    $file_path = Helpers::url_to_file_path($template_parts[1]);
+	    # set data object to match file path
+	    $data = AssetFactory::get($file_path);
+    }
+    return $template;
 	}
 	
 	static function parse_if($data, $template) {
