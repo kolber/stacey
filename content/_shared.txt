@@ -1,5 +1,0 @@
-name: Name
-
-profession: Graphic Designer
-
-email: hi@yourdomain.com
