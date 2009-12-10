@@ -51,7 +51,7 @@ Class AssetFactory {
 	    # loop through each declared class 
 	    foreach(get_declared_classes() as $class) {
 	      # if the class extends 'Asset', then push it into our asset_subclasses hash
-  	    if(strtolower(get_parent_class($class)) == 'asset') self::$asset_subclasses[$class] = $class::$identifiers;
+  	    if(strtolower(get_parent_class($class)) == 'asset') self::$asset_subclasses[$class] = eval('return '.$class.'::$identifiers;'); 
   	  }
 	  }
 	}
