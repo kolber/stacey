@@ -24,6 +24,9 @@ Class Helpers {
 	}
 	
 	static function url_to_file_path($url) {
+	  # if the url is empty, we're looking for the index page
+	  $url = empty($url) ? 'index': $url;
+	  
 		$file_path = './content';
 		# Split the url and recursively unclean the parts into folder names
 		$url_parts = explode('/', $url);
