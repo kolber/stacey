@@ -1,0 +1,5 @@
+page_title: Ñame's Graphic Design Portfolio
+
+page_description: A collection of Ñame's graphic design work
+
+title: Home
