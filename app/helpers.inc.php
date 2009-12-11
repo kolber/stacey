@@ -72,6 +72,16 @@ Class Helpers {
 		return empty($link_path) ? './' : $link_path;
 	}
 	
+	static function last_modified($dir) {
+		$last_modified = 0;
+	  if(is_dir($dir)) {
+      foreach(Helpers::list_files($dir, '/.*/u', false) as $file) {
+  			if(!is_dir($file)) $last_modified = (filemtime($file) > $last_modified) ? filemtime($file) : $last_modified;
+  		}
+	  }
+		return $last_modified;
+	}
+	
 }
 
 ?>

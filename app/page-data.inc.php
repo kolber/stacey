@@ -84,6 +84,8 @@ Class PageData {
 	static function create_vars($page) {
 		# @url
 		$page->url = Helpers::relative_root_path().$page->url_path.'/';
+		# @permalink
+		$page->permalink = $page->url_path;
 		# @slug
 			$split_url = explode("/", $page->url_path);
 		$page->slug = $split_url[count($split_url) - 1];
@@ -100,6 +102,16 @@ Class PageData {
 		$page->siblings_count = strval(count($page->data['$siblings']));
 		# @index
 		$page->index = self::get_index($page->data['$siblings'], $page->file_path);
+		
+		# @stacey_version
+		$page->stacey_version = Stacey::$version;
+		# @base_url
+		$page->base_url = 'http://'.$_SERVER['HTTP_HOST'];
+		# @site_updated
+		$page->site_updated = date(DATE_ATOM);
+		# @updated
+		$page->updated = strval(date(DATE_ATOM, Helpers::last_modified($page->file_path)));
+		
 	}
 	
 	static function create_collections($page) {
