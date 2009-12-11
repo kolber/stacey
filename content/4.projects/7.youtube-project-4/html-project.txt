@@ -1,6 +1,6 @@
-page_title: Youtube Project | Ñame's Graphic Design Portfolio
+page_title: Youtube Project | Anthony Kolber's Graphic Design Portfolio
 
-page_description: The Project Name project, designed by Ñame 
+page_description: The Project Name project, designed by Anthony Kolber
 
 title: Youtube Project 4—
 
