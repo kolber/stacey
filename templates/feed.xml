@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="http://xahlee.org/Periodic_dosage_dir/">
+
+ <title>Xah's Blog</title>
+ <subtitle>Ethnology, Ethology, and Tech Geeking</subtitle>
+ <link rel="self" href="http://xahlee.org/Periodic_dosage_dir/pd.xml"/>
+ <link rel="alternate" href="http://xahlee.org/Periodic_dosage_dir/pd.html"/>
+ <updated>2006-09-11T02:35:33-07:00</updated>
+
+ <author>
+   <name>Xah Lee</name>
+   <uri>http://xahlee.org/</uri>
+ </author>
+
+ <id>http://xahlee.org/Periodic_dosage_dir/pd.html</id>
+ <icon>http://xahlee.org/siteicon.png</icon>
+ <rights>© 2006 Xah Lee</rights>
+
+ :feed_entry
+
+</feed>
