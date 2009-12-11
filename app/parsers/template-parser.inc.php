@@ -10,7 +10,7 @@ Class TemplateParser {
 	
 	static function parse($data, $template) {
 		# parse template
-		if(preg_match('/get[\s]+?"\/?(.*?)\/?"/u', $template)) $template = self::parse_get($data, $template);
+		if(preg_match('/get[\s]+?["\']\/?(.*?)\/?["\']/u', $template)) $template = self::parse_get($data, $template);
 		if(preg_match('/foreach[\s]+?[\$\@].+?\s+?do/u', $template)) $template = self::parse_foreach($data, $template);
 		if(preg_match('/if\s*?!?\s*?[\$\@].+?\s+?do/u', $template)) $template = self::parse_if($data, $template);
 		if(preg_match('/\s:([\w\d_]+?)(\.html)?\b/u', $template)) $template = self::parse_includes($data, $template);
@@ -20,7 +20,7 @@ Class TemplateParser {
 	
 	static function parse_get(&$data, $template) {
 	  # match any gets
-	  preg_match('/get[\s]+?"\/?(.*?)\/?"/u', $template, $template_parts);
+	  preg_match('/get[\s]+?["\']\/?(.*?)\/?["\']/u', $template, $template_parts);
 
 	  if(!empty($template_parts)) {
 	    # strip out the get line
