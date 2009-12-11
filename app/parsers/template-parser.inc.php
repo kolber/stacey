@@ -4,8 +4,6 @@ Class TemplateParser {
 	
 	static function get_partial_template($name) {
 		# return contents of partial file, or return 'not found' error (as text)
-		$partial = Helpers::rglob('./templates/partials/*'.$name.'.html');
-		return isset($partial[0]) ? file_get_contents($partial[0]) : 'Partial \''.$name.'.html\' not found';
 		$partial = Helpers::rglob('./templates/partials/*'.$name.'.{html,json,xml,txt}', GLOB_BRACE);
 		return isset($partial[0]) ? file_get_contents($partial[0]) : 'Partial \''.$name.'\' not found';
 	}
@@ -15,7 +13,7 @@ Class TemplateParser {
 		if(preg_match('/get[\s]+?"\/?(.*?)\/?"/u', $template)) $template = self::parse_get($data, $template);
 		if(preg_match('/foreach[\s]+?[\$\@].+?\s+?do/u', $template)) $template = self::parse_foreach($data, $template);
 		if(preg_match('/if\s*?!?\s*?[\$\@].+?\s+?do/u', $template)) $template = self::parse_if($data, $template);
-		if(preg_match('/:([\w\d_]+?)(\.html)?\b/u', $template)) $template = self::parse_includes($data, $template);
+		if(preg_match('/\s:([\w\d_]+?)(\.html)?\b/u', $template)) $template = self::parse_includes($data, $template);
 		$template = self::parse_vars($data, $template);
 		return $template;
 	}
@@ -92,7 +90,7 @@ Class TemplateParser {
 	
 	static function parse_includes($data, $template) {
 		# Split out the partial into the parts Before, Inside, and After the :include
-		preg_match('/([\S\s]*?):([\w\d_]+?)(\.html)?\b([\S\s]*)$/u', $template, $template_parts);
+		preg_match('/([\S\s]*?)\s:([\w\d_]+?)(\.html)?\b([\S\s]*)$/u', $template, $template_parts);
 		
 		###### TODO: There is no protection against endless loops due to circular inclusions
 		if(!empty($template_parts)) {
