@@ -18,24 +18,21 @@ Class PageData {
 			if(isset($keys[$keyIndexes[$file_path] + 1])) $neighbors[] = $keys[$keyIndexes[$file_path] + 1];
 			else $neighbors[] = $keys[0];
 		}
-		return !empty($neighbors) ? $neighbors : array(false, false);
+		return !empty($neighbors) ? $neighbors : array(array(), array());
 	}
 	
 	static function get_parent($file_path, $url) {
-	  # the index page has no parents, so return false
-    if($url == 'index') return false;
 
 	  # split file path by slashes
 		$split_path = explode('/', $file_path);
 		# drop the last folder from the file path
 		array_pop($split_path);
 		$parent_path = array(implode('/', $split_path));
-		return $parent_path;
+		
+		return $parent_path[0] == './content' ? array() : $parent_path;
 	}
 	
 	static function get_parents($file_path, $url) {
-	  # the index page has no parents, so return false
-	  if($url == 'index') return false;
 	  
 	  # split file path by slashes
 		$split_path = explode('/', $file_path);
@@ -48,7 +45,7 @@ Class PageData {
 		# reverse array to emulate anchestor structure
 		$parents = array_reverse($parents);
 		
-		return $parents;
+		return $parents[0] == './content' ? array() : $parents;
 	}
 	
 	static function get_thumbnail($file_path) {
@@ -116,33 +113,33 @@ Class PageData {
 	
 	static function create_collections($page) {
 	  # $root
-		$page->setRoot(Helpers::list_files('./content', '/^\d+?\./u', true));
+		$page->root = Helpers::list_files('./content', '/^\d+?\./u', true);
 		# $parent
 			$parent_path = self::get_parent($page->file_path, $page->url_path);
-		$page->setParent($parent_path);
+		$page->parent = $parent_path;
 		# $parents
-		$page->setParents(self::get_parents($page->file_path, $page->url_path));
+		$page->parents = self::get_parents($page->file_path, $page->url_path);
 		# $siblings
 		$parent_path = !empty($parent_path[0]) ? $parent_path[0] : './content';
-		$page->setSiblings(Helpers::list_files($parent_path, '/^\d+?\./u', true));
+		$page->siblings = Helpers::list_files($parent_path, '/^\d+?\./u', true);
 		# $next_sibling / $previous_sibling
 			$neighboring_siblings = self::extract_closest_siblings($page->data['$siblings'], $page->file_path);
-		$page->setPreviousSibling(array($neighboring_siblings[0]));
-		$page->setNextSibling(array($neighboring_siblings[1]));
+		$page->previous_sibling = array($neighboring_siblings[0]);
+		$page->next_sibling = array($neighboring_siblings[1]);
 		# $children
-		$page->setChildren(Helpers::list_files($page->file_path, '/^\d+?\./u', true));
+		$page->children = Helpers::list_files($page->file_path, '/^\d+?\./u', true);
 	}
 	
 	static function create_asset_collections($page) {
 	  # $images
-		$page->setImages(Helpers::list_files($page->file_path, '/(?<!thumb)\.(gif|jpg|png|jpeg)/iu', false));
+		$page->images = Helpers::list_files($page->file_path, '/(?<!thumb)\.(gif|jpg|png|jpeg)/iu', false);
 		# $video
-		$page->setVideo(Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)/iu', false));
+		$page->video = Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)/iu', false);
 
 		# $swf, $html, $doc, $pdf, $mp3, etc.
 		# create a variable for each file type included within the page's folder (excluding .txt files)
 		$assets = self::get_file_types($page->file_path);
-		foreach($assets as $asset_type => $asset_files) eval('$page->set'.ucfirst($asset_type).'($asset_files);');
+		foreach($assets as $asset_type => $asset_files) eval('$page->'.$asset_type.' = $asset_files;');
 	}
 	
 	static function create($page) {

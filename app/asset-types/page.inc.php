@@ -33,18 +33,10 @@ Class Page {
 		return TemplateParser::parse($this->data, file_get_contents($this->template_file));
 	}
 	
-	function __call($name, $arguments) {
-		if(preg_match('/set(.*)/u', $name, $name)) {
-			# convert multiple words to underscores -- a function call of setCategoryList will create the array index $category_list
-			$var_name = strtolower(preg_replace('/(?<=.)([A-Z])/u', '_\1', $name[1]));
-			# save into cash_data array
-			$this->data['$'.$var_name] = $arguments[0];
-		}
-	}
-	
-	# magic variable assignment method
+	# magic variable assignment
 	function __set($name, $value) {
-		$this->data['@'.$name] = $value;
+	  $prefix = is_array($value) ? '$' : '@';
+		$this->data[$prefix.strtolower($name)] = $value;
 	}
 	
 	function template_name() {
