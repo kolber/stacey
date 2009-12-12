@@ -1,7 +1,3 @@
-page_title: Project Name | Anthony Kolber's Graphic Design Portfolio
-
-page_description: The Project Name project, designed by Anthony Kolber
-
 title: Project 9
 
 date: 2009, Jun–
