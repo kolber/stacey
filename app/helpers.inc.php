@@ -54,7 +54,7 @@ Class Helpers {
 		$files = array();
 		foreach($glob as $file) {
 			# strip out just the filename
-			preg_match('/\/([^\/]+?)$/u', $file, $slug);
+			preg_match('/\/([^\/]+?)$/', $file, $slug);
 			if(preg_match($regex, $slug[1])) $files[$slug[1]] = $file;
 		}
 		# sort list in reverse-numeric order
