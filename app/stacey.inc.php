@@ -50,7 +50,6 @@ Class Stacey {
 		    # set html/utf-8 charset header
     	  header("Content-type: text/html; charset=utf-8");
 		}
-		
 	  
 	}
 	
@@ -103,6 +102,9 @@ Class Stacey {
 
 		# create new page object
 		$page = new Page($route);
+		
+		# return a 404 if a matching template doesn't exist
+		if(!file_exists($page->template_file)) throw new Exception('404. Page does not exist.');
 
 		# render page
 		$this->render($page);
