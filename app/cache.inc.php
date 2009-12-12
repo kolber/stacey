@@ -41,7 +41,7 @@ Class Cache {
 	}
 	
 	function get_current_hash() {
-		preg_match('/Stacey.*: (.+?)\s/u', file_get_contents($this->cachefile), $matches);
+		preg_match('/Stacey.*: (.+?)\s/', file_get_contents($this->cachefile), $matches);
 		return $matches[1];
 	}
 	
@@ -65,7 +65,7 @@ Class Cache {
 	
 	function collate_files($dir) {
 		$files_modified = '';
-		foreach(Helpers::list_files($dir, '/.*/u', false) as $file) {
+		foreach(Helpers::list_files($dir, '/.*/', false) as $file) {
 			$files_modified .= $file.':'.filemtime($file);
 			if(is_dir($file)) $files_modified .= $this->collate_files($file);
 		}

@@ -6,13 +6,13 @@ Class Stacey {
 	
 	function handle_redirects() {
 		# rewrite any calls to /index or /app back to /
-		if(preg_match('/index|app\/?$/u', $_SERVER['REQUEST_URI'])) {
+		if(preg_match('/index|app\/?$/', $_SERVER['REQUEST_URI'])) {
 			header('HTTP/1.1 301 Moved Permanently');
 			header('Location: ../');
 			return true;
 		}
 		# add trailing slash if required
-		if(!preg_match('/\/$/u', $_SERVER['REQUEST_URI'])) {
+		if(!preg_match('/\/$/', $_SERVER['REQUEST_URI'])) {
 			header('HTTP/1.1 301 Moved Permanently');
 			header('Location:'.$_SERVER['REQUEST_URI'].'/');
 			return true;
@@ -27,7 +27,7 @@ Class Stacey {
 	
 	function set_content_type($template_file) {
 	  # split by file extension
-		preg_match('/\.([\w\d]+?)$/u', $template_file, $split_path);
+		preg_match('/\.([\w\d]+?)$/', $template_file, $split_path);
 		
 		switch ($split_path[1]) {
 		  case 'txt':

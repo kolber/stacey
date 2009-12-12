@@ -5,32 +5,32 @@ Class ContentParser {
 	static function parse($text) {
 		$patterns = array(
 			# replace inline colons
-			'/(?<=\n)([a-z0-9_-]+?):(?!\/)/u',
-			'/:/u',
-			'/\\\x01/u',
+			'/(?<=\n)([a-z0-9_-]+?):(?!\/)/',
+			'/:/',
+			'/\\\x01/',
 			# replace inline dashes
-			'/(?<=\n)-/u',
-			'/-/u',
-			'/\\\x02/u',
+			'/(?<=\n)-/',
+			'/-/',
+			'/\\\x02/',
 			# automatically link http:// websites
-			'/(?<![">])\bhttps?&#58;\/\/([-A-Za-z0-9+&@#\/%\?\=~_\(\)|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|])/u',
+			'/(?<![">])\bhttps?&#58;\/\/([-A-Za-z0-9+&@#\/%\?\=~_\(\)|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|])/',
 			# automatically link email addresses
-			'/(?<![;>])\b([A-Za-z0-9.-]+)@([A-Za-z0-9.-]+\.[A-Za-z]{2,4})/u',
+			'/(?<![;>])\b([A-Za-z0-9.-]+)@([A-Za-z0-9.-]+\.[A-Za-z]{2,4})/',
 			# convert lists
-			'/\n?-(.+?)(?=\n)/u',
-			'/(<li>.*<\/li>)/u',
+			'/\n?-(.+?)(?=\n)/',
+			'/(<li>.*<\/li>)/',
 			# replace doubled lis
-			'/<\/li><\/li>/u',
+			'/<\/li><\/li>/',
 			# replace headings h1. h2. etc
-			'/h([0-5])\.\s?(.*)/u',
+			'/h([0-5])\.\s?(.*)/',
 			# wrap multi-line text in paragraphs
-			'/([^\n]+?)(?=\n)/u',
-			'/<p>(.+):(.+)<\/p>/u',
-			'/: (.+)(?=\n<p>)/u',
+			'/([^\n]+?)(?=\n)/',
+			'/<p>(.+):(.+)<\/p>/',
+			'/: (.+)(?=\n<p>)/',
 			# replace any keys that got wrapped in ps
-			'/(<p>)([a-z0-9_-]+):(<\/p>)/u',
+			'/(<p>)([a-z0-9_-]+):(<\/p>)/',
 			# replace any headings that got wrapped in ps
-			'/<p>(<h[0-5]>.*<\/h[0-5]>)<\/p>/u'
+			'/<p>(<h[0-5]>.*<\/h[0-5]>)<\/p>/'
 		);
 		$replacements = array(
 			# replace inline colons

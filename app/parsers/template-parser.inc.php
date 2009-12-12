@@ -10,17 +10,17 @@ Class TemplateParser {
 	
 	static function parse($data, $template) {
 		# parse template
-		if(preg_match('/get[\s]+?["\']\/?(.*?)\/?["\']/u', $template)) $template = self::parse_get($data, $template);
-		if(preg_match('/foreach[\s]+?[\$\@].+?\s+?do/u', $template)) $template = self::parse_foreach($data, $template);
-		if(preg_match('/if\s*?!?\s*?[\$\@].+?\s+?do/u', $template)) $template = self::parse_if($data, $template);
-		if(preg_match('/\s:([\w\d_]+?)(\.html)?\b/u', $template)) $template = self::parse_includes($data, $template);
+		if(preg_match('/get[\s]+?["\']\/?(.*?)\/?["\']/', $template)) $template = self::parse_get($data, $template);
+		if(preg_match('/foreach[\s]+?[\$\@].+?\s+?do/', $template)) $template = self::parse_foreach($data, $template);
+		if(preg_match('/if\s*?!?\s*?[\$\@].+?\s+?do/', $template)) $template = self::parse_if($data, $template);
+		if(preg_match('/\s:([\w\d_]+?)(\.html)?\b/', $template)) $template = self::parse_includes($data, $template);
 		$template = self::parse_vars($data, $template);
 		return $template;
 	}
 	
 	static function parse_get(&$data, $template) {
 	  # match any gets
-	  preg_match('/get[\s]+?["\']\/?(.*?)\/?["\']/u', $template, $template_parts);
+	  preg_match('/get[\s]+?["\']\/?(.*?)\/?["\']/', $template, $template_parts);
 
 	  if(!empty($template_parts)) {
 	    # strip out the get line
@@ -35,7 +35,7 @@ Class TemplateParser {
 	
 	static function parse_if($data, $template) {
 		# match any inner if statements
-		preg_match('/([\S\s]*?)if\s*?(!)?\s*?([\$\@].+?)\s+?do\s+?([\S\s]+?)endif([\S\s]*)$/u', $template, $template_parts);
+		preg_match('/([\S\s]*?)if\s*?(!)?\s*?([\$\@].+?)\s+?do\s+?([\S\s]+?)endif([\S\s]*)$/', $template, $template_parts);
 		
 		if(!empty($template_parts)) {
 			# Run the replacements on the pre-"if" part of the partial
@@ -65,7 +65,7 @@ Class TemplateParser {
 	
 	static function parse_foreach($data, $template) {
 		# split out the partial into the parts Before, Inside, and After the foreach loop
-		preg_match('/([\S\s]*?)foreach[\s]+?([\$\@].+?)\s+?do\s+?([\S\s]+)endforeach([\S\s]*)$/u', $template, $template_parts);
+		preg_match('/([\S\s]*?)foreach[\s]+?([\$\@].+?)\s+?do\s+?([\S\s]+)endforeach([\S\s]*)$/', $template, $template_parts);
 		if(!empty($template_parts)) {
 			# run the replacements on the pre-"foreach" part of the partial
 			$template = self::parse($data, $template_parts[1]);
@@ -90,7 +90,7 @@ Class TemplateParser {
 	
 	static function parse_includes($data, $template) {
 		# Split out the partial into the parts Before, Inside, and After the :include
-		preg_match('/([\S\s]*?)\s:([\w\d_]+?)(\.html)?\b([\S\s]*)$/u', $template, $template_parts);
+		preg_match('/([\S\s]*?)\s:([\w\d_]+?)(\.html)?\b([\S\s]*)$/', $template, $template_parts);
 		
 		###### TODO: There is no protection against endless loops due to circular inclusions
 		if(!empty($template_parts)) {

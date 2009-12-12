@@ -19,7 +19,7 @@ Class Helpers {
 	}
 	
 	static function file_path_to_url($file_path) {
-	  $url = preg_replace(array('/\d+?\./u', '/\.\/content(\/)?/u'), '', $file_path);
+	  $url = preg_replace(array('/\d+?\./', '/\.\/content(\/)?/'), '', $file_path);
 		return $url ? $url : 'index';
 	}
 	
@@ -32,7 +32,7 @@ Class Helpers {
 		$url_parts = explode('/', $url);
 		foreach($url_parts as $u) {
 				# Look for a folder at the current $path
-				$matches = array_keys(Helpers::list_files($file_path, '/^(\d+?\.)?'.$u.'$/u', true));
+				$matches = array_keys(Helpers::list_files($file_path, '/^(\d+?\.)?'.$u.'$/', true));
 				# No matches means a bad url
 				if(empty($matches)) return false; 
 				else $file_path .=  '/'.$matches[0];
@@ -42,7 +42,7 @@ Class Helpers {
 	
 	static function has_children($dir) {
 		# check if this folder contains inner folders - if it does, then it is a category
-		$inner_folders = Helpers::list_files($dir, '/.*/u', true);
+		$inner_folders = Helpers::list_files($dir, '/.*/', true);
 		return !empty($inner_folders);
 	}
 
@@ -65,7 +65,7 @@ Class Helpers {
 	static function relative_root_path() {
 	  global $current_page_file_path;
 		$link_path = '';
-		if(!preg_match('/index/u', $current_page_file_path)) {
+		if(!preg_match('/index/', $current_page_file_path)) {
 			$slashes = explode('/', $current_page_file_path);
 			for($i = 2; $i < count($slashes); $i++) $link_path .= '../';
 		}
@@ -75,7 +75,7 @@ Class Helpers {
 	static function last_modified($dir) {
 		$last_modified = 0;
 	  if(is_dir($dir)) {
-      foreach(Helpers::list_files($dir, '/.*/u', false) as $file) {
+      foreach(Helpers::list_files($dir, '/.*/', false) as $file) {
   			if(!is_dir($file)) $last_modified = (filemtime($file) > $last_modified) ? filemtime($file) : $last_modified;
   		}
 	  }

@@ -51,7 +51,7 @@ Class PageData {
 	static function get_thumbnail($file_path) {
 		$thumbnails = array_keys(Helpers::list_files($file_path, '/thumb\.(gif|jpg|png|jpeg)/iu', false));
 		# replace './content' with relative path back to the root of the app
-		$relative_path = preg_replace('/^\.\//u', Helpers::relative_root_path(), $file_path);
+		$relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $file_path);
 		return (!empty($thumbnails)) ? $relative_path.'/'.$thumbnails[0] : false;
 	}
 	
@@ -70,8 +70,8 @@ Class PageData {
 	static function get_file_types($file_path) {
 	  $file_types = array();
 		# create an array for each file extension
-		foreach(Helpers::list_files($file_path, '/\.[\w\d]+?$/u', false) as $filename => $file_path) {
-		  preg_match('/(?<!thumb)\.(?!txt)([\w\d]+?)$/u', $filename, $ext);
+		foreach(Helpers::list_files($file_path, '/\.[\w\d]+?$/', false) as $filename => $file_path) {
+		  preg_match('/(?<!thumb)\.(?!txt)([\w\d]+?)$/', $filename, $ext);
 		  # return an hash containing arrays grouped by file extension
 		  if(isset($ext[1])) $file_types[$ext[1]][$filename] = $file_path;
 		}
@@ -113,7 +113,7 @@ Class PageData {
 	
 	static function create_collections($page) {
 	  # $root
-		$page->root = Helpers::list_files('./content', '/^\d+?\./u', true);
+		$page->root = Helpers::list_files('./content', '/^\d+?\./', true);
 		# $parent
 			$parent_path = self::get_parent($page->file_path, $page->url_path);
 		$page->parent = $parent_path;
@@ -121,13 +121,13 @@ Class PageData {
 		$page->parents = self::get_parents($page->file_path, $page->url_path);
 		# $siblings
 		$parent_path = !empty($parent_path[0]) ? $parent_path[0] : './content';
-		$page->siblings = Helpers::list_files($parent_path, '/^\d+?\./u', true);
+		$page->siblings = Helpers::list_files($parent_path, '/^\d+?\./', true);
 		# $next_sibling / $previous_sibling
 			$neighboring_siblings = self::extract_closest_siblings($page->data['$siblings'], $page->file_path);
 		$page->previous_sibling = array($neighboring_siblings[0]);
 		$page->next_sibling = array($neighboring_siblings[1]);
 		# $children
-		$page->children = Helpers::list_files($page->file_path, '/^\d+?\./u', true);
+		$page->children = Helpers::list_files($page->file_path, '/^\d+?\./', true);
 	}
 	
 	static function create_asset_collections($page) {
@@ -152,7 +152,7 @@ Class PageData {
 		$parsed_text = ContentParser::parse("\n\n".$text."\n\n".$shared."\n\n");
 		
 		# pull out each key/value pair from the content file
-		preg_match_all('/[\w\d_-]+?:[\S\s]*?\n\n/u', $parsed_text, $matches);
+		preg_match_all('/[\w\d_-]+?:[\S\s]*?\n\n/', $parsed_text, $matches);
 		foreach($matches[0] as $match) {
 			$colon_split = explode(':', $match);
 			# store page variables within Page::data
