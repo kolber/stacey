@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom" xml:base="http://xahlee.org/Periodic_dosage_dir/">
+  <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en" xml:base="@base_url">
 
- <title>Xah's Blog</title>
- <subtitle>Ethnology, Ethology, and Tech Geeking</subtitle>
- <link rel="self" href="http://xahlee.org/Periodic_dosage_dir/pd.xml"/>
- <link rel="alternate" href="http://xahlee.org/Periodic_dosage_dir/pd.html"/>
- <updated>2006-09-11T02:35:33-07:00</updated>
+  <title>@name</title>
+  <subtitle>@profession</subtitle>
+  <link href="@base_url/@permalink" hreflang="en" rel="self" type="application/atom+xml"/>
+  <link href="@base_url" hreflang="en" rel="alternate" type="text/html"/>
+  
+  <updated>@site_updated</updated>
+  <generator uri="http://staceyapp.com/" version="@stacey_version">Stacey</generator>
 
- <author>
-   <name>Xah Lee</name>
-   <uri>http://xahlee.org/</uri>
- </author>
+  <author>
+    <name>@name</name>
+    <uri>@base_url</uri>
+  </author>
 
- <id>http://xahlee.org/Periodic_dosage_dir/pd.html</id>
- <icon>http://xahlee.org/siteicon.png</icon>
- <rights>© 2006 Xah Lee</rights>
-
- :feed_entry
+  <id>tag:@base_url/@permalink,@site_updated</id>
+  <rights>©@current_year @name</rights>
+  :feed_loop
 
 </feed>

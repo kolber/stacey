@@ -1,0 +1,3 @@
+foreach $images do
+  <img src="@url" alt="@name."/>
+endforeach

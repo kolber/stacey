@@ -1,0 +1,4 @@
+foreach $root do
+  :feed_entry
+  :feed_children
+endforeach

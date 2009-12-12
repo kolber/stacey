@@ -1,0 +1,7 @@
+if $images do
+  :feed_images
+endif
+
+if $html do
+  :feed_html
+endif
