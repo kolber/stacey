@@ -108,7 +108,7 @@ Class PageData {
 		# @base_url
 		$page->base_url = 'http://'.$_SERVER['HTTP_HOST'];
 		# @site_updated
-		$page->site_updated = date(DATE_ATOM);
+		$page->site_updated = strval(date(DATE_ATOM));
 		# @updated
 		$page->updated = strval(date(DATE_ATOM, Helpers::last_modified($page->file_path)));
 		
