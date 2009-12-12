@@ -71,7 +71,7 @@ Class TemplateParser {
 			$template = self::parse($data, $template_parts[1]);
 			
 			# traverse one level deeper into the data hierachy
-			$pages = (isset($data[$template_parts[2]]) && is_array($data[$template_parts[2]])) ? $data[$template_parts[2]] : false;
+			$pages = (isset($data[$template_parts[2]]) && is_array($data[$template_parts[2]]) && !empty($data[$template_parts[2]])) ? $data[$template_parts[2]] : false;
 			
 			if($pages) {
 				foreach($pages as $data_item) {
