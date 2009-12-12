@@ -34,9 +34,13 @@ Class Stacey {
 	      # set text/utf-8 charset header
   	    header("Content-type: text/plain; charset=utf-8");
 		    break;
-		  case 'xml':
+		  case 'atom':
 		    # set atom+xml/utf-8 charset header
     	  header("Content-type: application/atom+xml; charset=utf-8");
+		    break;
+      case 'xml':
+		    # set xml/utf-8 charset header
+    	  header("Content-type: text/xml; charset=utf-8");
 		    break;
 		  case 'json':
 		    # set json/utf-8 charset header

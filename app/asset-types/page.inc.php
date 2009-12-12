@@ -54,7 +54,7 @@ Class Page {
 	}
 	
 	function template_file() {
-	  $template_file = glob('./templates/'.$this->template_name.'.{html,json,xml,txt}', GLOB_BRACE);
+	  $template_file = glob('./templates/'.$this->template_name.'.{html,json,xml,txt,atom}', GLOB_BRACE);
 	  return !empty($template_file) ? $template_file[0] : false;
 	}
 	
