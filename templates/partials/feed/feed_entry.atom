@@ -1,12 +1,12 @@
 <entry>
    <title>@title</title>
-   <id>tag:@base_url/@permalink,@updated</id>
+   <id>tag:@base_url,@current_year:/@permalink</id>
    <updated>@updated</updated>
    <summary>@page_description</summary>
-   <link rel="alternate" type="text/html" href="@base_url/@permalink" />
-   <content type="xhtml" xml:base="@base_url" xml:lang="en">
+   <link rel="alternate" type="text/html" href="http://@base_url/@permalink/" />
+   <content type="xhtml" xml:base="http://@base_url" xml:lang="en">
       <div xmlns="http://www.w3.org/1999/xhtml">
-          :feed_media
+          :feed_images
           if @content do 
             @content
           endif

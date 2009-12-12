@@ -103,11 +103,11 @@ Class PageData {
 		# @stacey_version
 		$page->stacey_version = Stacey::$version;
 		# @base_url
-		$page->base_url = 'http://'.$_SERVER['HTTP_HOST'];
+		$page->base_url = $_SERVER['HTTP_HOST'];
 		# @site_updated
-		$page->site_updated = strval(date(DATE_ATOM));
+		$page->site_updated = strval(date('c'));
 		# @updated
-		$page->updated = strval(date(DATE_ATOM, Helpers::last_modified($page->file_path)));
+		$page->updated = strval(date('c', Helpers::last_modified($page->file_path)));
 		
 	}
 	
