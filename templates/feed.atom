@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
   <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
 
-  <title>@name</title>
+  <title>@name's Portfolio @feed_name</title>
   <subtitle>@profession</subtitle>
   <link href="http://@base_url/@permalink/" hreflang="en" rel="self" type="application/atom+xml"/>
   <link href="http://@base_url/" hreflang="en" rel="alternate" type="text/html"/>
