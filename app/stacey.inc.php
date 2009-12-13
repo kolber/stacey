@@ -102,7 +102,7 @@ Class Stacey {
     $file_path = Helpers::url_to_file_path($route);
 
     # return a 404 if a matching folder doesn't exist
-		if(!file_exists($file_path)) throw new Exception('404. Page does not exist.');
+		if(!file_exists($file_path)) throw new Exception('404');
 
     # register global for the path to the page which is currently being loaded
 		global $current_page_file_path;
@@ -110,9 +110,6 @@ Class Stacey {
 
 		# create new page object
 		$page = new Page($route);
-		
-		# return a 404 if a matching template doesn't exist
-		if(!file_exists($page->template_file)) throw new Exception('404. Page does not exist.');
 
 		# render page
 		$this->render($page);

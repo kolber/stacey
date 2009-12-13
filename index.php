@@ -18,12 +18,14 @@ try {
   
 } catch(Exception $e) {
   
-  # return 404
-	header('HTTP/1.0 404 Not Found');
-	# if there is a 404 page set, use it
-	if(file_exists('./public/404.html')) echo file_get_contents('./public/404.html');
-	# otherwise, use this text as the default
-	else echo '<h1>404</h1><h2>Page could not be found.</h2><p>Unfortunately, the page you were looking for does not exist here.</p>';
+  if($e->getMessage() == "404") {
+    # return 404 headers
+  	header('HTTP/1.0 404 Not Found');
+  	if(file_exists('./public/404.html')) echo file_get_contents('./public/404.html');
+  	else echo '<h1>404</h1><h2>Page could not be found.</h2><p>Unfortunately, the page you were looking for does not exist here.</p>';
+  } else {
+    echo '<h3>'.$e->getMessage().'</h3>';
+  }
 
 }
 
