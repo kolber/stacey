@@ -6,7 +6,7 @@ Class Stacey {
 	
 	function handle_redirects() {
 		# rewrite any calls to /index or /app back to /
-		if(preg_match('/index|app\/?$/', $_SERVER['REQUEST_URI'])) {
+		if(preg_match('/(index|app)\/?$/', $_SERVER['REQUEST_URI'])) {
 			header('HTTP/1.1 301 Moved Permanently');
 			header('Location: ../');
 			return true;
