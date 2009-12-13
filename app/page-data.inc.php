@@ -102,6 +102,8 @@ Class PageData {
 		
 		# @stacey_version
 		$page->stacey_version = Stacey::$version;
+		# @domain_name
+		$page->domain_name = $_SERVER['HTTP_HOST'];
 		# @base_url
 		$page->base_url = $_SERVER['HTTP_HOST'].str_replace('/index.php', '', $_SERVER['PHP_SELF']);
 		# @site_updated

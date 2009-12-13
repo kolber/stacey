@@ -14,7 +14,7 @@
     <uri>http://@base_url</uri>
   </author>
 
-  <id>tag:@base_url,@current_year:/@permalink</id>
+  <id>tag:@domain_name,@current_year:/@permalink</id>
   <rights>©@current_year @name</rights>
   :feed_loop
 
