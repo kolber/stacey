@@ -36,12 +36,16 @@ Class TemplateParser {
 	static function parse_get(&$data, $template) {
 	  # match any gets
 	  preg_match('/get[\s]+?["\']\/?(.*?)\/?["\']/', $template, $template_parts);
-    # strip out the get line
-    $template = str_replace($template_parts[0], '', $template);
-    # turn route into file path
+	  # turn route into file path
     $file_path = Helpers::url_to_file_path($template_parts[1]);
-    # set data object to match file path
-    $data = AssetFactory::get($file_path);
+    # if the route exists...
+    if(file_exists($file_path)) {
+      # strip out the get line
+      $template = str_replace($template_parts[0], '', $template);
+      # set data object to match file path
+      $data = AssetFactory::get($file_path);
+    }
+    
     return $template;
 	}
 	
