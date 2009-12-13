@@ -103,7 +103,7 @@ Class PageData {
 		# @stacey_version
 		$page->stacey_version = Stacey::$version;
 		# @base_url
-		$page->base_url = $_SERVER['HTTP_HOST'];
+		$page->base_url = $_SERVER['HTTP_HOST'].str_replace('/index.php', '', $_SERVER['PHP_SELF']);
 		# @site_updated
 		$page->site_updated = strval(date('c'));
 		# @updated
