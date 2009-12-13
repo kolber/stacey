@@ -2,7 +2,7 @@
 
 Class Stacey {
 	
-	static $version = '2.0RC';
+	static $version = '2.0RC1';
 	
 	function handle_redirects() {
 		# rewrite any calls to /index or /app back to /
