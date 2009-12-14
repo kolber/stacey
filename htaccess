@@ -9,6 +9,12 @@ RewriteEngine on
 
 ErrorDocument 404 /404.html
 
+# Rewrite any calls to *.html, *.json, *.xml, *.atom, *.rss, *.rdf or *.txt if a folder matching * exists
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !public/
+RewriteCond %{DOCUMENT_ROOT}/public/$1.$2 !-f
+RewriteRule (.+)\.(html|json|xml|atom|rss|rdf|txt)$ $1/ [L]
+
 # Add a trailing slash to directories
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

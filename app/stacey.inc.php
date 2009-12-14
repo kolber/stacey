@@ -13,7 +13,7 @@ Class Stacey {
 			return true;
 		}
 		# add trailing slash if required
-		if(!preg_match('/\/$/', $_SERVER['REQUEST_URI'])) {
+		if(!preg_match('/\/$/', $_SERVER['REQUEST_URI']) && !preg_match('/\./', $_SERVER['REQUEST_URI'])) {
 			header('HTTP/1.1 301 Moved Permanently');
 			header('Location:'.$_SERVER['REQUEST_URI'].'/');
 			return true;
