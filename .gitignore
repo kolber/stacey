@@ -1,3 +1,4 @@
 .DS_Store
 app/cache/*
 !app/cache/.gitignore
+logs
