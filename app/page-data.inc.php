@@ -99,6 +99,8 @@ Class PageData {
 		$page->siblings_count = strval(count($page->data['$siblings']));
 		# @index
 		$page->index = self::get_index($page->data['$siblings'], $page->file_path);
+		# @is_current_page
+		$page->is_current_page = ($page->data['@permalink'] == 'index') ? '/' == $_SERVER['REQUEST_URI'] : '/'.$page->data['@permalink'].'/' == $_SERVER['REQUEST_URI'];
 		
 		# @stacey_version
 		$page->stacey_version = Stacey::$version;
