@@ -3,10 +3,11 @@
 Class Stacey {
 	
 	static $version = '2.0RC1';
-	
+		
 	function handle_redirects() {
 		# rewrite any calls to /index or /app back to /
-		if(preg_match('/(index|app)\/?$/', $_SERVER['REQUEST_URI'])) {
+		if(preg_match('/^\/?(index|app)\/?$/', $_SERVER['REQUEST_URI'])) {
+  		echo $_SERVER['REQUEST_URI'].'<br>';
 			header('HTTP/1.1 301 Moved Permanently');
 			header('Location: ../');
 			return true;
