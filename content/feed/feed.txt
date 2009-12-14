@@ -1,1 +1,1 @@
-feed_name: Feed
+feed_name: Portfolio Feed
