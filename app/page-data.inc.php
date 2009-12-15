@@ -45,7 +45,7 @@ Class PageData {
 		# reverse array to emulate anchestor structure
 		$parents = array_reverse($parents);
 		
-		return $parents[0] == './content' ? array() : $parents;
+		return (count($parents) < 2) ? array() : $parents;
 	}
 	
 	static function get_thumbnail($file_path) {
