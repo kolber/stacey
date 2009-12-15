@@ -73,7 +73,7 @@ Class PageData {
 		foreach(Helpers::list_files($file_path, '/\.[\w\d]+?$/', false) as $filename => $file_path) {
 		  preg_match('/(?<!thumb)\.(?!txt)([\w\d]+?)$/', $filename, $ext);
 		  # return an hash containing arrays grouped by file extension
-		  if(isset($ext[1])) $file_types[$ext[1]][$filename] = $file_path;
+		  if(isset($ext[1]) && !is_dir($file_path)) $file_types[$ext[1]][$filename] = $file_path;
 		}
 		return $file_types;
 	}
