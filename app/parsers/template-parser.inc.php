@@ -121,7 +121,8 @@ Class TemplateParser {
 		# split out the partial into the parts Before, Inside, and After the @var
 		
 		foreach($data as $key => $value) {
-			if(is_string($value)) $template = str_replace($key, $value, $template);
+		  $var = ($key == '@root_path') ? $key.'\/?' : $key;
+			if(is_string($value)) $template = preg_replace('/'.$var.'/', $value, $template);
 		}
 		
 		# replace any remaining @ symbols with their html entity code equivalents to prevent vars being replaced in the incorrect context 
