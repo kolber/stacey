@@ -50,7 +50,7 @@ ul#navigation li, ul.projects li { clear: both; }
 ul#navigation ol { display: none; margin: 0px; padding: 4px 0px 4px 25px; }
 ul.projects li { float: left; padding: 0px 0px 8px; }
 
-p#footer { margin: 0px 0px 0px 260px; display: inline; }
+p#footer { margin: 0px 0px 0px 260px; display: inline; line-height: 1.4; }
 
 p.date { text-align: right; padding: 14px 20px 0px 0px; }
 div.description p { clear: both; }
@@ -72,7 +72,7 @@ div#image-wrapper div#image-holder div.image { float: left; width: 560px; }
 
 img.project-thumb { padding: 0px 10px 5px 0px; float: left; display: none; }
 
-a.atom-rss { background: #999; color: #fff; padding: 1px 4px; margin: 0px 0px 0px 3px; border: 1px solid; font-size: 0.85em; letter-spacing: 0.1em; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
+a.atom-rss { margin: 0px 0px 0px 6px; padding: 1px 2px 0px; font-size: 0.93em; letter-spacing: 0.08em; background: #ddd; }
 
 /* Javascript-enabled styles */
 body.js-enabled p#gallery-count, body.js-enabled div#gallery-navigation { display: block; }
