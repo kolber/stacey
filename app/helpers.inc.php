@@ -66,8 +66,12 @@ Class Helpers {
 	  global $current_page_file_path;
 		$link_path = '';
 		if(!preg_match('/index/', $current_page_file_path)) {
-			$slashes = explode('/', $current_page_file_path);
-			for($i = 2; $i < count($slashes); $i++) $link_path .= '../';
+		  # split file path by slashes
+			$split_path = explode('/', $current_page_file_path);
+			# if the request uri is pointing at a document, drop another folder from the file path
+  		if (preg_match('/\./', $_SERVER['REQUEST_URI'])) array_pop($split_path);
+  		# add a ../ for each parent folder
+			for($i = 2; $i < count($split_path); $i++) $link_path .= '../';
 		}
 		return empty($link_path) ? './' : $link_path;
 	}
