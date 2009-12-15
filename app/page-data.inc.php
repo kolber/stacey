@@ -49,7 +49,7 @@ Class PageData {
 	}
 	
 	static function get_thumbnail($file_path) {
-		$thumbnails = array_keys(Helpers::list_files($file_path, '/thumb\.(gif|jpg|png|jpeg)/i', false));
+		$thumbnails = array_keys(Helpers::list_files($file_path, '/thumb\.(gif|jpg|png|jpeg)$/i', false));
 		# replace './content' with relative path back to the root of the app
 		$relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $file_path);
 		return (!empty($thumbnails)) ? $relative_path.'/'.$thumbnails[0] : false;
@@ -150,9 +150,9 @@ Class PageData {
 	
 	static function create_asset_collections($page) {
 	  # $images
-		$page->images = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(gif|jpg|png|jpeg)/i', false);
+		$page->images = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(gif|jpg|png|jpeg)$/i', false);
 		# $video
-		$page->video = Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)/i', false);
+		$page->video = Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)$/i', false);
 
 		# $swf, $html, $doc, $pdf, $mp3, etc.
 		# create a variable for each file type included within the page's folder (excluding .txt files)
