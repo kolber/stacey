@@ -9,7 +9,7 @@ Class Helpers {
 		}
 		$paths = glob($path . '*', GLOB_ONLYDIR | GLOB_NOSORT);
 		$files = glob($path . $pattern, $flags);
-		if(is_array($paths)) {
+		if(is_array($paths) && is_array($files)) {
 		  foreach ($paths as $p) $files = array_merge($files, self::rglob($pattern, $flags, $p . '/'));
 		}
 		return $files;
