@@ -46,9 +46,9 @@ Class Page {
 	}
 	
 	function template_file() {
-	  $template_file = glob('./templates/'.$this->template_name.'.{html,json,atom,rss,rdf,xml,txt}', GLOB_BRACE);
-	  # error out if template file doesn't exist
-	  if(empty($template_file)) throw new Exception('A template named \''.$this->template_name.'\' could not be found in the /templates folder.');
+    $template_file = glob('./templates/'.$this->template_name.'.{html,json,atom,rss,rdf,xml,txt}', GLOB_BRACE);
+	  # error out if template file doesn't exist (or glob returns an error)
+	  if(!$template_file || empty($template_file)) throw new Exception('A template named \''.$this->template_name.'\' could not be found in the \'/templates\' folder');
 	  return $template_file[0];
 	}
 	
