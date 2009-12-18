@@ -67,6 +67,15 @@ Class PageData {
 		return strval($count);
 	}
 	
+	static function is_current_page($base_url, $permalink) {
+	  $base_path = preg_replace('/^[^\/]+/', '', $base_url);
+  	if($permalink == 'index') {
+  	  return ('/' == $_SERVER['REQUEST_URI']);
+  	} else {
+  	  return ($base_path.'/'.$permalink.'/' == $_SERVER['REQUEST_URI']);
+  	}
+	}
+	
 	static function get_file_types($file_path) {
 	  $file_types = array();
 		# create an array for each file extension
@@ -109,13 +118,6 @@ Class PageData {
 		# @current_year
 		$page->current_year = date('Y');
 		
-		# @siblings_count
-		$page->siblings_count = strval(count($page->data['$siblings']));
-		# @index
-		$page->index = self::get_index($page->data['$siblings'], $page->file_path);
-		# @is_current_page
-		$page->is_current_page = ($page->data['@permalink'] == 'index') ? '/' == $_SERVER['REQUEST_URI'] : '/'.$page->data['@permalink'].'/' == $_SERVER['REQUEST_URI'];
-		
 		# @stacey_version
 		$page->stacey_version = Stacey::$version;
 		# @domain_name
@@ -126,6 +128,14 @@ Class PageData {
 		$page->site_updated = strval(date('c'));
 		# @updated
 		$page->updated = strval(date('c', Helpers::last_modified($page->file_path)));
+		
+		# @is_current_page
+		$page->is_current_page = self::is_current_page($page->data['@base_url'], $page->data['@permalink']);
+		
+		# @siblings_count
+		$page->siblings_count = strval(count($page->data['$siblings']));
+		# @index
+		$page->index = self::get_index($page->data['$siblings'], $page->file_path);
 		
 	}
 	
