@@ -12,7 +12,7 @@ Class Helpers {
 		if(is_array($paths) && is_array($files)) {
 		  foreach ($paths as $p) $files = array_merge($files, self::rglob($pattern, $flags, $p . '/'));
 		}
-		return $files;
+		return is_array($files) ? $files : array();
 	}
 	
 	static function sort_by_length($a,$b){
