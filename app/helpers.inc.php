@@ -9,7 +9,7 @@ Class Helpers {
 		}
 		$paths = glob($path . '*', GLOB_ONLYDIR | GLOB_NOSORT);
 		$files = glob($path . $pattern, $flags);
-		if(is_array($paths) && is_array($files)) {
+		if(is_array($paths)) {
 		  foreach ($paths as $p) $files = array_merge($files, self::rglob($pattern, $flags, $p . '/'));
 		}
 		return is_array($files) ? $files : array();
@@ -50,7 +50,7 @@ Class Helpers {
 
 	static function list_files($dir, $regex, $folders_only = false) {
 		$glob = ($folders_only) ? glob($dir."/*", GLOB_ONLYDIR) : glob($dir."/*");
-		$glob = !$glob ? array() : $glob;
+		$glob = is_array($glob) ? $glob : array();
 		# loop through each glob result and push it to $dirs if it matches the passed regexp
 		$files = array();
 		foreach($glob as $file) {
