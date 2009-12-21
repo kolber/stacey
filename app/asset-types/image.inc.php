@@ -17,12 +17,14 @@ Class Image extends Asset {
 		$large_version_path = preg_replace('/(\.[\w\d]+?)$/', '_lge$1', $this->link_path);
 		
 		# if a matching _sml version exists, set @small
-		if(file_exists(preg_replace('/(\.\.\/)+/', './', $small_version_path))) {
+		$small_relative_path = preg_replace('/(\.\.\/)+/', './', $small_version_path);
+		if(file_exists($small_relative_path) && !is_dir($small_relative_path)) {
 		  $this->data['@small'] = $small_version_path;
 		}
 		
 		# if a matching _lge version exists, set @large
-		if(file_exists(preg_replace('/(\.\.\/)+/', './', $large_version_path))) {
+		$large_relative_path = preg_replace('/(\.\.\/)+/', './', $large_version_path);
+		if(file_exists($large_relative_path) && !is_dir($large_relative_path)) {
 		  $this->data['@large'] = $large_version_path;
 		}
 		
