@@ -18,7 +18,7 @@ Class PageData {
 			if(isset($keys[$keyIndexes[$file_path] + 1])) $neighbors[] = $keys[$keyIndexes[$file_path] + 1];
 			else $neighbors[] = $keys[0];
 		}
-		return !empty($neighbors) ? $neighbors : array(array(), array());
+		return !empty($neighbors) ? $neighbors : array(false, false);
 	}
 	
 	static function get_parent($file_path, $url) {
@@ -154,6 +154,7 @@ Class PageData {
 			$neighboring_siblings = self::extract_closest_siblings($page->data['$siblings'], $page->file_path);
 		$page->previous_sibling = array($neighboring_siblings[0]);
 		$page->next_sibling = array($neighboring_siblings[1]);
+		
 		# $children
 		$page->children = Helpers::list_files($page->file_path, '/^\d+?\./', true);
 	}
