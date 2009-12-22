@@ -1,6 +1,3 @@
-AddType "text/html; charset=UTF-8" html
-AddType "text/plain; charset=UTF-8" txt
-
 RewriteEngine on
 
 # Some hosts require a rewritebase rule, if so, uncomment the RewriteBase line below. If you are running from a subdirectory, your rewritebase should match the name of the path to where stacey is stored.
