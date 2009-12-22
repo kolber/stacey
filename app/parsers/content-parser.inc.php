@@ -5,7 +5,7 @@ Class ContentParser {
 	static function parse($text) {
 		$patterns = array(
 			# replace inline colons
-			'/(?<=\n)([a-z0-9_-]+?):(?!\/)/',
+			'/(?<=\n)([\w\d_\-]+?):(?!\/)/',
 			'/:/',
 			'/\\\x01/',
 			# replace inline dashes

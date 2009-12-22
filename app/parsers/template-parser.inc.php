@@ -36,7 +36,7 @@ Class TemplateParser {
 		  $template = self::parse_includes($data, $template);
 		}
 		
-		if(preg_match('/\@[\w\d-_]+?/', $template)) {
+		if(preg_match('/\@[\w\d_\-]+?/', $template)) {
 		  $template = self::parse_vars($data, $template);
 		}
 		
@@ -129,7 +129,6 @@ Class TemplateParser {
 	
 	static function parse_vars($data, $template) {
 		# split out the partial into the parts Before, Inside, and After the @var
-		
 		foreach($data as $key => $value) {
 		  $var = ($key == '@root_path') ? $key.'\/?' : $key;
 			if(is_string($value)) $template = preg_replace('/'.$var.'/', $value, $template);
