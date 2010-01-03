@@ -101,6 +101,9 @@ Class Stacey {
 
 		# create new page object
 		$page = new Page($route);
+		
+		# error out if template file doesn't exist (or glob returns an error)
+	  if(!$page->template_file || empty($page->template_file)) throw new Exception('A template named \''.$page->template_name.'\' could not be found in the \'/templates\' folder');
 
 		# render page
 		$this->render($page);
@@ -118,7 +121,7 @@ Class Stacey {
     $file_path = Helpers::url_to_file_path($route);
 
     try {
-      
+
       # create and render the current page
       $this->create_page($file_path, $route);
 
