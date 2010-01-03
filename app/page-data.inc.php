@@ -186,7 +186,7 @@ Class PageData {
 		$parsed_text = ContentParser::parse("\n\n".$text."\n\n".$shared."\n\n");
 		
 		# pull out each key/value pair from the content file
-		preg_match_all('/[\w\d_\-]+?:[\S\s]*?\n\n/', $parsed_text, $matches);
+		preg_match_all('/[a-z\d_\-]+?:[\S\s]*?\n\n/', $parsed_text, $matches);
 		foreach($matches[0] as $match) {
 			$colon_split = explode(':', $match);
 			# store page variables within Page::data
