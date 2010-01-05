@@ -103,7 +103,13 @@ Class Stacey {
 		$page = new Page($route);
 		
 		# error out if template file doesn't exist (or glob returns an error)
-	  if(!$page->template_file || empty($page->template_file)) throw new Exception('A template named \''.$page->template_name.'\' could not be found in the \'/templates\' folder');
+		if(empty($page->template_name)) {
+		  throw new Exception('404');
+		}
+	  
+	  if(!$page->template_file) {
+	    throw new Exception('A template named \''.$page->template_name.'\' could not be found in the \'/templates\' folder');
+	  }
 
 		# render page
 		$this->render($page);
