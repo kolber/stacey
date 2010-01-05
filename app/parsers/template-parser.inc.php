@@ -32,7 +32,7 @@ Class TemplateParser {
 		  $template = self::parse_if($data, $template);
 		}
 		
-		if(preg_match('/:([\w\d_\-]+)\b/', $template)) {
+		if(preg_match('/[\b\s>]:([\w\d_\-]+)\b/', $template)) {
 		  $template = self::parse_includes($data, $template);
 		}
 		
@@ -113,7 +113,7 @@ Class TemplateParser {
 		###### TODO: There is no protection against endless loops due to circular inclusions
 	  
 		# split out the partial into the parts Before, Inside, and After the :include
-		preg_match('/([\S\s]*?):([\w\d_\-]+)\b([\S\s]*)$/', $template, $template_parts);
+		preg_match('/([\S\s]*?)[\b\s>]:([\w\d_\-]+)\b([\S\s]*)$/', $template, $template_parts);
 		# run the replacements on the pre-":include" part of the partial
 		$template = self::parse($data, $template_parts[1]);
 
