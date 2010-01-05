@@ -90,7 +90,7 @@ Class TemplateParser {
 		
 		# if statment expects a false result
 		if($template_parts[2]) {
-			if(isset($data[$template_parts[3]]) && (empty($data[$template_parts[3]]) || !$data[$template_parts[3]])) {
+			if(!isset($data[$template_parts[3]]) || (empty($data[$template_parts[3]]) || !$data[$template_parts[3]])) {
 				# parse the block inside the if statement
 				$template .= $template_parts[4];
 			}
