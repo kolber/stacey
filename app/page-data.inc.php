@@ -177,30 +177,30 @@ Class PageData {
 	}
 	
 	static function create_textfile_vars($page) {
-	  
 	  # store contents of content file (if it exists, otherwise, pass back an empty string)
 		$content_file_path = $page->file_path.'/'.$page->template_name.'.txt';
 		$text = (file_exists($content_file_path)) ? file_get_contents($content_file_path) : '';
 		
 		# include shared variables for each page
 		$shared = (file_exists('./content/_shared.txt')) ? file_get_contents('./content/_shared.txt') : '';
-		# 
 		$text = $text."\n-\n".$shared."\n-\n";
 		
 		# pull out each key/value pair from the content file
 		preg_match_all('/([a-z\d_\-]+?:[\S\s]*?)\n\s*?-\s*?\n/', $text, $matches);
+		
 		foreach($matches[1] as $match) {
 			#
+			# split the string by (the remaining) colon
 			$colon_split = explode(':', $match);
-			# 
+			# set a variable with a name of 'key' on the page with a value of 'value' 
 			$page->$colon_split[0] = 
-			  #
+			  # if the 'value' contains a newline character, parse it as markdown
 			  (strpos($colon_split[1], "\n") === false) ? trim($colon_split[1]) : Markdown(trim($colon_split[1]));
 		}
 	}
 	
 	static function create($page) {
-		#
+		# set vars created within the text file
 		self::create_textfile_vars($page);
 		
 		# create each of the page-specfic helper variables
