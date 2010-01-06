@@ -2,4 +2,5 @@ name: Ñame
 -
 profession: Gräphic Designer
 -
-email: hi@yourdomain.com
+email: 
+<hi@yourdomain.com>
