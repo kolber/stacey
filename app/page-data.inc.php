@@ -180,10 +180,15 @@ Class PageData {
 	  # store contents of content file (if it exists, otherwise, pass back an empty string)
 		$content_file_path = $page->file_path.'/'.$page->template_name.'.txt';
 		$text = (file_exists($content_file_path)) ? file_get_contents($content_file_path) : '';
-		
+    
 		# include shared variables for each page
 		$shared = (file_exists('./content/_shared.txt')) ? file_get_contents('./content/_shared.txt') : '';
-		$text = $text."\n-\n".$shared."\n-\n";
+
+		# Remove UTF-8 BOM and marker character in input, if present.
+    $merged_text = preg_replace('{^\xEF\xBB\xBF|\x1A}', '', array($shared, $text));
+
+    # merge shared content into text
+		$text = $merged_text[0]."\n-\n".$merged_text[1]."\n-\n";
 		
 		# pull out each key/value pair from the content file
 		preg_match_all('/([a-z\d_\-]+?:[\S\s]*?)\n\s*?-\s*?\n/', $text, $matches);
