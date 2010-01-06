@@ -176,22 +176,32 @@ Class PageData {
 		
 	}
 	
-	static function create($page) {
-		# store contents of content file (if it exists, otherwise, pass back an empty string)
+	static function create_textfile_vars($page) {
+	  
+	  # store contents of content file (if it exists, otherwise, pass back an empty string)
 		$content_file_path = $page->file_path.'/'.$page->template_name.'.txt';
 		$text = (file_exists($content_file_path)) ? file_get_contents($content_file_path) : '';
+		
 		# include shared variables for each page
 		$shared = (file_exists('./content/_shared.txt')) ? file_get_contents('./content/_shared.txt') : '';
-		# run preparsing rules to clean up content files (the newlines are added to ensure the first and last rules have their double-newlines to match on)
-		$parsed_text = ContentParser::parse("\n\n".$text."\n\n".$shared."\n\n");
+		# 
+		$text = $text."\n-\n".$shared."\n-\n";
 		
 		# pull out each key/value pair from the content file
-		preg_match_all('/[a-z\d_\-]+?:[\S\s]*?\n\n/', $parsed_text, $matches);
-		foreach($matches[0] as $match) {
+		preg_match_all('/([a-z\d_\-]+?:[\S\s]*?)\n\s*?-\s*?\n/', $text, $matches);
+		foreach($matches[1] as $match) {
+			#
 			$colon_split = explode(':', $match);
-			# store page variables within Page::data
-			$page->$colon_split[0] = trim($colon_split[1]);
+			# 
+			$page->$colon_split[0] = 
+			  #
+			  (strpos($colon_split[1], "\n") === false) ? trim($colon_split[1]) : Markdown(trim($colon_split[1]));
 		}
+	}
+	
+	static function create($page) {
+		#
+		self::create_textfile_vars($page);
 		
 		# create each of the page-specfic helper variables
 		self::create_collections($page);
