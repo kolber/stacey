@@ -189,11 +189,8 @@ Class PageData {
 		preg_match_all('/([a-z\d_\-]+?:[\S\s]*?)\n\s*?-\s*?\n/', $text, $matches);
 		
 		foreach($matches[1] as $match) {
-		  # replace any colons that occur within the [\S\s]*? part of the match
-		  $match = preg_replace('/:/', '\\x01', $match, 1);
-		  $match = preg_replace(array('/:/', '/\\\x01/'), array('&#58;', ':'), $match);
-			# split the string by (the remaining) colon
-			$colon_split = explode(':', $match);
+			# split the string by the first colon
+			$colon_split = explode(':', $match, 2);
 			# set a variable with a name of 'key' on the page with a value of 'value' 
 			$page->$colon_split[0] = 
 			  # if the 'value' contains a newline character, parse it as markdown
