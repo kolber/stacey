@@ -12,7 +12,7 @@ Class TemplateParser {
 		
 	  foreach(self::$partials as $partial) {
 	    if(preg_match('/([^\/]+?)\.[\w]+?$/', $partial, $file_name)) {
-	      if($file_name[1] == $name) return file_get_contents($partial);
+	      if($file_name[1] == $name) return ' '.file_get_contents($partial);
 	    }
 	  }
 		return 'Partial \''.$name.'\' not found';
