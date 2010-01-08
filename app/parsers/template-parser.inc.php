@@ -62,7 +62,7 @@ Class TemplateParser {
       # set data object to match file path
       $data = AssetFactory::get($file_path);
 
-  		# run the replacements on the post-"if" part of the partial
+  		# run the replacements on the inner-"get" part of the partial
   		$template .= self::parse($data, $template_parts[3]);
     }
     
