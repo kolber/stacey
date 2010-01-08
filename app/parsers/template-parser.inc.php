@@ -20,7 +20,7 @@ Class TemplateParser {
 	
 	static function parse($data, $template) {
 		# parse template
-		if(preg_match('/get[\s]+?["\']\/?(.*?)\/?["\']/', $template)) {
+		if(preg_match('/get[\s]+?["\']\/?(.*?)\/?["\']\s+?do\s+?([\S\s]+?)end(?!\w)/', $template)) {
 		  $template = self::parse_get($data, $template);
 		}
 		
@@ -45,16 +45,31 @@ Class TemplateParser {
 	
 	static function parse_get(&$data, $template) {
 	  # match any gets
-	  preg_match('/get[\s]+?["\']\/?(.*?)\/?["\']/', $template, $template_parts);
+	  preg_match('/([\S\s]*?)get[\s]+?["\']\/?(.*?)\/?["\']\s+?do\s+?([\S\s]+?)end(?!\w)([\S\s]*)$/', $template, $template_parts);
+
+	  # run the replacements on the pre-"get" part of the partial
+		$template = self::parse($data, $template_parts[1]);
+	  
 	  # turn route into file path
-    $file_path = Helpers::url_to_file_path($template_parts[1]);
+    $file_path = Helpers::url_to_file_path($template_parts[2]);
+    
+    # store current data
+    $current_data = $data;
+    
     # if the route exists...
     if(file_exists($file_path)) {
-      # strip out the get line
-      $template = str_replace($template_parts[0], '', $template);
+
       # set data object to match file path
       $data = AssetFactory::get($file_path);
+
+  		# run the replacements on the post-"if" part of the partial
+  		$template .= self::parse($data, $template_parts[3]);
     }
+    
+    $data = $current_data;
+    
+    # run the replacements on the post-"get" part of the partial
+		$template .= self::parse($data, $template_parts[4]);
     
     return $template;
 	}
