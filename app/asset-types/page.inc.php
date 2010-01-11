@@ -46,7 +46,7 @@ Class Page {
 	}
 	
 	function template_file() {
-    $template_file = glob('./templates/'.$this->template_name.'.{html,json,atom,rss,rdf,xml,txt}', GLOB_BRACE);
+    $template_file = glob('./templates/'.$this->template_name.'.*');
     # return template if one exists
 	  return isset($template_file[0]) ? $template_file[0] : false;
 	}

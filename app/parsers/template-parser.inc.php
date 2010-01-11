@@ -7,7 +7,7 @@ Class TemplateParser {
 	static function get_partial_template($name) {
 	  # return contents of partial file, or return 'not found' error (as text)
 	  if(!self::$partials) {
-	    self::$partials = Helpers::rglob('./templates/partials*/*.{html,json,atom,rss,rdf,xml,txt}', GLOB_BRACE);
+	    self::$partials = Helpers::rglob('./templates/partials*/*.*');
 	  }
 		
 	  foreach(self::$partials as $partial) {
