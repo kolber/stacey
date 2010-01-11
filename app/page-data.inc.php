@@ -184,11 +184,14 @@ Class PageData {
 		# include shared variables for each page
 		$shared = (file_exists('./content/_shared.txt')) ? file_get_contents('./content/_shared.txt') : '';
 
-		# Remove UTF-8 BOM and marker character in input, if present.
-    $merged_text = preg_replace('{^\xEF\xBB\xBF|\x1A}', '', array($shared, $text));
+		# remove UTF-8 BOM and marker character in input, if present
+    $merged_text = preg_replace('/^\xEF\xBB\xBF|\x1A/', '', array($shared, $text));
 
     # merge shared content into text
 		$text = "\n".$merged_text[0]."\n-\n".$merged_text[1]."\n-\n";
+		
+		# standardize line endings
+		$text = preg_replace('/\r\n?/', "\n", $text);
 		
 		# pull out each key/value pair from the content file
 		preg_match_all('/(?<=\n)([a-z\d_\-]+?:[\S\s]*?)\n\s*?-\s*?\n/', $text, $matches);
