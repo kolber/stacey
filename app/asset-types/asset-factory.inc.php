@@ -6,7 +6,6 @@ Class AssetFactory {
 	static $asset_subclasses = array();
 
 	static function &create($file_path) {
-
     #
     # a little bit of magic here to find any classes which extend 'Asset'
     #

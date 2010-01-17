@@ -12,7 +12,6 @@ Class Image extends Asset {
 	}
 	
 	function set_extended_data($file_path) {
-		
 		$small_version_path = preg_replace('/(\.[\w\d]+?)$/', '_sml$1', $this->link_path);
 		$large_version_path = preg_replace('/(\.[\w\d]+?)$/', '_lge$1', $this->link_path);
 		
@@ -27,7 +26,6 @@ Class Image extends Asset {
 		if(file_exists($large_relative_path) && !is_dir($large_relative_path)) {
 		  $this->data['@large'] = $large_version_path;
 		}
-		
 	}
 	
 }

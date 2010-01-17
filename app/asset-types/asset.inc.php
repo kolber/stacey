@@ -21,7 +21,7 @@ Class Asset {
 		$this->link_path = $this->construct_link_path($file_path);
 		
 		# extract filename from path
-			$split_path = explode('/', $file_path);
+		$split_path = explode('/', $file_path);
 		$this->file_name = array_pop($split_path);
 		
 		# set @url & @name variables

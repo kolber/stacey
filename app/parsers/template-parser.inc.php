@@ -33,19 +33,6 @@ Class TemplateParser {
 	}
 	
 	static function expand_match($closing_count, $template_parts, $opening, $closing) {
-	  
-	    #   TODO: This will still break:
-	    #
-	    #   foreach $root do
-	    #     foreach $children do
-      #       # do something
-      #     endforeach
-      #     foreach $parents do
-      #       # do something
-      #     endforeach
-      #   endforeach
-	    #
-	  
       # rerun match to include the correct number of closing references,
       # using a backreference repeated once for each additionally-required closing reference
       preg_match('/('.$opening.'[\S\s]*?('.$closing.')([\S\s]+?\\2){'.$closing_count.','.$closing_count.'})([\S\s]*)/', $template_parts[0], $matches);
@@ -112,6 +99,7 @@ Class TemplateParser {
   		$template .= self::parse($data, $template_parts[3]);
     }
     
+    # revert context back to original
     $data = $current_data;
     
     # run the replacements on the post-"get" part of the partial
@@ -178,8 +166,6 @@ Class TemplateParser {
 	}
 	
 	static function parse_includes($data, $template) {
-		###### TODO: There is no protection against endless loops due to circular inclusions
-	  
 		# split out the partial into the parts Before, Inside, and After the :include
 		preg_match('/([\S\s]*?)[\b\s>]:([\w\d_\-]+)\b([\S\s]*)$/', $template, $template_parts);
 		# run the replacements on the pre-":include" part of the partial

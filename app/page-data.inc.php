@@ -22,7 +22,6 @@ Class PageData {
 	}
 	
 	static function get_parent($file_path, $url) {
-
 	  # split file path by slashes
 		$split_path = explode('/', $file_path);
 		# drop the last folder from the file path
@@ -33,7 +32,6 @@ Class PageData {
 	}
 	
 	static function get_parents($file_path, $url) {
-	  
 	  # split file path by slashes
 		$split_path = explode('/', $file_path);
 		$parents = array();
@@ -98,7 +96,6 @@ Class PageData {
 	      if(!is_dir($asset_path)) $asset_collections[$filename][$asset_name] = $asset_path;
 	    }
     }
-    
 	  return $asset_collections;
 	}
 	
@@ -177,7 +174,6 @@ Class PageData {
 		# create asset collections (any assets within a folder beginning with an underscore)
 		$asset_collections = self::get_asset_collections($page->file_path);
 		foreach($asset_collections as $collection_name => $collection_files) eval('$page->'.$collection_name.' = $collection_files;');
-		
 	}
 	
 	static function create_textfile_vars($page) {
@@ -213,12 +209,10 @@ Class PageData {
 	static function create($page) {
 		# set vars created within the text file
 		self::create_textfile_vars($page);
-		
 		# create each of the page-specfic helper variables
 		self::create_collections($page);
 		self::create_vars($page);
 		self::create_asset_collections($page);
-		
 	}
 	
 }

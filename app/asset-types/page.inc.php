@@ -10,7 +10,6 @@ Class Page {
 	var $all_pages;
 	
 	function __construct($url) {
-		
 		# store url and converted file path
 		$this->url_path = $url;
 		$this->file_path = Helpers::url_to_file_path($this->url_path);
