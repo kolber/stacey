@@ -64,10 +64,11 @@ Class PageData {
 				if($sibling == $file_path) return strval($count);
 			}
 		}
+		$count = 0;
 		return strval($count);
 	}
 	
-	static function is_current_page($base_url, $permalink) {
+	static function is_current($base_url, $permalink) {
 	  $base_path = preg_replace('/^[^\/]+/', '', $base_url);
   	if($permalink == 'index') {
   	  return ('/' == $_SERVER['REQUEST_URI']);
@@ -129,14 +130,17 @@ Class PageData {
 		# @updated
 		$page->updated = strval(date('c', Helpers::last_modified($page->file_path)));
 		
-		# @is_current_page
-		$page->is_current_page = self::is_current_page($page->data['@base_url'], $page->data['@permalink']);
-		
 		# @siblings_count
 		$page->siblings_count = strval(count($page->data['$siblings']));
 		# @index
 		$page->index = self::get_index($page->data['$siblings'], $page->file_path);
 		
+		# @is_current
+		$page->is_current = self::is_current($page->data['@base_url'], $page->data['@permalink']);
+		# @is_last
+		$page->is_last = $page->data['@index'] == $page->data['@siblings_count'];
+		# @is_first
+		$page->is_first = $page->data['@index'] == 1;
 	}
 	
 	static function create_collections($page) {
