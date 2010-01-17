@@ -1,3 +1,0 @@
-foreach $html do
-	@content
-endforeach

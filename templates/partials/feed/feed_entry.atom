@@ -2,7 +2,6 @@
    <title>@title</title>
    <id>tag:@domain_name,@current_year:/@permalink</id>
    <updated>@updated</updated>
-   <summary>@page_description</summary>
    <link rel="alternate" type="text/html" href="http://@base_url/@permalink/" />
    <content type="xhtml" xml:lang="en">
       <div xmlns="http://www.w3.org/1999/xhtml">
