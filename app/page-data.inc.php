@@ -206,6 +206,15 @@ Class PageData {
 		}
 	}
 	
+	static function html_to_xhtml($value) {
+    # convert named entities to numbered entities
+	  $value = Helpers::translate_named_entities($value);
+	  # convert appropriate markdown-created tags to xhtml syntax
+    $value = preg_replace('/<(br|hr|input|img)(.*?)\s?\/?>/', '<\\1\\2 />', $value);
+		
+		return $value;
+	}
+	
 	static function create($page) {
 		# set vars created within the text file
 		self::create_textfile_vars($page);
@@ -213,6 +222,17 @@ Class PageData {
 		self::create_collections($page);
 		self::create_vars($page);
 		self::create_asset_collections($page);
+		
+		# if file extension matches an xml type, convert to any html to xhtml to pass validation
+    global $current_page_template_file;
+		if(preg_match('/\.(xml|rss|rdf|atom)$/', $current_page_template_file)) {
+		  # clean each value for xhtml rendering
+  	  foreach($page->data as $key => $value) {
+    	  if(is_string($value)) {
+		      $page->data[$key] = self::html_to_xhtml($value);
+		    }
+		  }
+		}
 	}
 	
 }

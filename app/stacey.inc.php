@@ -93,12 +93,16 @@ Class Stacey {
 	  # return a 404 if a matching folder doesn't exist
 		if(!file_exists($file_path)) throw new Exception('404');
 
-    # register global for the path to the page which is currently being loaded
+    # register global for the path to the page which is currently being viewed
 		global $current_page_file_path;
 		$current_page_file_path = $file_path;
 
 		# create new page object
 		$page = new Page($route);
+
+		# register global for the template for the page which is currently being viewed
+		global $current_page_template_file;
+		$current_page_template_file = $page->template_file;
 		
 		# error out if template file doesn't exist (or glob returns an error)
 		if(empty($page->template_name)) throw new Exception('404');
