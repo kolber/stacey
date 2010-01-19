@@ -123,7 +123,7 @@ Class PageData {
 		# @base_url
 		$page->base_url = $_SERVER['HTTP_HOST'].str_replace('/index.php', '', $_SERVER['PHP_SELF']);
 		# @site_updated
-		$page->site_updated = strval(date('c'));
+		$page->site_updated = strval(date('c', Helpers::site_last_modified()));
 		# @updated
 		$page->updated = strval(date('c', Helpers::last_modified($page->file_path)));
 		
