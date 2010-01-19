@@ -1,0 +1,6 @@
+<url>
+    <loc>http://@base_url/@permalink/</loc>
+    <lastmod>@updated</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+</url>
