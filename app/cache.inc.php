@@ -9,9 +9,8 @@ Class Cache {
 	function __construct($page) {
 		# store reference to current page
 		$this->page = $page;
-		# turn a base64 of the full path to the page's content file into the name of the cache file
-		$content_file_path = $page->file_path.'/'.$page->template_name.'.txt';
-		$this->cachefile = './app/_cache/'.base64_encode($content_file_path);
+		# turn a base64 of the current route into the name of the cache file
+		$this->cachefile = './app/_cache/'.base64_encode($_SERVER['REQUEST_URI']);
 		//collect an md5 of all files
 		$this->hash = $this->create_hash();
 	}
