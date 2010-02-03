@@ -32,8 +32,10 @@
 				  <p><a href="#" id="previous-image">Previous image</a> <em>&larr;</em></p>
 				</div>
 				<div class="col four">
-					:next-page
-					:previous-page
+				  if $siblings do
+					  :next-page
+					  :previous-page
+					endif
 				</div>
 				:media
 			</div>

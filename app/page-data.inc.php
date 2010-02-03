@@ -128,9 +128,9 @@ Class PageData {
 		$page->updated = strval(date('c', Helpers::last_modified($page->file_path)));
 		
 		# @siblings_count
-		$page->siblings_count = strval(count($page->data['$siblings']));
+		$page->siblings_count = strval(count($page->data['$siblings_and_self']));
 		# @index
-		$page->index = self::get_index($page->data['$siblings'], $page->file_path);
+		$page->index = self::get_index($page->data['$siblings_and_self'], $page->file_path);
 		
 		# @is_current
 		$page->is_current = self::is_current($page->data['@base_url'], $page->data['@permalink']);
@@ -150,9 +150,12 @@ Class PageData {
 		$page->parents = self::get_parents($page->file_path, $page->url_path);
 		# $siblings
 		$parent_path = !empty($parent_path[0]) ? $parent_path[0] : './content';
-		$page->siblings = Helpers::list_files($parent_path, '/^\d+?\./', true);
+		$split_url = explode("/", $page->url_path);
+		$page->siblings = Helpers::list_files($parent_path, '/^\d+?\.(?!'.$split_url[(count($split_url) - 1)].')/', true);
+		# $siblings_and_self
+		$page->siblings_and_self = Helpers::list_files($parent_path, '/^\d+?\./', true);
 		# $next_sibling / $previous_sibling
-			$neighboring_siblings = self::extract_closest_siblings($page->data['$siblings'], $page->file_path);
+			$neighboring_siblings = self::extract_closest_siblings($page->data['$siblings_and_self'], $page->file_path);
 		$page->previous_sibling = array($neighboring_siblings[0]);
 		$page->next_sibling = array($neighboring_siblings[1]);
 		
