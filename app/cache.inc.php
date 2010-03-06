@@ -5,18 +5,22 @@ Class Cache {
 	var $page;
 	var $cachefile;
 	var $hash;
+	var $comment_tags = array('<!--', '-->');
 	
 	function __construct($page) {
 		# store reference to current page
 		$this->page = $page;
 		# turn a base64 of the current route into the name of the cache file
 		$this->cachefile = './app/_cache/'.base64_encode($_SERVER['REQUEST_URI']);
-		//collect an md5 of all files
+		# collect an md5 of all files
 		$this->hash = $this->create_hash();
+		# if we're serving JSON, using js-appropriate comment tags
+		preg_match('/\.([\w\d]+?)$/', $this->page->template_file, $split_path);
+		if ($split_path[1] == 'json' || $split_path[1] == 'js') $this->comment_tags = array('/*', '*/');
 	}
 	
 	function render() {
-		return file_get_contents($this->cachefile)."\n".'<!-- Cached. -->';
+		return file_get_contents($this->cachefile)."\n".$this->comment_tags[0].' Cached. '.$this->comment_tags[1];
 	}
 	
 	function create($page) {
@@ -25,7 +29,7 @@ Class Cache {
 			echo $page->parse_template();
 			# if cache folder is writable, write to it
 			if(is_writable('./app/_cache')) $this->write_cache();
-			else echo "\n".'<!-- Stacey('.Stacey::$version.'). -->';
+			else echo "\n".$this->comment_tags[0].' Stacey('.Stacey::$version.'). '.$this->comment_tags[1];
 		# end buffer
 		ob_end_flush();
 		return '';
@@ -45,7 +49,7 @@ Class Cache {
 	}
 	
 	function write_cache() {
-		echo "\n".'<!-- Stacey('.Stacey::$version.'): '.$this->hash.' -->';
+		echo "\n".$this->comment_tags[0].' Stacey('.Stacey::$version.'): '.$this->hash.' '.$this->comment_tags[1];
 		$fp = fopen($this->cachefile, 'w');
 		fwrite($fp, ob_get_contents());
 		fclose($fp);
