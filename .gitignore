@@ -1,4 +1,4 @@
 .DS_Store
-app/cache/*
-!app/cache/.gitignore
+app/_cache/*
+!app/_cache/.gitignore
 logs
