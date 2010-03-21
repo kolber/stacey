@@ -204,6 +204,11 @@ Class PageData {
 		foreach($matches[1] as $match) {
 			# split the string by the first colon
 			$colon_split = explode(':', $match, 2);
+			
+			# replace the only var in your content - @path for your inline html with images and stuff
+			$relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
+			$colon_split[1] = preg_replace('/\@path/', $relative_path.'/', $colon_split[1]);
+			
 			# set a variable with a name of 'key' on the page with a value of 'value' 
 			$page->$colon_split[0] = 
 			  # if the 'value' contains a newline character, parse it as markdown
