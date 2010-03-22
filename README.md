@@ -12,7 +12,7 @@ Copy to server, `chmod 777 app/_cache`, rename `htaccess` file to `.htaccess`.
 
 ## Read More
 
-See [StaceyApp.com](http://staceyapp.com) for more detailed usage information.
+See <http://staceyapp.com> for more detailed usage information.
 
 ## Copyright/License
 
