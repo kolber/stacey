@@ -12,7 +12,7 @@ Class TemplateParser {
 		
 	  foreach(self::$partials as $partial) {
 	    if(preg_match('/([^\/]+?)\.[\w]+?$/', $partial, $file_name)) {
-	      if($file_name[1] == $name) return ' '.file_get_contents($partial);
+	      if($file_name[1] == $name) return file_get_contents($partial);
 	    }
 	  }
 		return 'Partial \''.$name.'\' not found';
@@ -167,7 +167,7 @@ Class TemplateParser {
 	
 	static function parse_includes($data, $template) {
 		# split out the partial into the parts Before, Inside, and After the :include
-		preg_match('/([\S\s]*?)[\b\s>]:([\w\d_\-]+)\b([\S\s]*)$/', $template, $template_parts);
+		preg_match('/([\S\s]*?)(?<![a-z0-9]):([\w\d_\-]+)\b([\S\s]*)$/', $template, $template_parts);
 		# run the replacements on the pre-":include" part of the partial
 		$template = self::parse($data, $template_parts[1]);
 
