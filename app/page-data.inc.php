@@ -71,7 +71,7 @@ Class PageData {
   	if($permalink == 'index') {
   	  return ('/' == $_SERVER['REQUEST_URI']);
   	} else {
-  	  return ($base_path.'/'.$permalink.'/' == $_SERVER['REQUEST_URI']);
+  	  return ($base_path.'/'.$permalink == $_SERVER['REQUEST_URI']);
   	}
 	}
 	
@@ -209,7 +209,7 @@ Class PageData {
 			$relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
 			$colon_split[1] = preg_replace('/\@path/', $relative_path.'/', $colon_split[1]);
 			
-			# set a variable with a name of 'key' on the page with a value of 'value' 
+			# set a variable with a name of 'key' on the page with a value of 'value'
 			$page->$colon_split[0] = 
 			  # if the 'value' contains a newline character, parse it as markdown
 			  (strpos($colon_split[1], "\n") === false) ? trim($colon_split[1]) : Markdown(trim($colon_split[1]));
