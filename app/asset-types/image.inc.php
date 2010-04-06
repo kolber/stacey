@@ -26,6 +26,27 @@ Class Image extends Asset {
 		if(file_exists($large_relative_path) && !is_dir($large_relative_path)) {
 		  $this->data['@large'] = $large_version_path;
 		}
+		
+		# set @width & @height variables
+		$img_data = getimagesize($file_path, $info);
+		preg_match_all('/\d+/', $img_data[3], $dimensions);
+		$this->data['@width'] = $dimensions[0][0];
+		$this->data['@height'] = $dimensions[0][1];
+		
+		# set iptc variables
+    if(isset($info["APP13"])) {                         
+      $iptc = iptcparse($info["APP13"]);
+      # @title
+      if(isset($iptc["2#005"][0]))
+        $this->data['@title'] = $iptc["2#005"][0];
+      # @description
+      if(isset($iptc["2#120"][0])) 
+        $this->data['@description'] = $iptc["2#120"][0];
+      # @keywords
+      if(isset($iptc["2#025"][0])) 
+        $this->data['@keywords'] = $iptc["2#025"][0];
+    }
+		
 	}
 	
 }
