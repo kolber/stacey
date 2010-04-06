@@ -10,11 +10,11 @@ If you look in the `/content` and `/templates` folders, you should get the gener
 
 Copy to server, `chmod 777 app/_cache`.
 
-If you want clean urls – `mv htaccess .htaccess`
+If you want clean urls, `mv htaccess .htaccess`
 
 ## Templates
 
-There are an additional two sets of templates which can be found at:
+There are an additional two sets of templates which can be found at:  
 <http://github.com/kolber/stacey-template2> &  
 <http://github.com/kolber/stacey-template3>
 
