@@ -11,8 +11,8 @@ Class Page {
 	
 	function __construct($url) {
 		# store url and converted file path
+		$this->file_path = Helpers::url_to_file_path($url);
 		$this->url_path = $url;
-		$this->file_path = Helpers::url_to_file_path($this->url_path);
     
     $this->template_name = $this->template_name();
 		$this->template_file = $this->template_file();

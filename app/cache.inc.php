@@ -56,6 +56,8 @@ Class Cache {
 	}
 
 	function create_hash() {
+	  # .htaccess file
+	  $htaccess = file_exists('./.htaccess') ? '.htaccess:'.filemtime('./.htaccess') : '';
 		# create a collection of every file inside the content folder
 		$content = $this->collate_files('./content');
 		# create a collection of every file inside the templates folder
@@ -63,7 +65,7 @@ Class Cache {
 		# create a collection of every file inside the public folder
 		$public = $this->collate_files('./public');
 		# create an md5 of the two collections
-		return md5($content.$templates.$public);
+		return md5($htaccess.$content.$templates.$public);
 	}
 	
 	function collate_files($dir) {

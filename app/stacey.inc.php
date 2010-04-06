@@ -120,8 +120,9 @@ Class Stacey {
 		# it's easier to handle some redirection through php rather than relying on a more complex .htaccess file to do all the work
 		if($this->handle_redirects()) return;
     
+    # strip any leading or trailing slashes from the passed url
+    $key = preg_replace(array('/\/$/', '/^\//'), '', key($get));
     # store file path for this current page
-    $key = key($get);
     $route = isset($key) ? $key : 'index';
     $file_path = Helpers::url_to_file_path($route);
 

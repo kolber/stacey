@@ -63,18 +63,29 @@ Class Helpers {
 		return $files;
 	}
 	
-	static function relative_root_path() {
+	static function modrewrite_parse($url) {
+	  # if the .htaccess file is missing or mod_rewrite is disabled, overwrite the clean urls
+	  if(!file_exists('.htaccess') && preg_match('/\/$/', $url)) {
+		  $url = '?/'.$url;
+		}
+	  return $url;
+	}
+	
+	static function relative_root_path($url = '') {
 	  global $current_page_file_path;
 		$link_path = '';
-		if(!preg_match('/index/', $current_page_file_path)) {
+		if(!preg_match('/index/', $current_page_file_path) && !preg_match('/\/\?\//', $_SERVER['REQUEST_URI'])) {
 		  # split file path by slashes
 			$split_path = explode('/', $current_page_file_path);
 			# if the request uri is pointing at a document, drop another folder from the file path
-  		if (preg_match('/\./', $_SERVER['REQUEST_URI'])) array_pop($split_path);
+  		if(preg_match('/\./', $_SERVER['REQUEST_URI'])) array_pop($split_path);
   		# add a ../ for each parent folder
 			for($i = 2; $i < count($split_path); $i++) $link_path .= '../';
 		}
-		return empty($link_path) ? './' : $link_path;
+		
+		$link_path = empty($link_path) ? './' : $link_path;
+		
+		return $link_path .= self::modrewrite_parse($url);
 	}
 	
 	static function last_modified($dir) {

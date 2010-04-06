@@ -100,10 +100,12 @@ Class PageData {
 	}
 	
 	static function create_vars($page) {
+		# @file_path
+		$page->data['@file_path'] = $page->file_path;
 		# @url
-		$page->url = Helpers::relative_root_path().$page->url_path.'/';
+		$page->url = Helpers::relative_root_path($page->url_path.'/');
 		# @permalink
-		$page->permalink = $page->url_path;
+		$page->permalink = Helpers::modrewrite_parse($page->url_path.'/');
 		# @slug
 			$split_url = explode("/", $page->url_path);
 		$page->slug = $split_url[count($split_url) - 1];
