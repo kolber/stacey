@@ -3,7 +3,7 @@
 
   <title>@name's @feed_name</title>
   <subtitle>@profession</subtitle>
-  <link href="http://@base_url/@permalink/" hreflang="en" rel="self" type="application/atom+xml"/>
+  <link href="http://@base_url/@permalink" hreflang="en" rel="self" type="application/atom+xml"/>
   <link href="http://@base_url/" hreflang="en" rel="alternate" type="text/html"/>
   
   <updated>@site_updated</updated>
