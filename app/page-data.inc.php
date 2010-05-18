@@ -174,11 +174,11 @@ Class PageData {
 		# $swf, $html, $doc, $pdf, $mp3, etc.
 		# create a variable for each file type included within the page's folder (excluding .txt files)
 		$assets = self::get_file_types($page->file_path);
-		foreach($assets as $asset_type => $asset_files) eval('$page->'.$asset_type.' = $asset_files;');
+		foreach($assets as $asset_type => $asset_files) eval('$page->'.$asset_type.'=$asset_files;');
 		
 		# create asset collections (any assets within a folder beginning with an underscore)
 		$asset_collections = self::get_asset_collections($page->file_path);
-		foreach($asset_collections as $collection_name => $collection_files) eval('$page->'.$collection_name.' = $collection_files;');
+		foreach($asset_collections as $collection_name => $collection_files) eval('$page->'.$collection_name.'=$collection_files;');
 	}
 	
 	static function create_textfile_vars($page) {
