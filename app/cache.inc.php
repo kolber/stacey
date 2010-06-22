@@ -11,12 +11,16 @@ Class Cache {
 		# store reference to current page
 		$this->page = $page;
 		# turn a base64 of the current route into the name of the cache file
-		$this->cachefile = './app/_cache/'.base64_encode($_SERVER['REQUEST_URI']);
+		$this->cachefile = './app/_cache/'.$this->base64_url($_SERVER['REQUEST_URI']);
 		# collect an md5 of all files
 		$this->hash = $this->create_hash();
 		# if we're serving JSON, using js-appropriate comment tags
 		preg_match('/\.([\w\d]+?)$/', $this->page->template_file, $split_path);
 		if ($split_path[1] == 'json' || $split_path[1] == 'js') $this->comment_tags = array('/*', '*/');
+	}
+	
+	function base64_url($input) {
+		return strtr(base64_encode($input), '+/=', '-_,');
 	}
 	
 	function render() {
