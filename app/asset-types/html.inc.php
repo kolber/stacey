@@ -2,7 +2,7 @@
 
 Class Html extends Asset {
   
-  static $identifiers = array('html', 'htm');
+  static $identifiers = array('html', 'htm', 'php');
 	
 	function __construct($file_path) {
 		# create and store data required for this asset
@@ -12,7 +12,14 @@ Class Html extends Asset {
 	}
 	
 	function set_extended_data($file_path) {
-		$this->data['@content'] = is_readable($file_path) ? file_get_contents($file_path) : '';
+		if(is_readable($file_path)) {
+			ob_start();
+			include $file_path;
+			$this->data['@content'] = ob_get_contents();
+			ob_end_clean();
+		} else {
+			$this->data['@content'] = '';
+		}
 	}
 	
 }
