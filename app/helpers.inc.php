@@ -2,6 +2,8 @@
 
 Class Helpers {
   
+  static $file_cache;
+  
   static function rglob($pattern, $flags = 0, $path = '') {
     if (!$path && ($dir = dirname($pattern)) != '.') {
       if ($dir == '\\' || $dir == '/') $dir = '';
@@ -47,17 +49,45 @@ Class Helpers {
     $inner_folders = Helpers::list_files($dir, '/.*/', true);
     return !empty($inner_folders);
   }
+  
+  static function file_cache($dir = false) {
+    if(!self::$file_cache) {
+      # build file cache
+      self::build_file_cache();
+    }
+    if($dir && !self::$file_cache[$dir]) return array();
+    return $dir ? self::$file_cache[$dir] : self::$file_cache;
+  }
+  
+  static function build_file_cache($dir = './') {
+    # build file cache
+    foreach(new DirectoryIterator($dir) as $file) {
+      # ignore dotfiles and the _cache folder
+      if(substr($file->getFilename(), 0, 1) == "." || $file->getFilename() == "_cache") continue;
+      # if result is a directory, then recurse
+      if($file->isDir()) self::build_file_cache($file->getPathname());
+      # otherwise, store file details in $file_cache
+      self::$file_cache[$dir][] = array(
+        'path' => $file->getPathname(),
+        'file_name' => $file->getFilename(),
+        'is_folder' => ($file->isDir() ? 1 : 0),
+        'mtime' => $file->getMTime()
+      );
+    }
+  }
 
   static function list_files($dir, $regex, $folders_only = false) {
-    $glob = ($folders_only) ? glob($dir."/*", GLOB_ONLYDIR) : glob($dir."/*");
-    $glob = is_array($glob) ? $glob : array();
-    # loop through each glob result and push it to $dirs if it matches the passed regexp
     $files = array();
-    foreach($glob as $file) {
-      # strip out just the filename
-      preg_match('/\/([^\/]+?)$/', $file, $slug);
-      if(preg_match($regex, $slug[1])) $files[$slug[1]] = $file;
+    foreach(self::file_cache($dir) as $file) {
+      # if file matches regex, continue
+      if(preg_match($regex, $file['file_name'])) {
+        # if $folders_only is true and the file is not a folder, skip it
+        if($folders_only && !$file['is_folder']) continue;
+        # otherwise, add file to results list
+        $files[$file['file_name']] = $file['path'];
+      }
     }
+    
     # sort list in reverse-numeric order
     krsort($files, SORT_NUMERIC);
     return $files;
