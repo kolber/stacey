@@ -4,11 +4,19 @@ Class TemplateParser {
   
   static $partials;
   
+  static function collate_partials($dir = './templates/partials') {
+    foreach(Helpers::file_cache($dir) as $file) {
+      if($file['is_folder']) {
+        self::collate_partials($file['path']);
+      } else {
+        self::$partials[] = $file['path'];
+      }
+    }
+  }
+  
   static function get_partial_template($name) {
     # return contents of partial file, or return 'not found' error (as text)
-    if(!self::$partials) {
-      self::$partials = Helpers::rglob('./templates/partials*/*.*');
-    }
+    if(!self::$partials) self::collate_partials();
     
     foreach(self::$partials as $partial) {
       if(preg_match('/([^\/]+?)\.[\w]+?$/', $partial, $file_name)) {
