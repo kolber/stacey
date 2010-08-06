@@ -62,23 +62,10 @@ Class Cache {
   function create_hash() {
     # .htaccess file
     $htaccess = file_exists('./.htaccess') ? '.htaccess:'.filemtime('./.htaccess') : '';
-    # create a collection of every file inside the content folder
-    $content = $this->collate_files('./content');
-    # create a collection of every file inside the templates folder
-    $templates = $this->collate_files('./templates');
-    # create a collection of every file inside the public folder
-    $public = $this->collate_files('./public');
+    # serialize the file cache
+    $file_cache = serialize(Helpers::file_cache());
     # create an md5 of the two collections
-    return md5($htaccess.$content.$templates.$public);
-  }
-  
-  function collate_files($dir) {
-    $files_modified = '';
-    foreach(Helpers::list_files($dir, '/.*/', false) as $file) {
-      $files_modified .= $file.':'.filemtime($file);
-      if(is_dir($file)) $files_modified .= $this->collate_files($file);
-    }
-    return $files_modified;
+    return md5($htaccess.$file_cache);
   }
   
 }
