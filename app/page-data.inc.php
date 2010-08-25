@@ -131,6 +131,8 @@ Class PageData {
     
     # @siblings_count
     $page->siblings_count = strval(count($page->data['$siblings_and_self']));
+    # @children_count
+    $page->children_count = strval(count($page->data['$children']));
     # @index
     $page->index = self::get_index($page->data['$siblings_and_self'], $page->file_path);
     
