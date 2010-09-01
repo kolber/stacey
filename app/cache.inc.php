@@ -14,9 +14,11 @@ Class Cache {
     $this->cachefile = './app/_cache/'.$this->base64_url($_SERVER['REQUEST_URI']);
     # collect an md5 of all files
     $this->hash = $this->create_hash();
-    # if we're serving JSON, using js-appropriate comment tags
+    # if we're serving JSON or CSS, use appropriate comment tags
     preg_match('/\.([\w\d]+?)$/', $this->page->template_file, $split_path);
-    if ($split_path[1] == 'json' || $split_path[1] == 'js') $this->comment_tags = array('/*', '*/');
+    if ($split_path[1] == 'json' || $split_path[1] == 'js' || $split_path[1] == 'css') $this->comment_tags = array('/*', '*/');
+    # robots.txt files need # comments in order to not break
+    if ($split_path[1] == 'txt') $this->comment_tags = array('#', '');
   }
   
   function base64_url($input) {
