@@ -54,6 +54,9 @@ Class Stacey {
         # set json/utf-8 charset header
         header('Content-type: application/json; charset=utf-8');
         break;
+      case 'css':
+        header('Content-type: text/css; charset=utf-8');
+        break;
       default:
         # set html/utf-8 charset header
         header("Content-type: text/html; charset=utf-8");
