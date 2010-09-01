@@ -29,7 +29,7 @@ Class Page {
   }
   
   function parse_template() {
-    return TemplateParser::parse($this->data, file_get_contents($this->template_file));
+    return TemplateParser::parse($this->data, file_get_contents($this->template_file), $this);
   }
   
   # magic variable assignment

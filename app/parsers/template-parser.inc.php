@@ -56,32 +56,32 @@ Class TemplateParser {
       return $template_parts;
   }
   
-  static function parse($data, $template) {
+  static function parse($data, $template, $page) {
     # parse template
     if(preg_match('/get[\s]+?["\']\/?(.*?)\/?["\']\s+?do\s+?([\S\s]+?)end(?!\w)/', $template)) {
-      $template = self::parse_get($data, $template);
+      $template = self::parse_get($data, $template, $page);
     }
     
     if(preg_match('/foreach[\s]+?([\$\@].+?)\s+?do\s+?([\S\s]+)endforeach/', $template)) {
-      $template = self::parse_foreach($data, $template);
+      $template = self::parse_foreach($data, $template, $page);
     }
     
     if(preg_match('/if\s*?(!)?\s*?([\$\@].+?)\s+?do\s+?([\S\s]+?)endif/', $template)) {
-      $template = self::parse_if($data, $template);
+      $template = self::parse_if($data, $template, $page);
     }
     
     if(preg_match('/[\b\s>]:([\w\d_\-]+)\b/', $template)) {
-      $template = self::parse_includes($data, $template);
+      $template = self::parse_includes($data, $template, $page);
     }
     
     if(preg_match('/\@[\w\d_\-]+?/', $template)) {
-      $template = self::parse_vars($data, $template);
+      $template = self::parse_vars($data, $template, $page);
     }
     
     return $template;
   }
   
-  static function parse_get(&$data, $template) {
+  static function parse_get(&$data, $template, $page) {
     # match any gets
     preg_match('/([\S\s]*?)get[\s]+?["\']\/?(.*?)\/?["\']\s+?do\s+?([\S\s]+?)end\b([\S\s]*)$/', $template, $template_parts);
 
@@ -116,11 +116,11 @@ Class TemplateParser {
     return $template;
   }
   
-  static function parse_foreach($data, $template) {
+  static function parse_foreach($data, $template, $page) {
     # split out the partial into the parts Before, Inside, and After the foreach loop
     preg_match('/([\S\s]*?)foreach[\s]+?([\$\@].+?)\s+?do\s+?([\S\s]+?)endforeach([\S\s]*)$/', $template, $template_parts);
     # run the replacements on the pre-"foreach" part of the partial
-    $template = self::parse($data, $template_parts[1]);
+    $template = self::parse($data, $template_parts[1],$page);
     
     # traverse one level deeper into the data hierachy
     $pages = (isset($data[$template_parts[2]]) && is_array($data[$template_parts[2]]) && !empty($data[$template_parts[2]])) ? $data[$template_parts[2]] : false;
@@ -134,20 +134,20 @@ Class TemplateParser {
         # transform data_item into its appropriate Object
         $data_object =& AssetFactory::get($data_item);
         # recursively parse the inside part of the foreach loop
-        $template .= self::parse($data_object, $template_parts[3]);
+        $template .= self::parse($data_object, $template_parts[3],$page);
       }
     }
     
     # run the replacements on the post-"foreach" part of the partial
-    $template .= self::parse($data, $template_parts[4]);
+    $template .= self::parse($data, $template_parts[4],$page);
     return $template;
   }
   
-  static function parse_if($data, $template) {
+  static function parse_if($data, $template, $page) {
     # match any inner if statements
     preg_match('/([\S\s]*?)if\s*?(!)?\s*?([\$\@].+?)\s+?do\s+?([\S\s]+?)endif([\S\s]*)$/', $template, $template_parts);
     # run the replacements on the pre-"if" part of the partial
-    $template = self::parse($data, $template_parts[1]);
+    $template = self::parse($data, $template_parts[1],$page);
     
     # check for any nested matches
     $template_parts = self::test_nested_matches($template_parts, 'if\s*?!?\s*?[\$\@].+?\s+?do\s+?', 'endif');
@@ -156,48 +156,53 @@ Class TemplateParser {
     if($template_parts[2]) {
       if(!isset($data[$template_parts[3]]) || (empty($data[$template_parts[3]]) || !$data[$template_parts[3]])) {
         # parse the block inside the if statement
-        $template .= self::parse($data, $template_parts[4]);
+        $template .= self::parse($data, $template_parts[4],$page);
       }
     } 
     # if statment expects a true result
     else {
       if(isset($data[$template_parts[3]]) && !empty($data[$template_parts[3]]) && ($data[$template_parts[3]])) {
         # parse the block inside the if statement
-        $template .= self::parse($data, $template_parts[4]);
+        $template .= self::parse($data, $template_parts[4], $page);
       }
     }
     
     # run the replacements on the post-"if" part of the partial
-    $template .= self::parse($data, $template_parts[5]);
+    $template .= self::parse($data, $template_parts[5], $page);
       
     return $template;
   }
   
-  static function parse_includes($data, $template) {
+  static function parse_includes($data, $template, $page) {
     # split out the partial into the parts Before, Inside, and After the :include
     preg_match('/([\S\s]*?)(?<![a-z0-9]):([\w\d_\-]+)\b([\S\s]*)$/', $template, $template_parts);
     # run the replacements on the pre-":include" part of the partial
-    $template = self::parse($data, $template_parts[1]);
+    $template = self::parse($data, $template_parts[1], $page);
 
     # parse the included template
     $inner_template = self::get_partial_template($template_parts[2]);
-    $template .= self::parse($data, $inner_template);
+    $template .= self::parse($data, $inner_template, $page);
       
     # run the replacements on the post-":include" part of the partial
-    $template .= self::parse($data, $template_parts[3]);
+    $template .= self::parse($data, $template_parts[3], $page);
       
     return $template;
   }
   
-  static function parse_vars($data, $template) {
+  static function parse_vars($data, $template, $page) {
     # split out the partial into the parts Before, Inside, and After the @var
     foreach($data as $key => $value) {
       $var = ($key == '@root_path') ? $key.'\/?' : $key;
       if(is_string($value)) $template = preg_replace('/'.$var.'/', $value, $template);
     }
     
-    # replace any remaining @ symbols with their html entity code equivalents to prevent vars being replaced in the incorrect context 
-    $template = str_replace('@', '&#64;', $template);
+    # replace any remaining @ symbols with their html entity code equivalents 
+    # to prevent vars being replaced in the incorrect context 
+    # but not for files that can't handle html entities
+    preg_match('/\.([\w\d]+?)$/', $page->template_file, $split_path);
+    if($split_path[1] !== "css" && $split_path[1] !== "txt"){
+      $template = str_replace('@', '&#64;', $template);
+    }
     
     return $template;
   }
