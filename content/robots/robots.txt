@@ -1,0 +1,5 @@
+custom_robots:
+
+User-Agent: Googlebot
+Disallow: @root_path/about/
+-

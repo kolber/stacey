@@ -1,0 +1,13 @@
+custom_styles:
+
+/* fonts used */
+@font-face {
+  font-family: 'CallunaRegular';
+  src: url('@root_path/public/docs/type/calluna-regular-webfont.eot');
+  src: local('☺'), url('@root_path/public/docs/type/calluna-regular-webfont.woff') format('woff'), url('@root_path/public/docs/type/calluna-regular-webfont.ttf') format('truetype'), url('@root_path/public/docs/type/calluna-regular-webfont.svg#webfontlrtqnawB') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body{font-family:"CallunaRegular"};
+-
