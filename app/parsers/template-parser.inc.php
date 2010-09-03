@@ -196,9 +196,6 @@ Class TemplateParser {
       if(is_string($value)) $template = preg_replace('/'.$var.'/', $value, $template);
     }
     
-    # replace any remaining @ symbols with their html entity code equivalents to prevent vars being replaced in the incorrect context 
-    $template = str_replace('@', '&#64;', $template);
-    
     return $template;
   }
     
