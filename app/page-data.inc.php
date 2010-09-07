@@ -142,6 +142,9 @@ Class PageData {
     $page->is_last = $page->data['@index'] == $page->data['@siblings_count'];
     # @is_first
     $page->is_first = $page->data['@index'] == 1;
+    
+    # @ip_address
+		$page->ip_address = $_SERVER['REMOTE_ADDR'];
   }
   
   static function create_collections($page) {
