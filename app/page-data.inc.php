@@ -213,6 +213,8 @@ Class PageData {
       
       # get template file type as $split_path[1]
       global $current_page_template_file;
+      if(!$current_page_template_file) $current_page_template_file = $page->template_file;
+
       preg_match('/\.([\w\d]+?)$/', $current_page_template_file, $split_path);
       # set a variable with a name of 'key' on the page with a value of 'value'
       # if the template type is xml or html & the 'value' contains a newline character, parse it as markdown
