@@ -168,11 +168,16 @@ Class PageData {
     
     # $children
     $page->children = Helpers::list_files($page->file_path, '/^\d+?\./', true);
+    # $reversed_children
+    $page->reversed_children = Helpers::list_files($page->file_path, '/^\d+?\./', true, false);
   }
   
   static function create_asset_collections($page) {
     # $images
     $page->images = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(gif|jpg|png|jpeg)$/i', false);
+    # $reversed_images
+		$page->reversed_images = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(gif|jpg|png|jpeg)$/i', false, false);
+
     # $video
     $page->video = Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)$/i', false);
 

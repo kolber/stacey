@@ -76,7 +76,7 @@ Class Helpers {
     }
   }
 
-  static function list_files($dir, $regex, $folders_only = false) {
+  static function list_files($dir, $regex, $folders_only = false, $reverse_order = true) {
     $files = array();
     foreach(self::file_cache($dir) as $file) {
       # if file matches regex, continue
@@ -88,8 +88,9 @@ Class Helpers {
       }
     }
     
-    # sort list in reverse-numeric order
-    krsort($files, SORT_NUMERIC);
+    # sort list in according to $reverse_order
+    if ($reverse_order) krsort($files, SORT_NUMERIC);
+    else ksort($files, SORT_NUMERIC);
     return $files;
   }
   
