@@ -1,7 +1,7 @@
 <?php
 
 Class PageData {
-  
+
   static function extract_closest_siblings($siblings, $file_path) {
     $neighbors = array();
     # flip keys/values
@@ -9,7 +9,7 @@ Class PageData {
     # store keys as array
     $keys = array_keys($siblings);
     $keyIndexes = array_flip($keys);
-    
+
     if(!empty($siblings) && isset($siblings[$file_path])) {
       # previous sibling
       if(isset($keys[$keyIndexes[$file_path] - 1])) $neighbors[] = $keys[$keyIndexes[$file_path] - 1];
@@ -20,17 +20,17 @@ Class PageData {
     }
     return !empty($neighbors) ? $neighbors : array(false, false);
   }
-  
+
   static function get_parent($file_path, $url) {
     # split file path by slashes
     $split_path = explode('/', $file_path);
     # drop the last folder from the file path
     array_pop($split_path);
     $parent_path = array(implode('/', $split_path));
-    
+
     return $parent_path[0] == './content' ? array() : $parent_path;
   }
-  
+
   static function get_parents($file_path, $url) {
     # split file path by slashes
     $split_path = explode('/', $file_path);
@@ -42,17 +42,17 @@ Class PageData {
     }
     # reverse array to emulate anchestor structure
     $parents = array_reverse($parents);
-    
+
     return (count($parents) < 1) ? array() : $parents;
   }
-  
+
   static function get_thumbnail($file_path) {
     $thumbnails = array_keys(Helpers::list_files($file_path, '/thumb\.(gif|jpg|png|jpeg)$/i', false));
     # replace './content' with relative path back to the root of the app
     $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $file_path);
     return (!empty($thumbnails)) ? $relative_path.'/'.$thumbnails[0] : false;
   }
-  
+
   static function get_index($siblings, $file_path) {
     $count = 0;
     if(!empty($siblings)) {
@@ -65,7 +65,7 @@ Class PageData {
     $count = 0;
     return strval($count);
   }
-  
+
   static function is_current($base_url, $permalink) {
     $base_path = preg_replace('/^[^\/]+/', '', $base_url);
     if($permalink == 'index') {
@@ -74,7 +74,7 @@ Class PageData {
       return ($base_path.'/'.$permalink == $_SERVER['REQUEST_URI']);
     }
   }
-  
+
   static function get_file_types($file_path) {
     $file_types = array();
     # create an array for each file extension
@@ -85,7 +85,7 @@ Class PageData {
     }
     return $file_types;
   }
-  
+
   static function get_asset_collections($file_path) {
     $asset_collections = array();
     # create an array of files for each folder named _*
@@ -98,7 +98,7 @@ Class PageData {
     }
     return $asset_collections;
   }
-  
+
   static function create_vars($page) {
     # @file_path
     $page->data['@file_path'] = $page->file_path;
@@ -117,7 +117,7 @@ Class PageData {
     $page->thumb = self::get_thumbnail($page->file_path);
     # @current_year
     $page->current_year = date('Y');
-    
+
     # @stacey_version
     $page->stacey_version = Stacey::$version;
     # @domain_name
@@ -128,14 +128,14 @@ Class PageData {
     $page->site_updated = strval(date('c', Helpers::site_last_modified()));
     # @updated
     $page->updated = strval(date('c', Helpers::last_modified($page->file_path)));
-    
+
     # @siblings_count
     $page->siblings_count = strval(count($page->data['$siblings_and_self']));
     # @children_count
     $page->children_count = strval(count($page->data['$children']));
     # @index
     $page->index = self::get_index($page->data['$siblings_and_self'], $page->file_path);
-    
+
     # @is_current
     $page->is_current = self::is_current($page->data['@base_url'], $page->data['@permalink']);
     # @is_last
@@ -143,7 +143,7 @@ Class PageData {
     # @is_first
     $page->is_first = $page->data['@index'] == 1;
   }
-  
+
   static function create_collections($page) {
     # $root
     $page->root = Helpers::list_files('./content', '/^\d+?\./', true);
@@ -162,11 +162,11 @@ Class PageData {
       $neighboring_siblings = self::extract_closest_siblings($page->data['$siblings_and_self'], $page->file_path);
     $page->previous_sibling = array($neighboring_siblings[0]);
     $page->next_sibling = array($neighboring_siblings[1]);
-    
+
     # $children
     $page->children = Helpers::list_files($page->file_path, '/^\d+?\./', true);
   }
-  
+
   static function create_asset_collections($page) {
     # $images
     $page->images = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(gif|jpg|png|jpeg)$/i', false);
@@ -177,17 +177,17 @@ Class PageData {
     # create a variable for each file type included within the page's folder (excluding .txt files)
     $assets = self::get_file_types($page->file_path);
     foreach($assets as $asset_type => $asset_files) eval('$page->'.$asset_type.'=$asset_files;');
-    
+
     # create asset collections (any assets within a folder beginning with an underscore)
     $asset_collections = self::get_asset_collections($page->file_path);
     foreach($asset_collections as $collection_name => $collection_files) eval('$page->'.$collection_name.'=$collection_files;');
   }
-  
+
   static function create_textfile_vars($page) {
     # store contents of content file (if it exists, otherwise, pass back an empty string)
     $content_file_path = $page->file_path.'/'.$page->template_name.'.txt';
     $text = (file_exists($content_file_path)) ? file_get_contents($content_file_path) : '';
-    
+
     # include shared variables for each page
     $shared = (file_exists('./content/_shared.txt')) ? file_get_contents('./content/_shared.txt') : '';
 
@@ -199,18 +199,18 @@ Class PageData {
     
     # standardize line endings
     $text = preg_replace('/\r\n?/', "\n", $text);
-    
+
     # pull out each key/value pair from the content file
     preg_match_all('/(?<=\n)([a-z\d_\-]+?:[\S\s]*?)\n\s*?-\s*?\n/', $text, $matches);
     
     foreach($matches[1] as $match) {
       # split the string by the first colon
       $colon_split = explode(':', $match, 2);
-      
+
       # replace the only var in your content - @path for your inline html with images and stuff
       $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
       $colon_split[1] = preg_replace('/\@path/', $relative_path.'/', $colon_split[1]);
-      
+
       # get template file type as $split_path[1]
       global $current_page_template_file;
       if(!$current_page_template_file) $current_page_template_file = $page->template_file;
@@ -225,16 +225,16 @@ Class PageData {
       }
     }
   }
-  
+
   static function html_to_xhtml($value) {
     # convert named entities to numbered entities
     $value = Helpers::translate_named_entities($value);
     # convert appropriate markdown-created tags to xhtml syntax
     $value = preg_replace('/<(br|hr|input|img)(.*?)\s?\/?>/', '<\\1\\2 />', $value);
-    
+
     return $value;
   }
-  
+
   static function create($page) {
     # set vars created within the text file
     self::create_textfile_vars($page);
@@ -242,7 +242,7 @@ Class PageData {
     self::create_collections($page);
     self::create_vars($page);
     self::create_asset_collections($page);
-    
+
     # if file extension matches an xml type, convert to any html to xhtml to pass validation
     global $current_page_template_file;
     if(preg_match('/\.(xml|rss|rdf|atom)$/', $current_page_template_file)) {
@@ -254,7 +254,7 @@ Class PageData {
       }
     }
   }
-  
+
 }
 
 ?>
