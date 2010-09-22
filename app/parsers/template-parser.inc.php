@@ -194,7 +194,7 @@ Class TemplateParser {
     # split out the partial into the parts Before, Inside, and After the @var
     foreach($data as $key => $value) {
       $var = ($key == '@root_path') ? $key.'\/?' : $key;
-      if(is_string($value)) $template = preg_replace('/'.$var.'/', $value, $template);
+      if(is_string($value) && strlen($var) > 1) $template = preg_replace('/'.$var.'/', $value, $template);
     }
 
     return $template;
