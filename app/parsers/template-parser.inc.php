@@ -78,6 +78,9 @@ Class TemplateParser {
       $template = self::parse_vars($data, $template);
     }
 
+    # we've finished parsing, so return any remaining @ symbols
+    $template = str_replace("\x01", '@', $template);
+
     return $template;
   }
 
@@ -196,6 +199,9 @@ Class TemplateParser {
       $var = ($key == '@root_path') ? $key.'\/?' : $key;
       if(is_string($value) && strlen($var) > 1) $template = preg_replace('/'.$var.'/', $value, $template);
     }
+
+    # temporarily replace any remaining @ symbols to prevent variables being replaced in an incorrect scope
+    $template = str_replace('@', "\x01", $template);
 
     return $template;
   }
