@@ -1,9 +1,9 @@
 <?php
 
 Class Stacey {
-  
-  static $version = '2.1.0';
-    
+
+  static $version = '2.2.0';
+
   function handle_redirects() {
     # rewrite any calls to /index or /app back to /
     if(preg_match('/^\/?(index|app)\/?$/', $_SERVER['REQUEST_URI'])) {
@@ -19,16 +19,16 @@ Class Stacey {
     }
     return false;
   }
-  
+
   function php_fixes() {
     # in PHP/5.3.0 they added a requisite for setting a default timezone, this should be handled via the php.ini, but as we cannot rely on this, we have to set a default timezone ourselves
     if(function_exists('date_default_timezone_set')) date_default_timezone_set('Australia/Melbourne');
   }
-  
+
   function set_content_type($template_file) {
     # split by file extension
     preg_match('/\.([\w\d]+?)$/', $template_file, $split_path);
-    
+
     switch ($split_path[1]) {
       case 'txt':
         # set text/utf-8 charset header
@@ -62,7 +62,7 @@ Class Stacey {
         header("Content-type: text/html; charset=utf-8");
     }
   }
-  
+
   function etag_expired($cache) {
     header('Etag: "'.$cache->hash.'"');
     if(isset($_SERVER['HTTP_IF_NONE_MATCH']) && stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) == '"'.$cache->hash.'"') {
@@ -74,7 +74,7 @@ Class Stacey {
       return true;
     }
   }
-  
+
   function render($page) {
     $cache = new Cache($page);
     # set any custom headers
@@ -89,9 +89,9 @@ Class Stacey {
       # render the existing cache
       echo $cache->render();
     }
-    
+
   }
-  
+
   function create_page($file_path, $route) {
     # return a 404 if a matching folder doesn't exist
     if(!file_exists($file_path)) throw new Exception('404');
@@ -106,23 +106,23 @@ Class Stacey {
     # register global for the template for the page which is currently being viewed
     global $current_page_template_file;
     $current_page_template_file = $page->template_file;
-    
+
     # error out if template file doesn't exist (or glob returns an error)
     if(empty($page->template_name)) throw new Exception('404');
-    
+
     if(!$page->template_file) {
       throw new Exception('A template named \''.$page->template_name.'\' could not be found in the \'/templates\' folder');
     }
     # render page
     $this->render($page);
   }
-  
+
   function __construct($get) {
     # sometimes when PHP release a new version, they do silly things - this function is here to fix them
     $this->php_fixes();
     # it's easier to handle some redirection through php rather than relying on a more complex .htaccess file to do all the work
     if($this->handle_redirects()) return;
-    
+
     # strip any leading or trailing slashes from the passed url
     $key = preg_replace(array('/\/$/', '/^\//'), '', key($get));
     # store file path for this current page
@@ -145,13 +145,13 @@ Class Stacey {
         else {
           echo '<h1>404</h1><h2>Page could not be found.</h2><p>Unfortunately, the page you were looking for does not exist here.</p>';
         }
-        
+
       } else {
         echo '<h3>'.$e->getMessage().'</h3>';
       }
     }
   }
-  
+
 }
 
 ?>
