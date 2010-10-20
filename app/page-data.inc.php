@@ -195,13 +195,15 @@ Class PageData {
     $merged_text = preg_replace('/^\xEF\xBB\xBF|\x1A/', '', array($shared, $text));
 
     # merge shared content into text
-    $text = $merged_text[0]."\n-\n".$merged_text[1];
+    $shared = preg_replace('/\n\s*?-\s*?\n?$/', '', $merged_text[0]);
+    $content = preg_replace('/\n\s*?-\s*?\n?$/', '', $merged_text[1]);
+    $text = $shared."\n-\n".$content;
 
     # standardize line endings
     $text = preg_replace('/\r\n?/', "\n", $text);
 
     # pull out each key/value pair from the content file
-    $matches = preg_split('/\n\s*?-\s*?\n/', $text);
+    $matches = preg_split("/\n\s*?-\s*?\n/", $text);
 
     foreach($matches as $match) {
       # split the string by the first colon
