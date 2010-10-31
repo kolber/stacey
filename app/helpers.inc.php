@@ -58,21 +58,21 @@ Class Helpers {
     if($dir && !self::$file_cache[$dir]) return array();
     return $dir ? self::$file_cache[$dir] : self::$file_cache;
   }
-  
-  static function build_file_cache($dir = './') {
+
+  static function build_file_cache($dir = '.') {
     # build file cache
-    foreach(new DirectoryIterator($dir) as $file) {
-      # ignore dotfiles and the _cache folder
-      if(substr($file->getFilename(), 0, 1) == "." || $file->getFilename() == "_cache") continue;
-      # if result is a directory, then recurse
-      if($file->isDir()) self::build_file_cache($file->getPathname());
-      # otherwise, store file details in $file_cache
-      self::$file_cache[$dir][] = array(
-        'path' => $file->getPathname(),
-        'file_name' => $file->getFilename(),
-        'is_folder' => ($file->isDir() ? 1 : 0),
-        'mtime' => $file->getMTime()
-      );
+    foreach(glob($dir.'/*') as $path) {
+      $file = basename($path);
+      if(substr($file, 0, 1) == "." || $file == "_cache") continue;
+      if(is_dir($path)) self::build_file_cache($path);
+      if(is_readable($path)) {
+        self::$file_cache[$dir][] = array(
+          'path' => $path,
+          'file_name' => $file,
+          'is_folder' => (is_dir($path) ? 1 : 0),
+          'mtime' => filemtime($path)
+        );
+      }
     }
   }
 
