@@ -55,6 +55,7 @@ Class Stacey {
         header('Content-type: application/json; charset=utf-8');
         break;
       case 'css':
+        # set text/css charset header
         header('Content-type: text/css; charset=utf-8');
         break;
       default:
@@ -89,7 +90,6 @@ Class Stacey {
       # render the existing cache
       echo $cache->render();
     }
-
   }
 
   function create_page($file_path, $route) {
