@@ -4,6 +4,8 @@ Class Stacey {
 
   static $version = '2.2.0';
 
+  var $route;
+
   function handle_redirects() {
     # rewrite any calls to /index or /app back to /
     if(preg_match('/^\/?(index|app)\/?$/', $_SERVER['REQUEST_URI'])) {
@@ -76,23 +78,23 @@ Class Stacey {
     }
   }
 
-  function render($page) {
-    $cache = new Cache($page);
+  function render($template_file) {
+    $cache = new Cache($template_file);
     # set any custom headers
-    $this->set_content_type($page->template_file);
+    $this->set_content_type($template_file);
     # if etag is still fresh, return 304 and don't render anything
     if(!$this->etag_expired($cache)) return;
     # if cache has expired
     if($cache->expired()) {
       # render page & create new cache
-      echo $cache->create($page);
+      echo $cache->create($this->route);
     } else {
       # render the existing cache
       echo $cache->render();
     }
   }
 
-  function create_page($file_path, $route) {
+  function create_page($file_path) {
     # return a 404 if a matching folder doesn't exist
     if(!file_exists($file_path)) throw new Exception('404');
 
@@ -100,21 +102,19 @@ Class Stacey {
     global $current_page_file_path;
     $current_page_file_path = $file_path;
 
-    # create new page object
-    $page = new Page($route);
-
     # register global for the template for the page which is currently being viewed
     global $current_page_template_file;
-    $current_page_template_file = $page->template_file;
+    $template_name = Page::template_name($file_path);
+    $current_page_template_file = Page::template_file($template_name);
 
     # error out if template file doesn't exist (or glob returns an error)
-    if(empty($page->template_name)) throw new Exception('404');
+    if(empty($template_name)) throw new Exception('404');
 
-    if(!$page->template_file) {
-      throw new Exception('A template named \''.$page->template_name.'\' could not be found in the \'/templates\' folder');
+    if(!$current_page_template_file) {
+      throw new Exception('A template named \''.$template_name.'\' could not be found in the \'/templates\' folder');
     }
     # render page
-    $this->render($page);
+    $this->render($current_page_template_file);
   }
 
   function __construct($get) {
@@ -126,12 +126,12 @@ Class Stacey {
     # strip any leading or trailing slashes from the passed url
     $key = preg_replace(array('/\/$/', '/^\//'), '', key($get));
     # store file path for this current page
-    $route = isset($key) ? $key : 'index';
-    $file_path = Helpers::url_to_file_path($route);
+    $this->route = isset($key) ? $key : 'index';
+    $file_path = Helpers::url_to_file_path($this->route);
 
     try {
       # create and render the current page
-      $this->create_page($file_path, $route);
+      $this->create_page($file_path);
     } catch(Exception $e) {
       if($e->getMessage() == "404") {
         # return 404 headers
