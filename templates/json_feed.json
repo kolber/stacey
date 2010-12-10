@@ -6,8 +6,17 @@ foreach $root do
       {
         "title": "@title",
         "thumb": "@thumb",
+        "url": "@url",
+        "date": "@date",
+        "updated": "@updated",
         "title": "@title",
-        "url": "@url"
+        "content": "@content",   
+        "images": [
+          foreach $images do
+            "url": "@url",
+            "name": "@name"
+          endforeach
+          ],
       }
       if !@is_last do
       ,
