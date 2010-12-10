@@ -1,0 +1,19 @@
+{
+foreach $root do  
+  if $children do
+    "projects": [
+    foreach $children do
+      {
+        "title": "@title",
+        "thumb": "@thumb",
+        "title": "@title",
+        "url": "@url"
+      }
+      if !@is_last do
+      ,
+      endif
+    endforeach
+    ]
+  endif
+endforeach
+}

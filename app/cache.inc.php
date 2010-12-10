@@ -5,18 +5,24 @@ Class Cache {
   var $page;
   var $cachefile;
   var $hash;
-  var $comment_tags = array('<!--', '-->');
+  var $filetype;
+  var $comment_tags;
+  var $no_comment_types = array('json');
+  var $filetype_comment_tags = array(
+    "default" => array("begin" => "<!--",  "end" => "-->"),
+    "js"      => array("begin" => "/*",    "end" => "*/"),
+    "css"     => array("begin" => "/*",    "end" => "*/"),
+    "txt"     => array("begin" => "#",     "end" => "") # robots.txt files need # comments in order to not break
+  );
 
   function __construct($template_file) {
     # turn a base64 of the current route into the name of the cache file
     $this->cachefile = './app/_cache/'.$this->base64_url($_SERVER['REQUEST_URI']);
     # collect an md5 of all files
     $this->hash = $this->create_hash();
-    # if we're serving JSON or CSS, use appropriate comment tags
-    preg_match('/\.([\w\d]+?)$/', $template_file, $split_path);
-    if ($split_path[1] == 'json' || $split_path[1] == 'js' || $split_path[1] == 'css') $this->comment_tags = array('/*', '*/');
-    # robots.txt files need # comments in order to not break
-    if ($split_path[1] == 'txt') $this->comment_tags = array('#', '');
+    # determine our file type so we know how (and if) to comment 
+    $this->filetype = $this->set_filetype($template_file);
+    $this->comment_tags = $this->set_comment_tags();
   }
 
   function base64_url($input) {
@@ -24,7 +30,7 @@ Class Cache {
   }
 
   function render() {
-    return file_get_contents($this->cachefile)."\n".$this->comment_tags[0].' Cached. '.$this->comment_tags[1];
+    return file_get_contents($this->cachefile)."\n".$this->comment_tags['begin'].' Cached. '.$this->comment_tags['end'];
   }
 
   function create($route) {
@@ -34,7 +40,7 @@ Class Cache {
       echo $page->parse_template();
       # if cache folder is writable, write to it
       if(is_writable('./app/_cache')) $this->write_cache();
-      else echo "\n".$this->comment_tags[0].' Stacey('.Stacey::$version.'). '.$this->comment_tags[1];
+      else if ($this->is_commentable()) echo "\n".$this->comment_tags['begin'].' Stacey('.Stacey::$version.'). '.$this->comment_tags['end'];
     # end buffer
     ob_end_flush();
     return '';
@@ -54,7 +60,7 @@ Class Cache {
   }
 
   function write_cache() {
-    echo "\n".$this->comment_tags[0].' Stacey('.Stacey::$version.'): '.$this->hash.' '.$this->comment_tags[1];
+    if ($this->is_commentable()) echo "\n".$this->comment_tags['begin'].' Stacey('.Stacey::$version.'): '.$this->hash.' '.$this->comment_tags['end'];
     $fp = fopen($this->cachefile, 'w');
     fwrite($fp, ob_get_contents());
     fclose($fp);
@@ -69,6 +75,21 @@ Class Cache {
     return md5($htaccess.$file_cache);
   }
 
-}
+  function set_filetype($template_file) {
+    preg_match('/\.([\w\d]+?)$/', $template_file, $split_path);
+    return $split_path[1];
+  }
 
+  function set_comment_tags() {
+    if (in_array($this->filetype, $this->filetype_comment_tags)) {
+      return $this->filetype_comment_tags[$this->filetype];
+    } 
+    else return $this->filetype_comment_tags['default'];
+  }
+
+  function is_commentable() {
+    return !(in_array($this->filetype, $this->no_comment_types));
+  }
+
+}
 ?>
