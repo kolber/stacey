@@ -117,6 +117,8 @@ Class PageData {
     $page->thumb = self::get_thumbnail($page->file_path);
     # @current_year
     $page->current_year = date('Y');
+    # @urlencoded_title
+    $page->urlencoded_title = rawurlencode($page->data['@title']);
 
     # @stacey_version
     $page->stacey_version = Stacey::$version;
