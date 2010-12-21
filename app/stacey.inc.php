@@ -78,8 +78,8 @@ Class Stacey {
     }
   }
 
-  function render($template_file) {
-    $cache = new Cache($template_file);
+  function render($file_path, $template_file) {
+    $cache = new Cache($file_path, $template_file);
     # set any custom headers
     $this->set_content_type($template_file);
     # if etag is still fresh, return 304 and don't render anything
@@ -114,7 +114,7 @@ Class Stacey {
       throw new Exception('A template named \''.$template_name.'\' could not be found in the \'/templates\' folder');
     }
     # render page
-    $this->render($current_page_template_file);
+    $this->render($file_path, $current_page_template_file);
   }
 
   function __construct($get) {
