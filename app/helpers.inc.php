@@ -61,7 +61,9 @@ Class Helpers {
 
   static function build_file_cache($dir = '.') {
     # build file cache
-    foreach(glob($dir.'/*') as $path) {
+    $files = glob($dir.'/*');
+    $files = is_array($files) ? $files : array();
+    foreach($files as $path) {
       $file = basename($path);
       if(substr($file, 0, 1) == "." || $file == "_cache") continue;
       if(is_dir($path)) self::build_file_cache($path);
