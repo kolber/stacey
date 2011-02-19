@@ -1,7 +1,7 @@
 {
 foreach $root do  
   if $children do
-    "projects": [
+    "pages": [
     foreach $children do
       {
         "title": "@title",
@@ -13,14 +13,10 @@ foreach $root do
         "content": "@content",   
         "images": [
           foreach $images do
-            "url": "@url",
-            "name": "@name"
+            { "url": "@url", "name": "@name" },
           endforeach
           ],
-      }
-      if !@is_last do
-      ,
-      endif
+      },
     endforeach
     ]
   endif
