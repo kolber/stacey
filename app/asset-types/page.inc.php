@@ -6,6 +6,7 @@ Class Page {
   var $file_path;
   var $template_name;
   var $template_file;
+  var $template_type;
   var $data;
   var $all_pages;
 
@@ -16,6 +17,7 @@ Class Page {
 
     $this->template_name = self::template_name($this->file_path);
     $this->template_file = self::template_file($this->template_name);
+    $this->template_type = self::template_type($this->template_file);
 
     # create/set all content variables
     PageData::create($this);
@@ -29,13 +31,30 @@ Class Page {
   }
 
   function parse_template() {
-    return TemplateParser::parse($this->data, file_get_contents($this->template_file));
+    $data = TemplateParser::parse($this->data, file_get_contents($this->template_file));
+
+    # post-parse JSON
+    if (strtolower($this->template_type) == 'json') {
+      # minfy it
+      $data = json_minify($data);
+      # strip any trailing commas
+      # (run it twice to get partial matches)
+      $data = preg_replace('/([}\]"]),([}\]])/', '$1$2', $data);
+      $data = preg_replace('/([}\]"]),([}\]])/', '$1$2', $data);
+    }
+
+    return $data;
   }
 
   # magic variable assignment
   function __set($name, $value) {
     $prefix = is_array($value) ? '$' : '@';
     $this->data[$prefix.strtolower($name)] = $value;
+  }
+
+  static function template_type($template_file) {
+    preg_match('/\.([\w\d]+?)$/', $template_file, $ext);
+    return isset($ext[1]) ? $ext[1] : false;
   }
 
   static function template_name($file_path) {
