@@ -60,7 +60,7 @@ Class Page {
   static function template_name($file_path) {
     $txts = array_keys(Helpers::list_files($file_path, '/\.txt$/'));
     # return first matched .txt file
-    return (!empty($txts)) ? preg_replace('/\.txt$/', '', $txts[0]) : false;
+    return (!empty($txts)) ? preg_replace('/([^.]*\.)?([^.]*)\.txt$/', '\\2', $txts[0]) : false;
   }
 
   static function template_file($template_name) {
