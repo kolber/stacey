@@ -107,7 +107,7 @@ Class PageData {
     # @permalink
     $page->permalink = Helpers::modrewrite_parse($page->url_path.'/');
     # @slug
-      $split_url = explode("/", $page->url_path);
+    $split_url = explode("/", $page->url_path);
     $page->slug = $split_url[count($split_url) - 1];
     # @page_name
     $page->page_name = ucfirst(preg_replace('/[-_](.)/e', "' '.strtoupper('\\1')", $page->data['@slug']));
@@ -142,6 +142,10 @@ Class PageData {
     $page->is_last = $page->data['@index'] == $page->data['@siblings_count'];
     # @is_first
     $page->is_first = $page->data['@index'] == 1;
+
+	# @cache_page
+	$page->cache_page = (isset($page->data['@cache_page']) && ($page->data['@cache_page'] == true)) || (!isset($page->data['@cache_page']));
+
   }
 
   static function create_collections($page) {
