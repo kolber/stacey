@@ -56,7 +56,7 @@ Class Cache {
 
   function get_current_hash() {
     preg_match('/Stacey.*: (.+?)\s/', file_get_contents($this->cachefile), $matches);
-    return $matches[1];
+    return isset($matches[1]) ? $matches[1] : false;
   }
 
   function write_cache() {
