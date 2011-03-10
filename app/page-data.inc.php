@@ -144,7 +144,7 @@ Class PageData {
     $page->is_first = $page->data['@index'] == 1;
 
 	# @cache_page
-	$page->cache_page = (isset($page->data['@cache_page']) && ($page->data['@cache_page'] == true)) || (!isset($page->data['@cache_page']));
+	$page->bypass_cache = isset($page->data['@bypass_cache']) ? $page->data['@bypass_cache'] : false;
 
   }
 
