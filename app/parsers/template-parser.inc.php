@@ -133,17 +133,17 @@ Class TemplateParser {
     # run the replacements on the pre-"foreach" part of the partial
     $template = self::parse($data, $template_parts[1]);
     # allow loop limiting
-    if(preg_match('/\[\d*:\d+\]$/', $template_parts[2])) {
-      preg_match('/([\$\@].+?)\[(\d*):(\d+)\]$/', $template_parts[2], $matches);
+    if(preg_match('/\[\d*:\d*\]$/', $template_parts[2])) {
+      preg_match('/([\$\@].+?)\[(\d*):(\d*)\]$/', $template_parts[2], $matches);
       $template_parts[2] = $matches[1];
-      $start_limit = $matches[2] ? $matches[2] : 0;
-      $end_limit = $matches[3];
+      $start_limit = empty($matches[2]) ? 0 : $matches[2];
+      if (!empty($matches[3])) $end_limit = $matches[3];
     }
     # traverse one level deeper into the data hierachy
     $pages = (isset($data[$template_parts[2]]) && is_array($data[$template_parts[2]]) && !empty($data[$template_parts[2]])) ? $data[$template_parts[2]] : false;
 
     # slice down the data array if required
-    if(is_array($pages) && $end_limit) {
+    if(is_array($pages) && $start_limit !== false) {
       $pages = array_slice($pages, $start_limit, $end_limit);
     }
 
