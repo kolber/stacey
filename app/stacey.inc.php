@@ -105,16 +105,24 @@ Class Stacey {
     # register global for the template for the page which is currently being viewed
     global $current_page_template_file;
     $template_name = Page::template_name($file_path);
-    $current_page_template_file = Page::template_file($template_name);
-
-    # error out if template file doesn't exist (or glob returns an error)
-    if(empty($template_name)) throw new Exception('404');
-
-    if(!$current_page_template_file) {
-      throw new Exception('A template named \''.$template_name.'\' could not be found in the \'/templates\' folder');
+    if ($template_name == 'redirect') {
+	   # Redirection::redirect() will throw an exception if file does not contain a location.
+	   # We let that exception bubble up to the caller, which will show the message.
+       Redirection::redirect($file_path);
     }
-    # render page
-    $this->render($file_path, $current_page_template_file);
+    else
+    {
+	    $current_page_template_file = Page::template_file($template_name);
+
+	    # error out if template file doesn't exist (or glob returns an error)
+	    if(empty($template_name)) throw new Exception('404');
+
+	    if(!$current_page_template_file) {
+	      throw new Exception('A template named \''.$template_name.'\' could not be found in the \'/templates\' folder');
+	    }
+	    # render page
+	    $this->render($file_path, $current_page_template_file);	
+    }
   }
 
   function __construct($get) {
