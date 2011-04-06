@@ -194,6 +194,9 @@ Class PageData {
 
     # include shared variables for each page
     $shared = (file_exists('./content/_shared.txt')) ? file_get_contents('./content/_shared.txt') : '';
+    # strip any $n matches from the text, as this will mess with any preg_replaces
+    # they get put back in after the template has finished being parsed
+    $text = preg_replace('/\$(\d+)/', "\x02$1", $text);
 
     # remove UTF-8 BOM and marker character in input, if present
     $merged_text = preg_replace('/^\xEF\xBB\xBF|\x1A/', '', array($shared, $text));

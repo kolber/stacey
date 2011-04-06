@@ -88,6 +88,8 @@ Class TemplateParser {
 
     # we've finished parsing, so return any remaining @ symbols
     $template = str_replace("\x01", '@', $template);
+    # put back any $ characters
+    $template = str_replace("\x02", '$', $template);
 
     return $template;
   }
