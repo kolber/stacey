@@ -144,7 +144,7 @@ Class TemplateParser {
     $pages = (isset($data[$template_parts[2]]) && is_array($data[$template_parts[2]]) && !empty($data[$template_parts[2]])) ? $data[$template_parts[2]] : false;
 
     # slice down the data array if required
-    if(is_array($pages) && $start_limit !== false) {
+    if(is_array($pages) && isset($start_limit)) {
       $pages = array_slice($pages, $start_limit, $end_limit);
     }
 
