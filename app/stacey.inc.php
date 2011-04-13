@@ -2,7 +2,7 @@
 
 Class Stacey {
 
-  static $version = '2.2.2';
+  static $version = '2.2.3';
 
   var $route;
 
