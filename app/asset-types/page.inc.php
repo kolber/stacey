@@ -58,8 +58,16 @@ Class Page {
 
   static function template_name($file_path) {
     $txts = array_keys(Helpers::list_files($file_path, '/\.txt$/'));
-    # return first matched .txt file
-    return (!empty($txts)) ? preg_replace('/\.txt$/', '', $txts[0]) : false;
+    $template = '';
+    #Walk trough txts and find template
+    foreach ($txts as $txt) {
+        $file = preg_replace('/\.txt$/', '', $txt);
+        if (Page::template_file($file) != false) {
+            $template = $file;
+            break;
+        }
+    }
+    return (!empty($template)) ? $template : false;
   }
 
   static function template_file($template_name) {
