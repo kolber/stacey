@@ -152,7 +152,7 @@ Class PageData {
     # $root
     $page->root = Helpers::list_files('./content', '/^\d+?\./', true);
     # $parent
-      $parent_path = self::get_parent($page->file_path, $page->url_path);
+    $parent_path = self::get_parent($page->file_path, $page->url_path);
     $page->parent = $parent_path;
     # $parents
     $page->parents = self::get_parents($page->file_path, $page->url_path);
