@@ -228,7 +228,8 @@ Class PageData {
       # set a variable with a name of 'key' on the page with a value of 'value'
       # if the template type is xml or html & the 'value' contains a newline character, parse it as markdown
       if(strpos($colon_split[1], "\n") !== false && preg_match('/xml|htm|html|rss|rdf|atom/', $split_path[1])) {
-        $page->$colon_split[0] = Markdown(trim($colon_split[1]));
+        $brokenText = preg_replace('/(?<!\n)\n(?![\n\*\#\-])/', "  \n", trim($colon_split[1]));
+        $page->$colon_split[0] = Markdown($brokenText);
       } else {
         $page->$colon_split[0] = trim($colon_split[1]);
       }
