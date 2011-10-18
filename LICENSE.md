@@ -26,10 +26,10 @@ https://github.com/kolber/stacey
 
 Major components:
 
-jQuery: MIT/GPL license
-Modernizr: MIT/BSD license
-Respond.js: MIT/GPL license
-Normalize.css: Public Domain
+* jQuery: MIT/GPL license
+* Modernizr: MIT/BSD license
+* Respond.js: MIT/GPL license
+* Normalize.css: Public Domain
 
 # Everything else:
 
