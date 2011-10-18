@@ -1,1 +1,3 @@
-company: Kvakes
+company: Company Name
+-
+google-analytics-id: UA-XXXXX-X
