@@ -1,4 +1,4 @@
 foreach $children do
-  :sitemap-url
-  :sitemap-children
+	:sitemap-url
+	:sitemap-children
 endforeach
