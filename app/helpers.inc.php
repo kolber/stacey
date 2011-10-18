@@ -133,6 +133,8 @@ Class Helpers {
   }
 
   static function site_last_modified($dir = './content') {
+  	// This function is very time-consuming on larger project.
+  	return time();
     $last_updated = 0;
     foreach(Helpers::list_files($dir, '/.*/', false) as $file) {
       if(filemtime($file) > $last_updated) $last_updated = filemtime($file);
