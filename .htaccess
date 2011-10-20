@@ -1,37 +1,45 @@
 # Set ChromeFrame header
 
-<IfModule mod_setenvif.c>
-	<IfModule mod_headers.c>
-		BrowserMatch MSIE ie
-		Header set X-UA-Compatible "IE=Edge,chrome=1" env=ie
-		Header append Vary User-Agent
-	</IfModule>
+<IfModule mod_headers.c>
+	Header set X-UA-Compatible "IE=Edge,chrome=1"
+	# mod_headers can't match by content-type, but we don't want to send this header on *everything*...
+	<FilesMatch "\.(js|css|gif|png|jpe?g|pdf|xml|oga|ogg|m4a|ogv|mp4|m4v|webm|svg|svgz|eot|ttf|otf|woff|ico|webp|appcache|manifest|htc|crx|xpi|safariextz|vcf)$" >
+		Header unset X-UA-Compatible
+	</FilesMatch>
 </IfModule>
 
 # Allow access from all domains for webfonts
 
-<FilesMatch "\.(ttf|otf|eot|woff|font.css)$">
-	<IfModule mod_headers.c>
+<IfModule mod_headers.c>
+	<FilesMatch "\.(ttf|ttc|otf|eot|woff|font.css)$">
 		Header set Access-Control-Allow-Origin "*"
-	</IfModule>
-</FilesMatch>
+	</FilesMatch>
+</IfModule>
 
 # Proper MIME type for all files
 
-AddType audio/ogg						oga ogg
+AddType application/javascript			js
 
+# Audio
+AddType audio/ogg						oga ogg
+AddType audio/mp4						m4a
+
+# Video
 AddType video/ogg						ogv
-AddType video/mp4						mp4
+AddType video/mp4						mp4 m4v
 AddType video/webm						webm
 
-AddType image/svg+xml					svg svgz 
+# SVG.
+AddType image/svg+xml					svg svgz
 AddEncoding gzip						svgz
 
+# Webfonts
 AddType application/vnd.ms-fontobject	eot
-AddType font/truetype					ttf
+AddType application/x-font-ttf			ttf ttc
 AddType font/opentype					otf
 AddType application/x-font-woff			woff
 
+# Assorted types
 AddType image/x-icon					ico
 AddType image/webp						webp
 AddType text/cache-manifest				appcache manifest
@@ -39,70 +47,72 @@ AddType text/x-component				htc
 AddType application/x-chrome-extension	crx
 AddType application/x-xpinstall			xpi
 AddType application/octet-stream		safariextz
+AddType text/x-vcard					vcf
 
 # gzip compression
 
 <IfModule mod_deflate.c>
 	<IfModule mod_setenvif.c>
 		<IfModule mod_headers.c>
-			SetEnvIfNoCase ^(Accept-EncodXng|X-cept-Encoding|X{15}|~{15}|-{15})$ ^((gzip|deflate)\s,?\s(gzip|deflate)?|X{4,13}|~{4,13}|-{4,13})$ HAVE_Accept-Encoding
+			SetEnvIfNoCase ^(Accept-EncodXng|X-cept-Encoding|X{15}|~{15}|-{15})$ ^((gzip|deflate)\s*,?\s*)+|[X~-]{4,13}$ HAVE_Accept-Encoding
 			RequestHeader append Accept-Encoding "gzip,deflate" env=HAVE_Accept-Encoding
 		</IfModule>
 	</IfModule>
 
+	# HTML, TXT, CSS, JavaScript, JSON, XML, HTC:
 	<IfModule filter_module>
-		FilterDeclare	COMPRESS
-		FilterProvider	COMPRESS	DEFLATE resp=Content-Type /text/(html|css|javascript|plain|x(ml|-component))/
-		FilterProvider	COMPRESS	DEFLATE resp=Content-Type /application/(javascript|json|xml|x-javascript)/
-		FilterChain		COMPRESS
-		FilterProtocol	COMPRESS	change=yes;byteranges=no
+		FilterDeclare   COMPRESS
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/html
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/css
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/plain
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/x-component
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/javascript
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/json
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/xhtml+xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/rss+xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/atom+xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/vnd.ms-fontobject
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $image/svg+xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $image/x-icon
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/x-font-ttf
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $font/opentype
+		FilterChain     COMPRESS
+		FilterProtocol  COMPRESS  DEFLATE change=yes;byteranges=no
 	</IfModule>
-
-	<FilesMatch "\.(ttf|otf|eot|svg)$" >
-		SetOutputFilter DEFLATE
-	</FilesMatch>
 </IfModule>
 
 # Caching
 
 <IfModule mod_expires.c>
 	ExpiresActive on
-
-	ExpiresDefault                          "access plus 1 month"
-
-	ExpiresByType text/cache-manifest       "access plus 0 seconds"
-
-	ExpiresByType text/html                 "access plus 0 seconds"
-
-	ExpiresByType text/xml                  "access plus 0 seconds"
-	ExpiresByType application/xml           "access plus 0 seconds"
-	ExpiresByType application/json          "access plus 0 seconds"
-
-	ExpiresByType application/rss+xml       "access plus 1 hour"
-
-	ExpiresByType image/x-icon              "access plus 1 week" 
-
-	ExpiresByType image/gif                 "access plus 1 month"
-	ExpiresByType image/png                 "access plus 1 month"
-	ExpiresByType image/jpg                 "access plus 1 month"
-	ExpiresByType image/jpeg                "access plus 1 month"
-	ExpiresByType video/ogg                 "access plus 1 month"
-	ExpiresByType audio/ogg                 "access plus 1 month"
-	ExpiresByType video/mp4                 "access plus 1 month"
-	ExpiresByType video/webm                "access plus 1 month"
-
-	ExpiresByType text/x-component          "access plus 1 month"
-
-	ExpiresByType font/truetype             "access plus 1 month"
-	ExpiresByType font/opentype             "access plus 1 month"
-	ExpiresByType application/x-font-woff   "access plus 1 month"
-	ExpiresByType image/svg+xml             "access plus 1 month"
-	ExpiresByType application/vnd.ms-fontobject "access plus 1 month"
-
-	ExpiresByType text/css                  "access plus 2 months"
-	ExpiresByType application/javascript    "access plus 2 months"
-	ExpiresByType text/javascript           "access plus 2 months"
-
+	ExpiresDefault							"access plus 1 month"
+	ExpiresByType text/cache-manifest		"access plus 0 seconds"
+	ExpiresByType text/html					"access plus 0 seconds"
+	ExpiresByType text/xml					"access plus 0 seconds"
+	ExpiresByType application/xml			"access plus 0 seconds"
+	ExpiresByType application/json			"access plus 0 seconds"
+	ExpiresByType application/rss+xml		"access plus 1 hour"
+	ExpiresByType application/atom+xml		"access plus 1 hour"
+	ExpiresByType image/x-icon				"access plus 1 week"
+	ExpiresByType image/gif					"access plus 1 month"
+	ExpiresByType image/png					"access plus 1 month"
+	ExpiresByType image/jpg					"access plus 1 month"
+	ExpiresByType image/jpeg				"access plus 1 month"
+	ExpiresByType video/ogg					"access plus 1 month"
+	ExpiresByType audio/ogg					"access plus 1 month"
+	ExpiresByType video/mp4					"access plus 1 month"
+	ExpiresByType video/webm				"access plus 1 month"
+	ExpiresByType text/x-component			"access plus 1 month"
+	ExpiresByType application/x-font-ttf	"access plus 1 month"
+	ExpiresByType font/opentype				"access plus 1 month"
+	ExpiresByType application/x-font-woff	"access plus 1 month"
+	ExpiresByType image/svg+xml				"access plus 1 month"
+	ExpiresByType application/vnd.ms-fontobject	"access plus 1 month"
+	ExpiresByType text/css					"access plus 1 year"
+	ExpiresByType application/javascript	"access plus 1 year"
+	
 	<IfModule mod_headers.c>
 		Header append Cache-Control "public"
 	</IfModule>
@@ -110,6 +120,9 @@ AddType application/octet-stream		safariextz
 
 # No need for Etags because of far-future expiration date
 
+<IfModule mod_headers.c>
+	Header unset ETag
+</IfModule>
 FileETag None
 
 # Redirections
@@ -160,15 +173,32 @@ FileETag None
 	RewriteRule ^(.+)$ public/$1 [L]
 </IfModule>
 
+<IfModule mod_rewrite.c>
+	Options +FollowSymlinks
+	RewriteEngine On
+</IfModule>
+
 # Apache will give a 404 for a rewrite if a folder of the same name does not exist 
 Options -MultiViews
 
 # Disable viewing folder contents
 Options -Indexes
 
+# Rewrite "www.example.com -> example.com"
+<IfModule mod_rewrite.c>
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# Block access to hidden folders
+<IfModule mod_rewrite.c>
+  RewriteRule "(^|/)\." - [F]
+</IfModule>
+
 # Errors
 ErrorDocument 404 /404.html
 
 # Encoding
 AddDefaultCharset utf-8
-AddCharset utf-8 .html .css .js .xml .json .rss
+AddCharset utf-8 .html .css .js .xml .json .rss .atom
