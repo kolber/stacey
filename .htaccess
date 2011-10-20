@@ -128,6 +128,7 @@ FileETag None
 # Redirections
 
 <IfModule mod_rewrite.c>
+	Options +FollowSymlinks
 	RewriteEngine On
 
 	# Rewrite "www.domain.com -> domain.com" 
@@ -183,18 +184,6 @@ Options -MultiViews
 
 # Disable viewing folder contents
 Options -Indexes
-
-# Rewrite "www.example.com -> example.com"
-<IfModule mod_rewrite.c>
-  RewriteCond %{HTTPS} !=on
-  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-  RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
-</IfModule>
-
-# Block access to hidden folders
-<IfModule mod_rewrite.c>
-  RewriteRule "(^|/)\." - [F]
-</IfModule>
 
 # Errors
 ErrorDocument 404 /404.html
