@@ -515,3 +515,36 @@ AddCharset utf-8 .html .css .js .xml .json .rss .atom
 <IfModule php5_module>
   php_value session.cookie_httponly true
 </IfModule>
+
+
+# ----------------------------------------------------------------------
+# Stacey rules
+# ----------------------------------------------------------------------
+
+<IfModule mod_rewrite.c>
+  # Rewrite any calls to *.html, *.json, *.xml, *.atom, *.rss, *.rdf or *.txt if a folder matching * exists
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_URI} !public/
+  RewriteCond %{DOCUMENT_ROOT}/public/$1.$2 !-f
+  RewriteRule (.+)\.(html|json|xml|atom|rss|rdf|txt)$ $1/ [L]
+  
+  # Add a trailing slash to directories
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !(\.)
+  RewriteCond %{REQUEST_URI} !(.*)/$
+  RewriteRule ([^/]+)$ $1/ [L]
+  
+  # Rewrite any calls to /* or /app to the index.php file
+  RewriteCond %{REQUEST_URI} /app/$
+  RewriteRule ^app/ index.php [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)/$ index.php?$1 [L]
+  
+  # Rewrite any file calls to the public directory
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !public/
+  RewriteRule ^(.+)$ public/$1 [L]
+</IfModule>
