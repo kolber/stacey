@@ -46,6 +46,17 @@ Class Image extends Asset {
       if(isset($iptc["2#025"][0])) 
         $this->data['@keywords'] = $iptc["2#025"][0];
     }
+
+    # get @description from a txt file
+    $description_path = preg_replace('/(\.[\w\d]+?)$/', '.txt', $file_path);
+    if (file_exists($description_path) && !is_dir($description_path)) {
+      $fh = fopen($description_path, 'r');
+      $desc = fread($fh, filesize($description_path));
+      $desc = preg_replace('/(?<!\n)\n(?![\n\*\#\-])/', "  \n", trim($desc));
+      $descM = Markdown($desc);
+      $this->data['@description'] = $descM;
+      fclose($fh);
+    }
     
   }
   
