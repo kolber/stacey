@@ -1,6 +1,3 @@
-name: Ñame
+company: Company Name
 -
-profession: Gräphic Designer
--
-email: 
-<hi@yourdomain.com>
+google-analytics-id: UA-XXXXX-X

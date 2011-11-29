@@ -133,6 +133,9 @@ Class Helpers {
   }
 
   static function site_last_modified($dir = './content') {
+  	// This function is very time-consuming when there're many pages or assets, so I'd disable it.
+  	return time();
+  	//
     $last_updated = 0;
     foreach(Helpers::list_files($dir, '/.*/', false) as $file) {
       if(filemtime($file) > $last_updated) $last_updated = filemtime($file);

@@ -1,29 +1,49 @@
-# Stacey 2.3.0
+# Stacey 2.3.0 CMS with HTML5 (boilerplate) obfuscated template
 
-## Overview
-Stacey takes content from `.txt` files, image files and implied directory structure and generates a website.
-It is a no-database, dynamic website generator.
+This is not simple merging of Stacey + HTML5 Boilerplate, because I don't need all techniques from HTML5B, because I use this repo for myself on real projects.
 
-If you look in the `/content` and `/templates` folders, you should get the general idea of how it all works.
+## Stacey 2.3.0
 
-## Installation
+https://github.com/kolber/stacey
 
-Copy to server, `chmod 777 app/_cache`.
+## HTML5 Boilerplate
 
-If you want clean urls, `mv htaccess .htaccess`
+https://github.com/h5bp/html5-boilerplate
 
-## Templates
+# My Workflow (Mac only)
 
-There are an additional two sets of templates which can be found at:
-<http://github.com/kolber/stacey-template2> &
-<http://github.com/kolber/stacey-template3>
+Instruments:
 
-## Read More
+* GitHub
+* MAMP http://www.mamp.info/en/index.html
+* SASS http://sass-lang.com/
 
-See <http://staceyapp.com> for more detailed usage information.
+## First, you need to create a repo on GitHub. http://help.github.com/create-a-repo/
 
-## Copyright/License
+	$ cd ~
+	$ git clone git://github.com/Kvakes/stacey-html5.git
+	$ mkdir ~/Hello-World
+	$ cd ~/Hello-World
+	$ git init
+	$ cp -r ../stacey-html5/* .
+	$ git add *
+	$ git commit -m "stacey-html5"
+	$ git remote add origin git@github.com:username/Hello-World.git
+	$ git push origin master
 
-Copyright (c) 2009 Anthony Kolber. See `LICENSE` for details.
-Except PHP Markdown Extra which is (c) Michel Fortin (see `/app/parsers/markdown-parser.inc.php` for details) and
-JSON.minify which is (c) Kyle Simpson (see 'app/parsers/json-minifier.inc.php' for details).
+## Download and install MAMP
+
+Once you've started MAMP, click Preferences, select Apache tab and set Document Root to ~/Hello-World
+
+## SASS
+
+You don't need to use it, you can just edit style.css file. But if you want to harness power of Syntactically Awesome Stylesheets, bend over: here's how you can install it:
+
+	$ gem install sass
+
+Then you need to run this commands and SASS will automatically convert all your .scss files within the public/docs/scss folder to .css files and put it to public/docs/css folder. Then, whenever you will change any .scss file, it will automatically rewrite corresponding .css file.
+
+	$ cd ~/Hello-World
+	$ scss --watch public/docs/scss:public/docs/css -t compressed
+
+Note that the command is not "sass" but "scss", because I prefer to use SCSS syntax. Omit "-t compressed" if you want result css file to be uncompressed. Use "-t compressed" to produce CSS for live version.
