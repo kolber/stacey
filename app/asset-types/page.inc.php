@@ -47,8 +47,7 @@ Class Page {
 
   # magic variable assignment
   function __set($name, $value) {
-    $prefix = is_array($value) ? '$' : '@';
-    $this->data[$prefix.strtolower($name)] = $value;
+    $this->data[strtolower($name)] = $value;
   }
 
   static function template_type($template_file) {

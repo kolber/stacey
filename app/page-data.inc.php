@@ -100,84 +100,84 @@ Class PageData {
   }
 
   static function create_vars($page) {
-    # @file_path
-    $page->data['@file_path'] = $page->file_path;
-    # @url
+    # page.file_path
+    $page->data['file_path'] = $page->file_path;
+    # page.url
     $page->url = Helpers::relative_root_path($page->url_path.'/');
-    # @permalink
+    # page.permalink
     $page->permalink = Helpers::modrewrite_parse($page->url_path.'/');
-    # @slug
+    # page.slug
     $split_url = explode("/", $page->url_path);
     $page->slug = $split_url[count($split_url) - 1];
-    # @page_name
-    $page->page_name = ucfirst(preg_replace('/[-_](.)/e', "' '.strtoupper('\\1')", $page->data['@slug']));
-    # @root_path
+    # page.page_name
+    $page->page_name = ucfirst(preg_replace('/[-_](.)/e', "' '.strtoupper('\\1')", $page->data['slug']));
+    # page.root_path
     $page->root_path = Helpers::relative_root_path();
-    # @thumb
+    # page.thumb
     $page->thumb = self::get_thumbnail($page->file_path);
-    # @current_year
+    # page.current_year
     $page->current_year = date('Y');
 
-    # @stacey_version
+    # page.stacey_version
     $page->stacey_version = Stacey::$version;
-    # @domain_name
+    # page.domain_name
     $page->domain_name = $_SERVER['HTTP_HOST'];
-    # @base_url
+    # page.base_url
     $page->base_url = $_SERVER['HTTP_HOST'].str_replace('/index.php', '', $_SERVER['PHP_SELF']);
-    # @site_updated
+    # page.site_updated
     $page->site_updated = strval(date('c', Helpers::site_last_modified()));
-    # @updated
+    # page.updated
     $page->updated = strval(date('c', Helpers::last_modified($page->file_path)));
 
-    # @siblings_count
-    $page->siblings_count = strval(count($page->data['$siblings_and_self']));
-    # @children_count
-    $page->children_count = strval(count($page->data['$children']));
-    # @index
-    $page->index = self::get_index($page->data['$siblings_and_self'], $page->file_path);
+    # page.siblings_count
+    $page->siblings_count = strval(count($page->data['siblings_and_self']));
+    # page.children_count
+    $page->children_count = strval(count($page->data['children']));
+    # page.index
+    $page->index = self::get_index($page->data['siblings_and_self'], $page->file_path);
 
-    # @is_current
-    $page->is_current = self::is_current($page->data['@base_url'], $page->data['@permalink']);
-    # @is_last
-    $page->is_last = $page->data['@index'] == $page->data['@siblings_count'];
-    # @is_first
-    $page->is_first = $page->data['@index'] == 1;
+    # page.is_current
+    $page->is_current = self::is_current($page->data['base_url'], $page->data['permalink']);
+    # page.is_last
+    $page->is_last = $page->data['index'] == $page->data['siblings_count'];
+    # page.is_first
+    $page->is_first = $page->data['index'] == 1;
 
-	# @cache_page
-	$page->bypass_cache = isset($page->data['@bypass_cache']) ? $page->data['@bypass_cache'] : false;
+	  # page.cache_page
+    $page->bypass_cache = isset($page->data['bypass_cache']) && $page->data['bypass_cache'] !== 'false' ? $page->data['bypass_cache'] : false;
 
   }
 
   static function create_collections($page) {
-    # $root
+    # page.root
     $page->root = Helpers::list_files('./content', '/^\d+?\./', true);
-    # $parent
+    # page.parent
       $parent_path = self::get_parent($page->file_path, $page->url_path);
     $page->parent = $parent_path;
-    # $parents
+    # page.parents
     $page->parents = self::get_parents($page->file_path, $page->url_path);
-    # $siblings
+    # page.siblings
     $parent_path = !empty($parent_path[0]) ? $parent_path[0] : './content';
     $split_url = explode("/", $page->url_path);
     $page->siblings = Helpers::list_files($parent_path, '/^\d+?\.(?!'.$split_url[(count($split_url) - 1)].')/', true);
-    # $siblings_and_self
+    # page.siblings_and_self
     $page->siblings_and_self = Helpers::list_files($parent_path, '/^\d+?\./', true);
-    # $next_sibling / $previous_sibling
-      $neighboring_siblings = self::extract_closest_siblings($page->data['$siblings_and_self'], $page->file_path);
+    # page.next_sibling / page.previous_sibling
+      $neighboring_siblings = self::extract_closest_siblings($page->data['siblings_and_self'], $page->file_path);
     $page->previous_sibling = array($neighboring_siblings[0]);
     $page->next_sibling = array($neighboring_siblings[1]);
 
-    # $children
+    # page.children
     $page->children = Helpers::list_files($page->file_path, '/^\d+?\./', true);
   }
 
   static function create_asset_collections($page) {
-    # $images
+    # page.images
     $page->images = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(gif|jpg|png|jpeg)$/i', false);
-    # $video
+    # page.video
     $page->video = Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)$/i', false);
 
-    # $swf, $html, $doc, $pdf, $mp3, etc.
+    # page.swf, page.html, page.doc, page.pdf, page.mp3, etc.
     # create a variable for each file type included within the page's folder (excluding .txt files)
     $assets = self::get_file_types($page->file_path);
     foreach($assets as $asset_type => $asset_files) eval('$page->'.$asset_type.'=$asset_files;');
@@ -216,9 +216,9 @@ Class PageData {
       # split the string by the first colon
       $colon_split = explode(':', $match, 2);
 
-      # replace the only var in your content - @path for your inline html with images and stuff
+      # replace the only var in your content - page.path for your inline html with images and stuff
       $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
-      $colon_split[1] = preg_replace('/\@path/', $relative_path.'/', $colon_split[1]);
+      $colon_split[1] = preg_replace('/{{\s*path\s*}}/', $relative_path.'/', $colon_split[1]);
 
       # get template file type as $split_path[1]
       global $current_page_template_file;
