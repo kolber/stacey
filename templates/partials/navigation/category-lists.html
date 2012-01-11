@@ -1,15 +1,17 @@
-foreach $root do
-  if $children do
+{% for child in page.root %}
+  {% if child.children %}
     <ul class="projects">
-      foreach $children do
-        <li class="col seven">
-          <p class="date col one">@date</p>
-          <h2 class="col five">
-            if @thumb do <img src="@thumb" class="project-thumb" alt=""> endif
-            <a href="@url">@title</a>
-          </h2>
-        </li>
-      endforeach
+    {% for child in child.children %}
+      <li class="col seven">
+        <p class="date col one">{{ child.date }}</p>
+        <h2 class="col five">
+          {% if child.thumb %}
+            <img src="{{ child.thumb }}" class="project-thumb" alt="">
+          {% endif %}
+          <a href="{{ child.url }}">{{ child.title }}</a>
+        </h2>
+      </li>
+    {% endfor %}
     </ul>
-  endif
-endforeach
+  {% endif %}
+{% endfor %}

@@ -1,10 +1,10 @@
-if $children do
+{% if page.children %}
   <ol class="children">
-  foreach $children do
-    <li>
-      <a href="@url">@page_name</a>
-      :children
-    </li>
-  endforeach
+    {% for child in page.children %}
+      <li>
+        <a href="{{ child.url }}">{{ child.page_name }}</a>
+        {% include 'partials/navigation/children.html' with { 'page' : child } %}
+      </li>
+    {% endfor %}
   </ol>
-endif
+{% endif %}
