@@ -3,7 +3,7 @@
     <ul class="projects">
     {% for child in child.children %}
       <li class="col seven">
-        <p class="date col one">{{ child.date }}</p>
+        <p class="date col one">{{ child.date | date("Y, M-") }}</p>
         <h2 class="col five">
           {% if child.thumb %}
             <img src="{{ child.thumb }}" class="project-thumb" alt="">

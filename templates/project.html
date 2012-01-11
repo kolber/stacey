@@ -17,7 +17,7 @@
       <hr>
       {% include 'partials/navigation/navigation.html' %}
       <div id="content" class="col eight">
-        <p class="date col one">{{ page.date | date("m/d/Y") }}</p>
+        <p class="date col one">{{ page.date | date("Y, M-") }}</p>
         <div class="description col six">
           <h2 class="col six"><a href="{{ page.root_path }}">{{ page.title }}</a></h2>
           {{ page.content }}
