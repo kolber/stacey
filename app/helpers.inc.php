@@ -102,6 +102,7 @@ Class Helpers {
     if(!file_exists('.htaccess') && preg_match('/\/$/', $url)) {
       $url = '?/'.$url;
     }
+    $url = preg_replace('/^(\?\/)?index\/$/', '', $url);
     return $url;
   }
 
