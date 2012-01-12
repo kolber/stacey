@@ -11,6 +11,8 @@ if(phpversion() < 5) {
   require_once './app/helpers.inc.php';
   # include any php files which sit in the app folder
   foreach(Helpers::rglob('./app/**.inc.php') as $include) include_once $include;
+  # include any custom extensions
+  foreach(Helpers::rglob('./extensions/**.inc.php') as $include) include_once $include;
 
   # start the app
   new Stacey($_GET);

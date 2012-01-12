@@ -20,6 +20,7 @@ Class TemplateParser {
       'auto_reload' => true,
       'autoescape' => false
     ));
+    $twig->addExtension(new Stacey_Twig_Extension());
 
     return $twig->render($template, array('page' => $data));
   }
