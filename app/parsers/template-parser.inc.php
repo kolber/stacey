@@ -2,9 +2,16 @@
 
 Class TemplateParser {
 
+  static function find_template($template) {
+    if (!file_exists($template)) {
+      throw new Exception('\''.$template.'\' template not found.');
+    }
+    return preg_replace('/.+\//', '', $template);
+  }
+
   static function parse($data, $template) {
 
-    $template = preg_replace('/.+\//', '', $template);
+    $template = self::find_template($template);
 
     Twig_Autoloader::register();
     $loader = new Twig_Loader_Filesystem('templates');

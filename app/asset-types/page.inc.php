@@ -65,7 +65,7 @@ Class Page {
     $template_name = preg_replace('/([^.]*\.)?([^.]*)$/', '\\2', $template_name);
     $template_file = glob('./templates/'.$template_name.'.*');
     # return template if one exists
-    return isset($template_file[0]) ? $template_file[0] : false;
+    return isset($template_file[0]) ? $template_file[0] : './templates/default.html';
   }
 
 }
