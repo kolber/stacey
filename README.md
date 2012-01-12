@@ -1,4 +1,4 @@
-# Stacey 2.3.0
+# Stacey 3.0.0
 
 ## Overview
 Stacey takes content from `.txt` files, image files and implied directory structure and generates a website.
