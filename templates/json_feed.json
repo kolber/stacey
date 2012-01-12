@@ -1,24 +1,22 @@
-{
-foreach $root do  
-  if $children do
+{% for page in page.root %}
+  {% if page.children %}
     "pages": [
-    foreach $children do
-      {
-        "title": "@title",
-        "thumb": "@thumb",
-        "url": "@url",
-        "date": "@date",
-        "updated": "@updated",
-        "title": "@title",
-        "content": "@content",   
-        "images": [
-          foreach $images do
-            { "url": "@url", "name": "@name" },
-          endforeach
+      {% for page in page.children %}
+        {
+          "title": "{{ page.title }}",
+          "thumb": "{{ page.thumb }}",
+          "url": "{{ page.url }}",
+          "date": "{{ page.date }}",
+          "updated": "{{ page.updated }}",
+          "title": "{{ page.title }}",
+          "content": "{{ page.content }}",
+          "images": [
+            {% for image in page.images %}
+              { "url": "{{ image.url }}", "name": "{{ image.name }}" },
+            {% endfor %}
           ],
-      },
-    endforeach
+        },
+      {% endfor %}
     ]
-  endif
-endforeach
-}
+  {% endif %}
+{% endfor %}
