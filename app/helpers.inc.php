@@ -93,7 +93,7 @@ Class Helpers {
     }
 
     # sort list in reverse-numeric order
-    krsort($files, SORT_NUMERIC);
+    ksort($files, SORT_NUMERIC);
     return $files;
   }
 
