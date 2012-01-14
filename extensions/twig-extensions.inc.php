@@ -39,7 +39,8 @@ require_once 'app/parsers/twig/Extension.php';
     $url = preg_replace('/^(\.\.)?\/+/', '', $url);
     # turn route into file path
     $file_path = Helpers::url_to_file_path($url);
-    if (!$file_path) return false;
+    # check for children of the index page
+    if (!$file_path) return $file_path = Helpers::url_to_file_path('index/'.$url);
     # create & return the new page object
     return AssetFactory::get($file_path);
   }
