@@ -24,6 +24,7 @@ require_once 'app/parsers/twig/Extension.php';
       'sortbydate' => new Twig_Function_Method($this, 'sortbydate'),
       'sortby' => new Twig_Function_Method($this, 'sortby'),
       'get' => new Twig_Filter_Method($this, 'get'),
+      'slice' => new Twig_Filter_Method($this, 'slice'),
     );
   }
 
@@ -43,6 +44,13 @@ require_once 'app/parsers/twig/Extension.php';
     if (!$file_path) return $file_path = Helpers::url_to_file_path('index/'.$url);
     # create & return the new page object
     return AssetFactory::get($file_path);
+  }
+
+  #
+  # allow offsetting and limiting arrays
+  #
+  function slice($array, $start, $end) {
+    return array_slice($array, $start, $end);
   }
 
   #
