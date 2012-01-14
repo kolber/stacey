@@ -23,14 +23,14 @@ require_once 'app/parsers/twig/Extension.php';
     return array(
       'sortbydate' => new Twig_Function_Method($this, 'sortbydate'),
       'sortby' => new Twig_Function_Method($this, 'sortby'),
-      'context' => new Twig_Filter_Method($this, 'context')
+      'get' => new Twig_Filter_Method($this, 'get'),
     );
   }
 
   #
   #   manually change page context
   #
-  function context($url, $current_url = '') {
+  function get($url, $current_url = '') {
     # strip leading & trailing slashes from $url
     $url = preg_replace(array('/^\//', '/\/$/'), '', $url);
     # if the current url is passed, then we use it to build up a relative context

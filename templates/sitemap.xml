@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   {% block context %}
-    {% set page = context('/') %}
+    {% set page = get('/') %}
     <url>
         <loc>http://{{ page.base_url }}/{{ page.permalink }}</loc>
         <lastmod>{{ page.updated }}</lastmod>
