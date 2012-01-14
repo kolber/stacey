@@ -86,19 +86,6 @@ Class PageData {
     return $file_types;
   }
 
-  static function get_asset_collections($file_path) {
-    $asset_collections = array();
-    # create an array of files for each folder named _*
-    foreach(Helpers::list_files($file_path, '/_.+$/', true) as $filename => $file_path) {
-      # select all files from within the folder
-      foreach(Helpers::list_files($file_path, '/\.[\w\d]+?$/', false) as $asset_name => $asset_path) {
-        # if the returned file is not a folder, push it into the appropriate asset key
-        if(!is_dir($asset_path)) $asset_collections[$filename][$asset_name] = $asset_path;
-      }
-    }
-    return $asset_collections;
-  }
-
   static function create_vars($page) {
     # page.file_path
     $page->data['file_path'] = $page->file_path;
@@ -181,10 +168,6 @@ Class PageData {
     # create a variable for each file type included within the page's folder (excluding .txt files)
     $assets = self::get_file_types($page->file_path);
     foreach($assets as $asset_type => $asset_files) eval('$page->'.$asset_type.'=$asset_files;');
-
-    # create asset collections (any assets within a folder beginning with an underscore)
-    $asset_collections = self::get_asset_collections($page->file_path);
-    foreach($asset_collections as $collection_name => $collection_files) eval('$page->'.$collection_name.'=$collection_files;');
   }
 
   static function create_textfile_vars($page) {
