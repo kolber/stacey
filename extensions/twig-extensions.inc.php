@@ -35,8 +35,8 @@ require_once 'app/parsers/twig/Extension.php';
     $url = preg_replace(array('/^\//', '/\/$/'), '', $url);
     # if the current url is passed, then we use it to build up a relative context
     $url = $current_url.$url;
-    # strip leading '../' from the url if one exists
-    $url = preg_replace('/^(\.\.)?\/+/', '', $url);
+    # strip leading '../'s from the url if any exists
+    $url = preg_replace('/^((\.+)*\/)*/', '', $url);
     # turn route into file path
     $file_path = Helpers::url_to_file_path($url);
     # check for children of the index page
