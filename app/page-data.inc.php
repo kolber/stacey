@@ -159,6 +159,8 @@ Class PageData {
   }
 
   static function create_asset_collections($page) {
+    # page.files
+    $page->files = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(?!txt)([\w\d]+?)$/i', false);
     # page.images
     $page->images = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(gif|jpg|png|jpeg)$/i', false);
     # page.video
