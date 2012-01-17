@@ -195,7 +195,7 @@ Class PageData {
     $text = preg_replace('/\r\n?/', "\n", $text);
 
     # pull out each key/value pair from the content file
-    $matches = preg_split("/\n\s*?-\s*?\n/", $text);
+    $matches = preg_split("/\n\s*?-+\s*?\n/", $text);
 
     foreach($matches as $match) {
       # split the string by the first colon
