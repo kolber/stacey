@@ -4,3 +4,5 @@ app/_cache/pages/*
 app/_cache/templates/*
 !app/_cache/templates/.gitignore
 logs
+.htaccess
+htaccess
