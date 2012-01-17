@@ -1,7 +1,7 @@
 <?php
 
-require_once 'app/parsers/twig/ExtensionInterface.php';
-require_once 'app/parsers/twig/Extension.php';
+require_once 'app/parsers/Twig/ExtensionInterface.php';
+require_once 'app/parsers/Twig/Extension.php';
 
  class Stacey_Twig_Extension extends Twig_Extension {
 
