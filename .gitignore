@@ -1,7 +1,6 @@
 .DS_Store
-app/_cache/*
-!app/_cache/.gitignore
-templates/_cache/*
-!templates/_cache/.gitignore
-
+app/_cache/pages/*
+!app/_cache/pages/.gitignore
+app/_cache/templates/*
+!app/_cache/templates/.gitignore
 logs

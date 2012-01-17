@@ -17,7 +17,7 @@ Class Cache {
 
   function __construct($file_path, $template_file) {
     # turn a base64 of the current route into the name of the cache file
-    $this->cachefile = './app/_cache/'.$this->base64_url($file_path);
+    $this->cachefile = './app/_cache/pages/'.$this->base64_url($file_path);
     # collect an md5 of all files
     $this->hash = $this->create_hash();
     # determine our file type so we know how (and if) to comment 
@@ -83,7 +83,7 @@ Class Cache {
   function set_comment_tags() {
     if (in_array($this->filetype, $this->filetype_comment_tags)) {
       return $this->filetype_comment_tags[$this->filetype];
-    } 
+    }
     else return $this->filetype_comment_tags['default'];
   }
 
