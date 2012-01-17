@@ -14,6 +14,8 @@ If you want clean urls, `mv htaccess .htaccess`
 
 ## Templates
 
+Stacey uses the [Twig templating language](http://twig.sensiolabs.org/).
+
 There are an additional two sets of templates which can be found at:
 <http://github.com/kolber/stacey-template2> &
 <http://github.com/kolber/stacey-template3>
@@ -26,4 +28,4 @@ See <http://staceyapp.com> for more detailed usage information.
 
 Copyright (c) 2009 Anthony Kolber. See `LICENSE` for details.
 Except PHP Markdown Extra which is (c) Michel Fortin (see `/app/parsers/markdown-parser.inc.php` for details) and
-JSON.minify which is (c) Kyle Simpson (see 'app/parsers/json-minifier.inc.php' for details).
+JSON.minify which is (c) Kyle Simpson (see `app/parsers/json-minifier.inc.php` for details).
