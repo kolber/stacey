@@ -24,7 +24,7 @@ RewriteCond %{REQUEST_URI} /app/$
 RewriteRule ^app/ index.php [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)/$ index.php?$1 [L,QSA]
+RewriteRule ^(.*)/$ index.php?/$1/ [L,QSA]
 
 # Rewrite any file calls to the public directory
 RewriteCond %{REQUEST_FILENAME} !-f
