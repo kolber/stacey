@@ -15,7 +15,7 @@ RewriteRule (.+)\.(html|json|xml|atom|rss|rdf|txt)$ $1/ [L]
 # Add a trailing slash to directories
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !(\.)
+RewriteCond %{REQUEST_URI} !(\.|\?)
 RewriteCond %{REQUEST_URI} !(.*)/$
 RewriteRule ([^/]+)$ $1/ [L]
 
@@ -24,7 +24,7 @@ RewriteCond %{REQUEST_URI} /app/$
 RewriteRule ^app/ index.php [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)/$ index.php?$1 [L]
+RewriteRule ^(.*)/$ index.php?$1 [L,QSA]
 
 # Rewrite any file calls to the public directory
 RewriteCond %{REQUEST_FILENAME} !-f
