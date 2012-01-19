@@ -14,7 +14,7 @@ Class Stacey {
       return true;
     }
     # add trailing slash if required
-    if(!preg_match('/\/$/', $_SERVER['REQUEST_URI']) && !preg_match('/\./', $_SERVER['REQUEST_URI'])) {
+    if(!preg_match('/\/$/', $_SERVER['REQUEST_URI']) && !preg_match('/[\.\?\&][^\/]+$/', $_SERVER['REQUEST_URI'])) {
       header('HTTP/1.1 301 Moved Permanently');
       header('Location:'.$_SERVER['REQUEST_URI'].'/');
       return true;
@@ -120,7 +120,10 @@ Class Stacey {
     if($this->handle_redirects()) return;
 
     # strip any leading or trailing slashes from the passed url
-    $key = preg_replace(array('/\/$/', '/^\//'), '', key($get));
+    $key = key($get);
+    # if the key isn't a URL path, then ignore it
+    if (!preg_match('/\//', $key)) $key = false;
+    $key = preg_replace(array('/\/$/', '/^\//'), '', $key);
     # store file path for this current page
     $this->route = isset($key) ? $key : 'index';
     $file_path = Helpers::url_to_file_path($this->route);

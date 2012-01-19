@@ -23,7 +23,7 @@ Class Helpers {
   }
 
   static function file_path_to_url($file_path) {
-    $url = preg_replace(array('/\d+?\./', '/\.\/content(\/)?/'), '', $file_path);
+    $url = preg_replace(array('/\d+?\./', '/(\.+\/)*content\/*/'), '', $file_path);
     return $url ? $url : 'index';
   }
 

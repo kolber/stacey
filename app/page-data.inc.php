@@ -138,6 +138,8 @@ Class PageData {
   static function create_collections($page) {
     # page.root
     $page->root = Helpers::list_files('./content', '/^\d+?\./', true);
+    # page.query
+    $page->query = $_GET;
     # page.parent
       $parent_path = self::get_parent($page->file_path, $page->url_path);
     $page->parent = $parent_path;
