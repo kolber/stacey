@@ -49,14 +49,8 @@ Class PageData {
   static function get_thumbnail($file_path) {
     $thumbnails = array_keys(Helpers::list_files($file_path, '/thumb\.(gif|jpg|png|jpeg)$/i', false));
     if (!empty($thumbnails)) {
-      # replace './content' with relative path back to the root of the app
-      $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $file_path);
-      $relative_filename = $relative_path.'/'.$thumbnails[0];
-      # get thumb dimensions
-      $img_data = getimagesize($relative_filename);
-      preg_match_all('/\d+/', $img_data[3], $thumb_dimensions);
-      # return
-      return array($relative_filename, $thumb_dimensions[0][0], $thumb_dimensions[0][1]);
+      $thumb = new Image($file_path.'/'.$thumbnails[0]);
+      return $thumb->data;
     } else {
       return false;
     }
@@ -110,10 +104,7 @@ Class PageData {
     # page.root_path
     $page->root_path = Helpers::relative_root_path();
     # page.thumb
-    $thumb_info = self::get_thumbnail($page->file_path);
-    $page->thumb = $thumb_info[0];
-    $page->thumb_width = $thumb_info[1];
-    $page->thumb_height = $thumb_info[2];
+    $page->thumb = self::get_thumbnail($page->file_path);
     # page.current_year
     $page->current_year = date('Y');
 

@@ -6,7 +6,7 @@
         <p class="date col one">{{ child.date | date("Y, M-") }}</p>
         <h2 class="col five">
           {% if child.thumb %}
-            <img src="{{ child.thumb }}" width="{{ child.thumb_width }}" height="{{ child.thumb_height }}" class="project-thumb" alt="">
+            <img src="{{ child.thumb.url }}" width="{{ child.thumb.width }}" height="{{ child.thumb.width }}" class="project-thumb" alt="">
           {% endif %}
           <a href="{{ child.url }}">{{ child.title }}</a>
         </h2>
