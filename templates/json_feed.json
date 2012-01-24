@@ -4,7 +4,7 @@
       {% for page in page.children %}
         {
           "title": "{{ page.title }}",
-          "thumb": "{{ page.thumb }}",
+          "thumb": "{{ page.thumb.url }}",
           "url": "{{ page.url }}",
           "date": "{{ page.date }}",
           "updated": "{{ page.updated }}",
