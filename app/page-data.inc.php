@@ -118,6 +118,8 @@ Class PageData {
     $page->site_updated = strval(date('c', Helpers::site_last_modified()));
     # page.updated
     $page->updated = strval(date('c', Helpers::last_modified($page->file_path)));
+    # page.id
+    $page->id = "p" . md5($_SERVER['HTTP_HOST'] . $page->data['permalink']);
 
     # page.siblings_count
     $page->siblings_count = strval(count($page->data['siblings_and_self']));
