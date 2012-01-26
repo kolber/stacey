@@ -2,7 +2,7 @@
   {% if child.children %}
     <ul class="projects">
     {% for child in child.children %}
-      <li class="col seven">
+      <li class="col seven {{ child.id }}">
         <p class="date col one">{{ child.date | date("Y, M-") }}</p>
         <h2 class="col five">
           {% if child.thumb %}
