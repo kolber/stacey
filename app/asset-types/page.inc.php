@@ -35,11 +35,11 @@ Class Page {
     # post-parse JSON
     if (strtolower($this->template_type) == 'json') {
       # minfy it
-      $data = json_minify($data);
+      $data = JSMin::minify($data);
       # strip any trailing commas
       # (run it twice to get partial matches)
-      $data = preg_replace('/([}\]"]),([}\]])/', '$1$2', $data);
-      $data = preg_replace('/([}\]"]),([}\]])/', '$1$2', $data);
+      $data = preg_replace('/([}\]"][\s\n]*),([\s\n]*[}\]])/', '$1$2', $data);
+      $data = preg_replace('/([}\]"][\s\n]*),([\s\n]*[}\]])/', '$1$2', $data);
     }
 
     return $data;
