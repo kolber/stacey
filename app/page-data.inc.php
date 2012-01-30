@@ -48,9 +48,12 @@ Class PageData {
 
   static function get_thumbnail($file_path) {
     $thumbnails = array_keys(Helpers::list_files($file_path, '/thumb\.(gif|jpg|png|jpeg)$/i', false));
-    # replace './content' with relative path back to the root of the app
-    $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $file_path);
-    return (!empty($thumbnails)) ? $relative_path.'/'.$thumbnails[0] : false;
+    if (!empty($thumbnails)) {
+      $thumb = new Image($file_path.'/'.$thumbnails[0]);
+      return $thumb->data;
+    } else {
+      return false;
+    }
   }
 
   static function get_index($siblings, $file_path) {
@@ -115,6 +118,8 @@ Class PageData {
     $page->site_updated = strval(date('c', Helpers::site_last_modified()));
     # page.updated
     $page->updated = strval(date('c', Helpers::last_modified($page->file_path)));
+    # page.id
+    $page->id = "p" . substr(md5($_SERVER['HTTP_HOST'] . $page->data['permalink']), 0, 6);
 
     # page.siblings_count
     $page->siblings_count = strval(count($page->data['siblings_and_self']));
