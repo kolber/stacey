@@ -1,7 +1,9 @@
 <?php
 
-require_once 'app/parsers/Twig/ExtensionInterface.php';
-require_once 'app/parsers/Twig/Extension.php';
+if (file_exists('app/parsers/Twig/ExtensionInterface.php')) require_once 'app/parsers/Twig/ExtensionInterface.php';
+else require_once '../app/parsers/Twig/ExtensionInterface.php';
+if (file_exists('app/parsers/Twig/Extension.php')) require_once 'app/parsers/Twig/Extension.php';
+else require_once '../app/parsers/Twig/Extension.php';
 
  class Stacey_Twig_Extension extends Twig_Extension {
 
