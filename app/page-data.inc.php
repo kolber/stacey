@@ -208,6 +208,8 @@ Class PageData {
       # split the string by the first colon
       $colon_split = explode(':', $match, 2);
 
+      if (!isset($colon_split[1])) $colon_split[1] = '';
+
       # replace the only var in your content - page.path for your inline html with images and stuff
       $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
       $colon_split[1] = preg_replace('/{{\s*path\s*}}/', $relative_path.'/', $colon_split[1]);
