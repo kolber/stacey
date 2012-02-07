@@ -9,18 +9,21 @@
 		<key>ContentSize</key>
 		<string>{1436, 801}</string>
 		<key>ProjectURL</key>
-		<string>file://localhost/Users/XD/Library/Application%20Support/Quicksilver/Templates/%20-%20Espresso%20Project%20-.esproj/</string>
+		<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/gh-stacey.esproj/</string>
 		<key>StateType</key>
 		<string>ProjectWindow</string>
 		<key>TopLeftPoint</key>
-		<string>{32, 789}</string>
+		<string>{4, 878}</string>
 	</dict>
 	<key>com.macrabbit.Espresso.FileManager.DisclosureCollapsed</key>
 	<false/>
 	<key>com.macrabbit.Espresso.FileManager.FileControllerState</key>
 	<dict>
 		<key>ExpandedURLs</key>
-		<array/>
+		<array>
+			<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/content/index</string>
+			<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/templates/twigs</string>
+		</array>
 	</dict>
 	<key>com.macrabbit.Espresso.Publisher.DisclosureCollapsed</key>
 	<false/>
@@ -30,13 +33,31 @@
 		<array>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/templates/default.html</string>
+				<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/templates/index.html</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/templates/base.html</string>
+				<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/content/index/index.txt</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/templates/twigs/base.twig</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/app/page-data.inc.php</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/templates/page.html</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>

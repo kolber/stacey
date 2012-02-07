@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "twigs/base.twig" %}
   {% block content %}
   <body>
     <div id="container">
       <h1 class="col three">
-        <a href="{{ page.root_path }}">{{ page.name }}</a> and so on.
+        <a href="//{{ page.base_url }}">{{ page.name }}</a> and so on.
         <strong>{{ page.profession }}</strong>
       </h1>
       <em class="col three">{{ page.email }}</em>
