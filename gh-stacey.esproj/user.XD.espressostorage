@@ -45,12 +45,6 @@
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/templates/twigs/base.twig</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
 				<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/app/page-data.inc.php</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
@@ -58,6 +52,12 @@
 			<dict>
 				<key>DocumentURL</key>
 				<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/templates/page.html</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/XD/G/Code/github/bumpux-forks/stacey/templates/project.html</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>
