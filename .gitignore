@@ -6,4 +6,4 @@ app/_cache/templates/*
 logs
 .htaccess
 *.esproj
-*.espre*
+*.espressostorage
