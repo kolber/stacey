@@ -7,3 +7,4 @@ logs
 .htaccess
 *.esproj
 *.espressostorage
+gh-stacey.esproj*
