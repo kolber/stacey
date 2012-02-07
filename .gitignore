@@ -5,3 +5,5 @@ app/_cache/templates/*
 !app/_cache/templates/.gitignore
 logs
 .htaccess
+*.esproj
+*.espre*
