@@ -8,9 +8,10 @@
     <link rel="stylesheet" href="//{{ page.base_url }}/public/docs/css/screen.css" type="text/css" media="screen">
   </head>
 {% block content %} 
-	<h1>Ahoy. This should be overwritten by something real.</h1>
-{% endblock %}
-{% block footer %} 
- <h1>this be the jumbo footer </h1>
+	<!-- default to be over-written -->
+	{% block footer %} 
+	 <p id="footer" class="col six">&copy; Copyright {{ page.name }} {{ page.current_year }} <a class="atom-rss" href="{{ page.root_path }}/?/feed/">RSS</a><br>
+	   <em>Content managed by <a href="http://www.staceyapp.com">stacey</a></em></p>
+	{% endblock %}
 {% endblock %}
 </html>

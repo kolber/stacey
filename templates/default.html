@@ -16,8 +16,9 @@
         {% include 'partials/navigation/category-lists.html' %}
       </div>
       <hr>
-      <p id="footer" class="col six">&copy; Copyright {{ page.name }} {{ page.current_year }} <a class="atom-rss" href="{{ page.root_path }}/?/feed/">RSS</a><br>
-        <em>Content managed by <a href="http://www.staceyapp.com">stacey</a></em></p>
+      {% block footer %} 
+       {{ parent() }}
+      {% endblock %}
     </div>
     </body>
   {% endblock %}
