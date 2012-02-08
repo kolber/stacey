@@ -1,6 +1,10 @@
 {% extends "base/base.twig" %}
+
+	{% block title %}{{ page.title }}, {{ parent() }} {% endblock title %}
 	
-	{% block title %}{{ page.title }}, {{ parent() }} {% endblock %}
+	{% block head %}
+		{{ parent() }}
+	{% endblock head %}
 	
   {% block content %}
   <body>
@@ -18,7 +22,7 @@
       <hr>
       {% block footer %} 
        {{ parent() }}
-      {% endblock %}
+      {% endblock footer %}
     </div>
     </body>
-  {% endblock %}
+  {% endblock content %}
