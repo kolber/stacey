@@ -3,4 +3,7 @@ app/_cache/pages/*
 !app/_cache/pages/.gitignore
 app/_cache/templates/*
 !app/_cache/templates/.gitignore
+app/_cache/images/*
+!app/_cache/images/.gitignore
+
 logs

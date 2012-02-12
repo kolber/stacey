@@ -19,6 +19,10 @@ RewriteCond %{REQUEST_URI} !(\.|\?)
 RewriteCond %{REQUEST_URI} !(.*)/$
 RewriteRule ([^/]+)$ $1/ [L]
 
+# Rewrite any calls to /render to the image parser
+RewriteCond %{REQUEST_URI} render/
+RewriteRule ^render/. app/parsers/slir/ [L]
+
 # Rewrite any calls to /* or /app to the index.php file
 RewriteCond %{REQUEST_URI} /app/$
 RewriteRule ^app/ index.php [L]

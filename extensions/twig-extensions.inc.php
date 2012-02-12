@@ -27,6 +27,7 @@ else require_once '../app/parsers/Twig/Extension.php';
       'sortby' => new Twig_Function_Method($this, 'sortby'),
       'get' => new Twig_Filter_Method($this, 'get'),
       'slice' => new Twig_Filter_Method($this, 'slice'),
+      'resize_path' => new Twig_Filter_Method($this, 'resize_path'),
     );
   }
 
@@ -46,6 +47,19 @@ else require_once '../app/parsers/Twig/Extension.php';
     if (!$file_path) return $file_path = Helpers::url_to_file_path('index/'.$url);
     # create & return the new page object
     return AssetFactory::get($file_path);
+  }
+
+  #
+  # 
+  #
+  function resize_path($img_path, $max_width = '100', $max_height = '100', $ratio = '1:1') {
+    $clean_path = preg_replace('/^(\.+\/)*content/', '', $img_path);
+    $root_path = Helpers::relative_root_path();
+    if(!file_exists('.htaccess')) {
+      return $root_path.'app/parsers/slir/index.php?w='.$max_width.'&h='.$max_height.'&c='.$ratio.'&i='.$clean_path;
+    } else {
+      return $root_path.'render/w'.$max_width.'-h'.$max_height.'-c'.$ratio.$clean_path;
+    }
   }
 
   #
