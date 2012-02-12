@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with SLIR.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * @copyright Copyright © 2010, Joe Lencioni
+ * @copyright Copyright Β© 2010, Joe Lencioni
  * @license http://opensource.org/licenses/gpl-3.0.html GNU General Public
  * License version 3 (GPLv3)
  * @since 2.0

@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with SLIR.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * @copyright Copyright © 2010, Joe Lencioni
+ * @copyright Copyright Β© 2010, Joe Lencioni
  * @license http://opensource.org/licenses/gpl-3.0.html GNU General Public
  * License version 3 (GPLv3)
  * @since 2.0
@@ -523,7 +523,7 @@ class SLIRCropperSmart implements SLIRCropper
 		$g	*= 100;
 		$b	*= 100;
 
-		//Observer. = 2°, Illuminant = D65
+		//Observer. = 2Β°, Illuminant = D65
 		$x = $r * 0.4124 + $g * 0.3576 + $b * 0.1805;
 		$y = $r * 0.2126 + $g * 0.7152 + $b * 0.0722;
 		$z = $r * 0.0193 + $g * 0.1192 + $b * 0.9505;
@@ -762,7 +762,7 @@ class SLIRCropperSmart implements SLIRCropper
 	 * @since 2.0
 	 * @param integer $a
 	 * @param integer $b
-	 * @return CIE-H° value
+	 * @return CIE-HΒ° value
 	 */
 	private function LABtoHue($a, $b)
 	{

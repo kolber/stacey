@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with SLIR.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @copyright Copyright © 2010, Joe Lencioni
+ * @copyright Copyright Â© 2010, Joe Lencioni
  * @license http://opensource.org/licenses/gpl-3.0.html GNU General Public
  * License version 3 (GPLv3)
  * @since 2.0
@@ -35,8 +35,8 @@
  * I love to hear when my work is being used, so if you decide to use this,
  * feel encouraged to send me an email. I would appreciate it if you would
  * include a link on your site back to Shifting Pixel (either the SLIR page or
- * shiftingpixel.com), but don’t worry about including a big link on each page
- * if you don’t want to–one will do just nicely. Feel free to contact me to
+ * shiftingpixel.com), but donâ€™t worry about including a big link on each page
+ * if you donâ€™t want toâ€“one will do just nicely. Feel free to contact me to
  * discuss any specifics (joe@shiftingpixel.com).
  *
  * REQUIREMENTS:
@@ -1505,4 +1505,4 @@ class SLIR
 // a frog jumps
 // the sound of water
 
-// —Matsuo Basho
+// â€”Matsuo Basho
