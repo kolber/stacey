@@ -1,14 +1,8 @@
-# Stacey 2.3.0 CMS with HTML5 (boilerplate) obfuscated template
+# Boilerplatypus
 
-This is not simple merging of Stacey + HTML5 Boilerplate, because I don't need all techniques from HTML5B, because I use this repo for myself on real projects.
+Now this is a very strange name. But it actually makes sense. Why? First, I only wanted to add H5BP to Stacey. But then Twitter Bootstrap appeared and I decided to play with it too. Bot how can I do that? With Git branches, my young padawan!
 
-## Stacey 2.3.0
-
-https://github.com/kolber/stacey
-
-## HTML5 Boilerplate
-
-https://github.com/h5bp/html5-boilerplate
+So, meet [the one, the only](http://www.youtube.com/watch?v=z8f2mW1GFSI), crossbreed of [Stacey](http://staceyapp.com/), [H5BP](http://h5bp.com) and [Bootstrap](http://twitter.github.com/bootstrap/): the Boilerplatypus!
 
 # My Workflow (Mac only)
 
