@@ -1,0 +1,1 @@
+For documentation, open slir.class.php in your favorite text editor.

@@ -3,7 +3,15 @@ app/_cache/pages/*
 !app/_cache/pages/.gitignore
 app/_cache/templates/*
 !app/_cache/templates/.gitignore
+<<<<<<< HEAD
+logs
+.htaccess
+*.esproj
+*.espressostorage
+gh-stacey.esproj*
+=======
 app/_cache/images/*
 !app/_cache/images/.gitignore
 
 logs
+>>>>>>> upstream/master
