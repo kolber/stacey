@@ -50,15 +50,15 @@ else require_once '../app/parsers/Twig/Extension.php';
   }
 
   #
-  # 
+  # shortcut to generate the image resize path from a full image path
   #
-  function resize_path($img_path, $max_width = '100', $max_height = '100', $ratio = '1:1') {
+  function resize_path($img_path, $max_width = '100', $max_height = '100', $ratio = '1:1', $quality = 100) {
     $clean_path = preg_replace('/^(\.+\/)*content/', '', $img_path);
     $root_path = Helpers::relative_root_path();
     if(!file_exists('.htaccess')) {
-      return $root_path.'app/parsers/slir/index.php?w='.$max_width.'&h='.$max_height.'&c='.$ratio.'&i='.$clean_path;
+      return $root_path.'app/parsers/slir/index.php?w='.$max_width.'&h='.$max_height.'&c='.$ratio.'&q='.$quality.'&i='.$clean_path;
     } else {
-      return $root_path.'render/w'.$max_width.'-h'.$max_height.'-c'.$ratio.$clean_path;
+      return $root_path.'render/w'.$max_width.'-h'.$max_height.'-c'.$ratio.'-q'.$quality.$clean_path;
     }
   }
 
