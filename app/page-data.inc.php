@@ -195,14 +195,12 @@ Class PageData {
       $vars = array_merge($shared_vars, $vars);
     }
 
-    $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
-
     global $current_page_template_file;
-    # get template file type as $split_path[1]
     if (!$current_page_template_file) {
       $current_page_template_file = $page->template_file;
     }
-    preg_match('/\.([\w\d]+?)$/', $current_page_template_file, $split_path);
+    $markdown_compatible = preg_match('/\.(xml|html?|rss|rdf|atom)$/', $current_page_template_file);
+    $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
 
     foreach ($vars as $key => $value) {
       # replace the only var in your content - page.path for your inline html with images and stuff
@@ -210,7 +208,7 @@ Class PageData {
 
       # set a variable with a name of 'key' on the page with a value of 'value'
       # if the template type is xml or html & the 'value' contains a newline character, parse it as markdown
-      if(strpos($value, "\n") !== false && preg_match('/xml|htm|html|rss|rdf|atom/', $split_path[1])) {
+      if ($markdown_compatible && strpos($value, "\n") !== false) {
         $page->$key = Markdown(trim($value));
       } else {
         $page->$key = trim($value);
