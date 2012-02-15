@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/lib/yaml/lib/sfYaml.php';
+
 Class PageData {
 
   static function extract_closest_siblings($siblings, $file_path) {
@@ -82,7 +84,7 @@ Class PageData {
     $file_types = array();
     # create an array for each file extension
     foreach(Helpers::list_files($file_path, '/\.[\w\d]+?$/', false) as $filename => $file_path) {
-      preg_match('/(?<!thumb|_lge|_sml)\.(?!txt)([\w\d]+?)$/', $filename, $ext);
+      preg_match('/(?<!thumb|_lge|_sml)\.(?!yml)([\w\d]+?)$/', $filename, $ext);
       # return an hash containing arrays grouped by file extension
       if(isset($ext[1]) && !is_dir($file_path)) $file_types[$ext[1]][$filename] = $file_path;
     }
@@ -146,7 +148,7 @@ Class PageData {
     # page.query
     $page->query = $_GET;
     # page.parent
-      $parent_path = self::get_parent($page->file_path, $page->url_path);
+    $parent_path = self::get_parent($page->file_path, $page->url_path);
     $page->parent = $parent_path;
     # page.parents
     $page->parents = self::get_parents($page->file_path, $page->url_path);
@@ -157,7 +159,7 @@ Class PageData {
     # page.siblings_and_self
     $page->siblings_and_self = Helpers::list_files($parent_path, '/^\d+?\./', true);
     # page.next_sibling / page.previous_sibling
-      $neighboring_siblings = self::extract_closest_siblings($page->data['siblings_and_self'], $page->file_path);
+    $neighboring_siblings = self::extract_closest_siblings($page->data['siblings_and_self'], $page->file_path);
     $page->previous_sibling = array($neighboring_siblings[0]);
     $page->next_sibling = array($neighboring_siblings[1]);
 
@@ -167,64 +169,52 @@ Class PageData {
 
   static function create_asset_collections($page) {
     # page.files
-    $page->files = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(?!txt)([\w\d]+?)$/i', false);
+    $page->files = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(?!yml)([\w\d]+?)$/i', false);
     # page.images
     $page->images = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(gif|jpg|png|jpeg)$/i', false);
     # page.video
     $page->video = Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)$/i', false);
 
     # page.swf, page.html, page.doc, page.pdf, page.mp3, etc.
-    # create a variable for each file type included within the page's folder (excluding .txt files)
+    # create a variable for each file type included within the page's folder (excluding .yml files)
     $assets = self::get_file_types($page->file_path);
     foreach($assets as $asset_type => $asset_files) eval('$page->'.$asset_type.'=$asset_files;');
   }
 
   static function create_textfile_vars($page) {
     # store contents of content file (if it exists, otherwise, pass back an empty string)
-    $content_file_path = $page->file_path.'/'.$page->template_name.'.txt';
-    $text = (file_exists($content_file_path)) ? file_get_contents($content_file_path) : '';
+    $content_file_path = sprintf('%s/%s.yml', $page->file_path, $page->template_name);
+    if (!file_exists($content_file_path)) {
+      return;
+    }
+    $vars = sfYaml::load($content_file_path); 
 
     # include shared variables for each page
-    $shared = (file_exists('./content/_shared.txt')) ? file_get_contents('./content/_shared.txt') : '';
-    # strip any $n matches from the text, as this will mess with any preg_replaces
-    # they get put back in after the template has finished being parsed
-    $text = preg_replace('/\$(\d+)/', "\x02$1", $text);
+    $shared_file_path = './content/_shared.yml';
+    if (file_exists($shared_file_path)) {
+      $shared_vars = sfYaml::load($shared_file_path);
+      $vars = array_merge($shared_vars, $vars);
+    }
 
-    # remove UTF-8 BOM and marker character in input, if present
-    $merged_text = preg_replace('/^\xEF\xBB\xBF|\x1A/', '', array($shared, $text));
+    $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
 
-    # merge shared content into text
-    $shared = preg_replace('/\n\s*?-\s*?\n?$/', '', $merged_text[0]);
-    $content = preg_replace('/\n\s*?-\s*?\n?$/', '', $merged_text[1]);
-    $text = $shared."\n-\n".$content;
+    global $current_page_template_file;
+    # get template file type as $split_path[1]
+    if (!$current_page_template_file) {
+      $current_page_template_file = $page->template_file;
+    }
+    preg_match('/\.([\w\d]+?)$/', $current_page_template_file, $split_path);
 
-    # standardize line endings
-    $text = preg_replace('/\r\n?/', "\n", $text);
-
-    # pull out each key/value pair from the content file
-    $matches = preg_split("/\n\s*?-+\s*?\n/", $text);
-
-    foreach($matches as $match) {
-      # split the string by the first colon
-      $colon_split = explode(':', $match, 2);
-
-      if (!isset($colon_split[1])) $colon_split[1] = '';
-
+    foreach ($vars as $key => $value) {
       # replace the only var in your content - page.path for your inline html with images and stuff
-      $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
-      $colon_split[1] = preg_replace('/{{\s*path\s*}}/', $relative_path.'/', $colon_split[1]);
+      $value = preg_replace('/{{\s*path\s*}}/', $relative_path . '/', $value);
 
-      # get template file type as $split_path[1]
-      global $current_page_template_file;
-      if(!$current_page_template_file) $current_page_template_file = $page->template_file;
-
-      preg_match('/\.([\w\d]+?)$/', $current_page_template_file, $split_path);
       # set a variable with a name of 'key' on the page with a value of 'value'
       # if the template type is xml or html & the 'value' contains a newline character, parse it as markdown
-      if(strpos($colon_split[1], "\n") !== false && preg_match('/xml|htm|html|rss|rdf|atom/', $split_path[1])) {
-        $page->$colon_split[0] = Markdown(trim($colon_split[1]));
+      if(strpos($value, "\n") !== false && preg_match('/xml|htm|html|rss|rdf|atom/', $split_path[1])) {
+        $page->$key = Markdown(trim($value));
       } else {
-        $page->$colon_split[0] = trim($colon_split[1]);
+        $page->$key = trim($value);
       }
     }
   }
