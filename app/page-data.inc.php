@@ -195,7 +195,9 @@ Class PageData {
     $shared_file_path = './content/_shared.yml';
     if (file_exists($shared_file_path)) {
       $shared_vars = sfYaml::load($shared_file_path);
-      $vars = array_merge($shared_vars, $vars);
+      if ($shared_vars) {
+        $vars = array_merge($shared_vars, $vars);
+      }
     }
 
     global $current_page_template_file;
@@ -205,21 +207,32 @@ Class PageData {
     $markdown_compatible = preg_match('/\.(xml|html?|rss|rdf|atom)$/', $current_page_template_file);
     $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
 
+    $parse_markdown = function (&$value) {
+      if (!is_string($value))
+        return;
+      if (strpos($value, "\n") !== false)
+        $value = Markdown(trim($value));
+      else
+        $value = trim($value);
+    };
+    # replace the only var in your content - page.path for your inline html with images and stuff
+    $replace_path_var = function (&$value) use ($relative_path) {
+      if (is_string($value))
+        $value = preg_replace('/{{\s*path\s*}}/', $relative_path . '/', $value);
+    };
+    array_walk_recursive($vars, $replace_path_var);
+    if ($markdown_compatible) {
+      array_walk_recursive($vars, $parse_markdown);
+    }
     foreach ($vars as $key => $value) {
-      # replace the only var in your content - page.path for your inline html with images and stuff
-      $value = preg_replace('/{{\s*path\s*}}/', $relative_path . '/', $value);
-
-      # set a variable with a name of 'key' on the page with a value of 'value'
-      # if the template type is xml or html & the 'value' contains a newline character, parse it as markdown
-      if ($markdown_compatible && strpos($value, "\n") !== false) {
-        $page->$key = Markdown(trim($value));
-      } else {
-        $page->$key = trim($value);
-      }
+      $page->$key = $value;
     }
   }
 
-  static function html_to_xhtml($value) {
+  static function html_to_xhtml(&$value) {
+    if (!is_string($value))
+      return;
+
     # convert named entities to numbered entities
     $value = Helpers::translate_named_entities($value);
     # convert appropriate markdown-created tags to xhtml syntax
@@ -238,13 +251,9 @@ Class PageData {
 
     # if file extension matches an xml type, convert to any html to xhtml to pass validation
     global $current_page_template_file;
-    if(preg_match('/\.(xml|rss|rdf|atom)$/', $current_page_template_file)) {
+    if (preg_match('/\.(xml|rss|rdf|atom)$/', $current_page_template_file)) {
       # clean each value for xhtml rendering
-      foreach($page->data as $key => $value) {
-        if(is_string($value)) {
-          $page->data[$key] = self::html_to_xhtml($value);
-        }
-      }
+      array_walk_recursive($page->data, array('self', 'html_to_xhtml'));
     }
   }
 
