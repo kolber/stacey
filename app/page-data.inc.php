@@ -191,12 +191,13 @@ Class PageData {
     # include shared variables for each page
     $shared_file_path = file_exists('./content/_shared.yml') ? './content/_shared.yml' : './content/_shared.txt';
     if (file_exists($shared_file_path)) {
-      $shared_vars = sfYaml::load($shared_file_path);
-      if ($shared_vars) {
-        $vars = array_merge($shared_vars, $vars);
+      if ($shared_vars = sfYaml::load($shared_file_path)) {
+        $vars = array_merge($shared_vars, $vars ?: array());
       }
     }
-
+    if (empty($vars)) {
+      return;
+    }
     global $current_page_template_file;
     if (!$current_page_template_file) {
       $current_page_template_file = $page->template_file;
@@ -215,7 +216,7 @@ Class PageData {
     # replace the only var in your content - page.path for your inline html with images and stuff
     $replace_path_var = function (&$value) use ($relative_path) {
       if (is_string($value))
-        $value = preg_replace('/{{\s*path\s*}}/', $relative_path . '/', $value);
+        $value = preg_replace('/{{\s*path\s*}}/', $relative_path, $value);
     };
     array_walk_recursive($vars, $replace_path_var);
     if ($markdown_compatible) {
