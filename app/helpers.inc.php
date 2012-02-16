@@ -57,7 +57,7 @@ Class Helpers {
       self::build_file_cache('./content');
       self::build_file_cache('./templates');
     }
-    if($dir && !self::$file_cache[$dir]) return array();
+    if($dir && !isset(self::$file_cache[$dir])) return array();
     return $dir ? self::$file_cache[$dir] : self::$file_cache;
   }
 
