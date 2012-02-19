@@ -70,12 +70,15 @@ Class PageData {
   }
 
   static function is_current($base_url, $permalink) {
-    $base_path = preg_replace('/^[^\/]+/', '', $base_url);
     if($permalink == 'index') {
       return ('/' == $_SERVER['REQUEST_URI']);
     } else {
-      return ($base_path.'/'.$permalink == $_SERVER['REQUEST_URI']);
+      $base_path = preg_replace('/^[^\/]+/', '', $base_url);
+      if (0 === strpos($_SERVER['REQUEST_URI'], $base_path)) {
+        return preg_match('#(/' . $permalink . '|' . $permalink . '/)#', $_SERVER['REQUEST_URI']);
+      }
     }
+    return false;
   }
 
   static function get_file_types($file_path) {
