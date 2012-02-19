@@ -195,11 +195,25 @@ Class PageData {
     $vars = sfYaml::load($content_file_path); 
 
     # include shared variables for each page
-    $shared_file_path = './content/_shared.yml';
-    if (file_exists($shared_file_path)) {
-      if ($shared_vars = sfYaml::load($shared_file_path)) {
-        $vars = array_merge($shared_vars, $vars ?: array());
+    $page_path_parts = explode('/', $page->file_path);
+    array_shift($page_path_parts); // .
+    array_shift($page_path_parts); // contents
+    array_unshift($page_path_parts, '.');
+
+    $shared_file_path = './content/';
+    $shared_vars = array();
+    while ($part = array_shift($page_path_parts)) {
+      if ('.' !== $part) {
+        $shared_file_path .= $part . '/';
       }
+      if (file_exists($shared_file_path . '_shared.yml')) {
+        if ($loaded_vars = sfYaml::load($shared_file_path . '_shared.yml')) {
+          $shared_vars = array_merge($shared_vars, $loaded_vars);
+        }
+      }
+    }
+    if (!empty($shared_vars)) {
+      $vars = array_merge($shared_vars, $vars ?: array());
     }
     if (empty($vars)) {
       return;
