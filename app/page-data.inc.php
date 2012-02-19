@@ -107,7 +107,7 @@ Class PageData {
     # page.page_name
     $page->page_name = ucfirst(preg_replace('/[-_](.)/e', "' '.strtoupper('\\1')", $page->data['slug']));
     # page.root_path
-    $page->root_path = Helpers::relative_root_path();
+    $page->root_path = rtrim(Helpers::relative_root_path(), '/');
     # page.thumb
     $page->thumb = self::get_thumbnail($page->file_path);
     # page.current_year
