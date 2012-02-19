@@ -34,7 +34,8 @@ Class Cache {
   }
 
   function render() {
-    return file_get_contents($this->cachefile)."\n".$this->comment_tags['begin'].' Cached. '.$this->comment_tags['end'];
+    if ($this->is_commentable()) return file_get_contents($this->cachefile)."\n".$this->comment_tags['begin'].' Cached. '.$this->comment_tags['end'];
+    else return file_get_contents($this->cachefile);
   }
 
   function create($route) {
