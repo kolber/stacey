@@ -24,7 +24,7 @@ Class Helpers {
 
   static function file_path_to_url($file_path) {
     $url = preg_replace(array('/\d+?\./', '/(\.+\/)*content\/*/'), '', $file_path);
-    return $url ? $url : 'index';
+    return $url ?: 'index';
   }
 
   static function url_to_file_path($url) {
@@ -107,20 +107,11 @@ Class Helpers {
   }
 
   static function relative_root_path($url = '') {
-    global $current_page_file_path;
-    $link_path = '';
-    if(!preg_match('/index/', $current_page_file_path) && !preg_match('/\/\?\//', $_SERVER['REQUEST_URI'])) {
-      # split file path by slashes
-      $split_path = explode('/', $current_page_file_path);
-      # if the request uri is pointing at a document, drop another folder from the file path
-      if(preg_match('/\./', $_SERVER['REQUEST_URI'])) array_pop($split_path);
-      # add a ../ for each parent folder
-      for($i = 2; $i < count($split_path); $i++) $link_path .= '../';
-    }
+    $root_path = dirname($_SERVER['SCRIPT_NAME']);
+    if ('/' !== $root_path) $root_path .= '/';
+    if ($url) $root_path .= self::modrewrite_parse($url);
 
-    $link_path = empty($link_path) ? './' : $link_path;
-
-    return $link_path .= self::modrewrite_parse($url);
+    return $root_path;
   }
 
   static function last_modified($dir) {
