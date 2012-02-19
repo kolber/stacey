@@ -74,7 +74,7 @@ Class PageData {
       return ('/' == $_SERVER['REQUEST_URI']);
     } else {
       $base_path = preg_replace('/^[^\/]+/', '', $base_url);
-      if (0 === strpos($_SERVER['REQUEST_URI'], $base_path)) {
+      if (empty($base_path) || 0 === strpos($_SERVER['REQUEST_URI'], $base_path)) {
         return preg_match('#(/' . $permalink . '|' . $permalink . '/)#', $_SERVER['REQUEST_URI']);
       }
     }
