@@ -18,6 +18,10 @@ Class Cache {
   function __construct($file_path, $template_file) {
     # turn a base64 of the current route into the name of the cache file
     $this->cachefile = './app/_cache/pages/'.$this->base64_url($file_path);
+     
+    # to store the current site reference (md5 of all files) in a seperate file  
+    $this->cachefile_state = $this->cachefile.'.state';
+
     # collect an md5 of all files
     $this->hash = $this->create_hash();
     # determine our file type so we know how (and if) to comment 
@@ -30,7 +34,8 @@ Class Cache {
   }
 
   function render() {
-    return file_get_contents($this->cachefile)."\n".$this->comment_tags['begin'].' Cached. '.$this->comment_tags['end'];
+    if ($this->is_commentable()) return file_get_contents($this->cachefile)."\n".$this->comment_tags['begin'].' Cached. '.$this->comment_tags['end'];
+    else return file_get_contents($this->cachefile);
   }
 
   function create($route) {
@@ -55,14 +60,20 @@ Class Cache {
   }
 
   function get_current_hash() {
-    preg_match('/Stacey.*: (.+?)\s/', file_get_contents($this->cachefile), $matches);
-    return isset($matches[1]) ? $matches[1] : false;
+    return file_get_contents($this->cachefile_state);
   }
 
   function write_cache() {
     if ($this->is_commentable()) echo "\n".$this->comment_tags['begin'].' Stacey('.Stacey::$version.'): '.$this->hash.' '.$this->comment_tags['end'];
+
+    //write the actual cached content to the file
     $fp = fopen($this->cachefile, 'w');
     fwrite($fp, ob_get_contents());
+    fclose($fp);
+
+    //write the current site referece (md5 of all files) to check against later
+    $fp = fopen($this->cachefile_state, 'w'); 
+    fwrite($fp, $this->hash);
     fclose($fp);
   }
 
