@@ -28,6 +28,13 @@ Class Asset {
     $this->data['url'] = $this->link_path;
     $this->data['file_name'] = $this->file_name;
     $this->data['name'] = ucfirst(preg_replace(array('/[-_]/', '/\.[\w\d]+?$/', '/^\d+?\./'), array(' ', '', ''), $this->file_name));
+
+    if (class_exists('finfo')) {
+      $finfo = new finfo(FILEINFO_MIME_TYPE);
+      if ($finfo) {
+        $this->data['mime_type'] = $finfo->file($file_path);
+      }
+    }
   }
 
 }

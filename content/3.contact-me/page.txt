@@ -1,8 +1,0 @@
-bypass_cache: true
----
-title: Contact details
----
-content:
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas et mauris eu magna convallis cursus. Pellentesque a justo nisl. Duis vel velit at libero ultricies consectetur. Ut sem libero, ornare in ullamcorper eget, molestie sit amet tellus. Aenean auctor porttitor consectetur. Aliquam erat volutpat.
-
-I can be contacted at: <hi@yourdomain.com>.
