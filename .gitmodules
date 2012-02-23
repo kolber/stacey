@@ -1,3 +1,0 @@
-[submodule "app/lib/yaml"]
-	path = app/lib/yaml
-	url = git://github.com/fabpot/yaml.git

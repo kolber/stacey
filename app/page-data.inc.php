@@ -1,7 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/lib/yaml/lib/sfYaml.php';
-
 Class PageData {
 
   static function extract_closest_siblings($siblings, $file_path) {
