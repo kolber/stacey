@@ -82,6 +82,7 @@ Class Stacey {
     $cache = new Cache($file_path, $template_file);
     # set any custom headers
     $this->set_content_type($template_file);
+    header('Generator: stacey-v'.Stacey::$version);
     # if etag is still fresh, return 304 and don't render anything
     if(!$this->etag_expired($cache)) return;
     # if cache has expired
