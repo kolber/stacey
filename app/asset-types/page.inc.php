@@ -21,11 +21,6 @@ Class Page {
 
     # create/set all content variables
     PageData::create($this);
-    # sort data array by key length
-    # this ensures that something like '@title' doesn't turn '@page_title'
-    # into '@page_Contents of @title variable' in the final rendered template
-    #
-    uksort($this->data, array('Helpers', 'sort_by_length'));
 
   }
 
