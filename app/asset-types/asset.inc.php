@@ -29,7 +29,7 @@ Class Asset {
     $this->data['file_name'] = $this->file_name;
     $this->data['name'] = ucfirst(preg_replace(array('/[-_]/', '/\.[\w\d]+?$/', '/^\d+?\./'), array(' ', '', ''), $this->file_name));
 
-    if (class_exists('finfo')) {
+    if (class_exists('finfo') && file_exists($file_path)) {
       $finfo = new finfo(FILEINFO_MIME_TYPE);
       if ($finfo) {
         $this->data['mime_type'] = $finfo->file($file_path);
