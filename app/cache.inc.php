@@ -2,104 +2,61 @@
 
 Class Cache {
 
-  var $page;
+  var $path_hash;
   var $cachefile;
-  var $hash;
-  var $filetype;
-  var $comment_tags;
-  var $no_comment_types = array('json');
-  var $filetype_comment_tags = array(
-    "default" => array("begin" => "<!--",  "end" => "-->"),
-    "js"      => array("begin" => "/*",    "end" => "*/"),
-    "css"     => array("begin" => "/*",    "end" => "*/"),
-    "txt"     => array("begin" => "#",     "end" => "") # robots.txt files need # comments in order to not break
-  );
+  var $cache_prefix = 'c-';
 
   function __construct($file_path, $template_file) {
-    # turn a base64 of the current route into the name of the cache file
-    $this->cachefile = './app/_cache/pages/'.$this->base64_url($file_path);
-     
-    # to store the current site reference (md5 of all files) in a seperate file  
-    $this->cachefile_state = $this->cachefile.'.state';
-
-    # collect an md5 of all files
-    $this->hash = $this->create_hash();
-    # determine our file type so we know how (and if) to comment 
-    $this->filetype = $this->set_filetype($template_file);
-    $this->comment_tags = $this->set_comment_tags();
+    # generate an md5 hash from the file_path
+    $this->path_hash = $this->generate_hash($file_path);
+    # generate an md5 hash from the current state of the site content
+    $htaccess = file_exists('./.htaccess') ? '.htaccess:'.filemtime('./.htaccess') : '';
+    $file_cache = serialize(Helpers::file_cache());
+    $content_hash = $this->generate_hash($htaccess.$file_cache);
+    # combine the two hashes to create a cachefile name
+    $this->cachefile = './app/_cache/pages/'.$this->cache_prefix.$this->path_hash.'-'.$content_hash;
   }
 
-  function base64_url($input) {
-    return strtr(base64_encode($input), '+/=', '-_,');
+  function generate_hash($str) {
+    # generate a 10 character hash
+    return substr(md5($str), 0, 10);
   }
 
   function render() {
-    if ($this->is_commentable()) return file_get_contents($this->cachefile)."\n".$this->comment_tags['begin'].' Cached. '.$this->comment_tags['end'];
-    else return file_get_contents($this->cachefile);
+    # return the contents of the cachefile
+    return file_get_contents($this->cachefile);
+  }
+
+  function delete_old_caches() {
+    # collect a list of all cache files matching the same file_path hash and delete them
+    $old_caches = glob('./app/_cache/pages/'.$this->cache_prefix.$this->path_hash.'-*');
+    foreach($old_caches as $file) unlink($file);
   }
 
   function create($route) {
+    # remove any unused caches for this route
+    $this->delete_old_caches();
+
     $page = new Page($route);
     # start output buffer
     ob_start();
       echo $page->parse_template();
       # if cache folder is writable, write to it
       if(is_writable('./app/_cache/pages') && !$page->data['bypass_cache']) $this->write_cache();
-      else if ($this->is_commentable()) echo "\n".$this->comment_tags['begin'].' Stacey('.Stacey::$version.'). '.$this->comment_tags['end'];
     # end buffer
     ob_end_flush();
     return '';
   }
 
   function expired() {
-    # if cachefile doesn't exist, we need to create one
-    if(!file_exists($this->cachefile)) return true;
-    # compare new m5d to existing cached md5
-    elseif($this->hash !== $this->get_current_hash()) return true;
-    else return false;
-  }
-
-  function get_current_hash() {
-    return file_get_contents($this->cachefile_state);
+    # check whether the cachefile matching the collated hashes exists
+    return !file_exists($this->cachefile);
   }
 
   function write_cache() {
-    if ($this->is_commentable()) echo "\n".$this->comment_tags['begin'].' Stacey('.Stacey::$version.'): '.$this->hash.' '.$this->comment_tags['end'];
-
-    //write the actual cached content to the file
     $fp = fopen($this->cachefile, 'w');
     fwrite($fp, ob_get_contents());
     fclose($fp);
-
-    //write the current site referece (md5 of all files) to check against later
-    $fp = fopen($this->cachefile_state, 'w'); 
-    fwrite($fp, $this->hash);
-    fclose($fp);
-  }
-
-  function create_hash() {
-    # .htaccess file
-    $htaccess = file_exists('./.htaccess') ? '.htaccess:'.filemtime('./.htaccess') : '';
-    # serialize the file cache
-    $file_cache = serialize(Helpers::file_cache());
-    # create an md5 of the two collections
-    return md5($htaccess.$file_cache);
-  }
-
-  function set_filetype($template_file) {
-    preg_match('/\.([\w\d]+?)$/', $template_file, $split_path);
-    return $split_path[1];
-  }
-
-  function set_comment_tags() {
-    if (in_array($this->filetype, $this->filetype_comment_tags)) {
-      return $this->filetype_comment_tags[$this->filetype];
-    }
-    else return $this->filetype_comment_tags['default'];
-  }
-
-  function is_commentable() {
-    return !(in_array($this->filetype, $this->no_comment_types));
   }
 
 }
