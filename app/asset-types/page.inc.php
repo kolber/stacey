@@ -21,22 +21,26 @@ Class Page {
 
     # create/set all content variables
     PageData::create($this);
+  }
 
+  function clean_json($data) {
+    # strip any trailing commas
+    # (run it twice to get partial matches)
+    $data = preg_replace('/([}\]"][\s\n]*),([\s\n]*[}\]])/', '$1$2', $data);
+    $data = preg_replace('/([}\]"][\s\n]*),([\s\n]*[}\]])/', '$1$2', $data);
+    # strip newline characters
+    $data = preg_replace('/\n/', '', $data);
+    # minfy it
+    $data = JSMin::minify($data);
+    return $data;
   }
 
   function parse_template() {
     $data = TemplateParser::parse($this->data, $this->template_file);
-
     # post-parse JSON
     if (strtolower($this->template_type) == 'json') {
-      # minfy it
-      $data = JSMin::minify($data);
-      # strip any trailing commas
-      # (run it twice to get partial matches)
-      $data = preg_replace('/([}\]"][\s\n]*),([\s\n]*[}\]])/', '$1$2', $data);
-      $data = preg_replace('/([}\]"][\s\n]*),([\s\n]*[}\]])/', '$1$2', $data);
+      $data = $this->clean_json($data);
     }
-
     return $data;
   }
 

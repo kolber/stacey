@@ -238,6 +238,11 @@ Class PageData {
     return $value;
   }
 
+  static function clean_json($value) {
+    # escape inner quotes
+    return addslashes($value);
+  }
+
   static function create($page) {
     # set vars created within the text file
     self::create_textfile_vars($page);
@@ -248,11 +253,18 @@ Class PageData {
 
     # if file extension matches an xml type, convert to any html to xhtml to pass validation
     global $current_page_template_file;
-    if(preg_match('/\.(xml|rss|rdf|atom)$/', $current_page_template_file)) {
+    if (preg_match('/\.(xml|rss|rdf|atom)$/', $current_page_template_file)) {
       # clean each value for xhtml rendering
       foreach($page->data as $key => $value) {
-        if(is_string($value)) {
+        if (is_string($value)) {
           $page->data[$key] = self::html_to_xhtml($value);
+        }
+      }
+    } else if (preg_match('/\.(js|json)$/', $current_page_template_file)) {
+      # clean strings for json output
+      foreach($page->data as $key => $value) {
+        if(is_string($value)) {
+          $page->data[$key] = self::clean_json($value);
         }
       }
     }

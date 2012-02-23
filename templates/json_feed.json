@@ -1,22 +1,24 @@
-{% for page in page.root %}
-  {% if page.children %}
-    "pages": [
-      {% for page in page.children %}
-        {
-          "title": "{{ page.title }}",
-          "thumb": "{{ page.thumb.url }}",
-          "url": "{{ page.url }}",
-          "date": "{{ page.date }}",
-          "updated": "{{ page.updated }}",
-          "title": "{{ page.title }}",
-          "content": "{{ page.content }}",
-          "images": [
-            {% for image in page.images %}
-              { "url": "{{ image.url }}", "name": "{{ image.name }}" },
-            {% endfor %}
-          ],
-        },
-      {% endfor %}
-    ]
-  {% endif %}
-{% endfor %}
+{
+  {% for page in page.root %}
+    {% if page.children %}
+      "pages": [
+        {% for page in page.children %}
+          {
+            "title": "{{ page.title }}",
+            "thumb": "{{ page.thumb.url }}",
+            "url": "{{ page.url }}",
+            "date": "{{ page.date }}",
+            "updated": "{{ page.updated }}",
+            "title": "{{ page.title }}",
+            "content": "{{ page.content }}",
+            "images": [
+              {% for image in page.images %}
+                { "url": "{{ image.url }}", "name": "{{ image.name }}" },
+              {% endfor %}
+            ],
+          },
+        {% endfor %}
+      ]
+    {% endif %}
+  {% endfor %}
+}
