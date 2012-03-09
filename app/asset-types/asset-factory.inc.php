@@ -5,6 +5,17 @@ Class AssetFactory {
   static $store;
   static $asset_subclasses = array();
 
+  static function extract_page_data($asset_path) {
+    # separate the filename and the parent page path
+    $path = explode('/', $asset_path);
+    $file_name = array_pop($path);
+    $page_path = implode('/', $path);
+
+    # return any page data scoped against the asset filename
+    $page_data = self::$store[$page_path];
+    return isset($page_data[$file_name]) ? $page_data[$file_name] : array();
+  }
+
   static function &create($file_path) {
     #
     # a little bit of magic here to find any classes which extend 'Asset'
@@ -27,9 +38,12 @@ Class AssetFactory {
         if(in_array(strtolower($split_path[1]), $identifiers)) $asset = $asset_type;
       }
 
+      # extract any page data scoped against the asset filename
+      $page_data = self::extract_page_data($file_path);
+
       # create a new asset and return its data
       $asset = new $asset($file_path);
-      return $asset->data;
+      return array_merge($asset->data, $page_data);
 
     } else {
       # new page
