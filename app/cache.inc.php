@@ -2,6 +2,7 @@
 
 Class Cache {
 
+  var $hash;
   var $path_hash;
   var $cachefile;
   var $cache_prefix = 'c-';
@@ -15,6 +16,8 @@ Class Cache {
     $content_hash = $this->generate_hash($htaccess.$file_cache);
     # combine the two hashes to create a cachefile name
     $this->cachefile = './app/_cache/pages/'.$this->cache_prefix.$this->path_hash.'-'.$content_hash;
+    # store the hash
+    $this->hash = $this->cache_prefix.$this->path_hash.'-'.$content_hash;
   }
 
   function generate_hash($str) {
