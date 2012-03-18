@@ -195,7 +195,7 @@ Class PageData {
     $shared_file_path = file_exists('./content/_shared.yml') ? './content/_shared.yml' : './content/_shared.txt';
     if (file_exists($shared_file_path)) {
       if ($shared_vars = sfYaml::load($shared_file_path)) {
-        $vars = array_merge($shared_vars, $vars ?: array());
+        $vars = array_merge($shared_vars, $vars ? $vars : array());
       }
     }
     if (empty($vars)) {
