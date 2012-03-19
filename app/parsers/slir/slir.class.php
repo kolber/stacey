@@ -1128,15 +1128,15 @@ class SLIR
 	private function cacheFile($cacheFilePath, $imageData, $copyEXIF = TRUE, $symlinkToPath = NULL)
 	{
 		$this->initializeCache();
-		
+
 		// Try to create just a symlink to minimize disk space
-		if ($symlinkToPath && function_exists('symlink') && (file_exists($cacheFilePath) || symlink($symlinkToPath, $cacheFilePath)))
+		if ($symlinkToPath && function_exists('symlink') && (file_exists($cacheFilePath) || @symlink($symlinkToPath, $cacheFilePath)))
 		{
 			return TRUE;
 		}
 
 		// Create the file
-		if (!file_put_contents($cacheFilePath, $imageData))
+		if (!@file_put_contents($cacheFilePath, $imageData))
 		{
 			return FALSE;
 		}
