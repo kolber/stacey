@@ -70,13 +70,11 @@ Class PageData {
   }
 
   static function is_current($base_url, $permalink) {
+    $base_path = preg_replace('/^[^\/]+/', '', $base_url);
     if($permalink == 'index') {
       return ('/' == $_SERVER['REQUEST_URI']);
     } else {
-      $base_path = preg_replace('/^[^\/]+/', '', $base_url);
-      if (empty($base_path) || 0 === strpos($_SERVER['REQUEST_URI'], $base_path)) {
-        return preg_match('#(/' . $permalink . '|' . $permalink . '/)#', $_SERVER['REQUEST_URI']);
-      }
+      return ($base_path.'/'.$permalink == $_SERVER['REQUEST_URI']);
     }
     return false;
   }
@@ -208,25 +206,19 @@ Class PageData {
     $markdown_compatible = preg_match('/\.(xml|html?|rss|rdf|atom)$/', $current_page_template_file);
     $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
 
-    $parse_markdown = function (&$value) {
-      if (!is_string($value))
-        return;
-      if (strpos($value, "\n") !== false)
-        $value = Markdown(trim($value));
-      else
-        $value = trim($value);
-    };
-    # replace the only var in your content - page.path for your inline html with images and stuff
-    $replace_path_var = function (&$value) use ($relative_path) {
-      if (is_string($value))
-        $value = preg_replace('/{{\s*path\s*}}/', $relative_path, $value);
-    };
-    array_walk_recursive($vars, $replace_path_var);
-    if ($markdown_compatible) {
-      array_walk_recursive($vars, $parse_markdown);
-    }
     foreach ($vars as $key => $value) {
-      $page->$key = $value;
+      # replace the only var in your content - page.path for your inline html with images and stuff
+      $value = preg_replace('/{{\s*path\s*}}/', $relative_path . '/', $value);
+
+      # set a variable with a name of 'key' on the page with a value of 'value'
+      # if the template type is xml or html & the 'value' contains a newline character, parse it as markdown
+      if (!is_string($value)) {
+        return;
+      } else if ($markdown_compatible && strpos($value, "\n") !== false) {
+        $page->$key = Markdown(trim($value));
+      } else {
+        $page->$key = trim($value);
+      }
     }
   }
 
