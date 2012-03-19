@@ -13,7 +13,7 @@ Class AssetFactory {
 
     # return any page data scoped against the asset filename
     $page_data = self::$store[$page_path];
-    return isset($page_data[$file_name]) ? $page_data[$file_name] : array();
+    return $page_data[$file_name];
   }
 
   static function &create($file_path) {
@@ -40,10 +40,9 @@ Class AssetFactory {
 
       # extract any page data scoped against the asset filename
       $page_data = self::extract_page_data($file_path);
-
       # create a new asset and return its data
       $asset = new $asset($file_path);
-      return array_merge($asset->data, $page_data);
+      return array_merge($asset->data, is_array($page_data) ? $page_data : array());
 
     } else {
       # new page
