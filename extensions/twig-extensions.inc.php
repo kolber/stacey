@@ -25,11 +25,29 @@ else require_once '../app/parsers/Twig/Extension.php';
     return array(
       'sortbydate' => new Twig_Function_Method($this, 'sortbydate'),
       'sortby' => new Twig_Function_Method($this, 'sortby'),
+      'debug' => new Twig_Function_Method($this, 'var_dumper'),
+      'pebug' => new Twig_Function_Method($this, 'var_dumper_pre'),
       'get' => new Twig_Filter_Method($this, 'get'),
       'slice' => new Twig_Filter_Method($this, 'slice'),
       'resize_path' => new Twig_Filter_Method($this, 'resize_path'),
     );
   }
+
+	#
+	#		dump out our var for easy debugging
+	#
+	public function var_dumper($input) {
+		var_dump( $input );
+	}
+	
+	#
+	#  dump out our var for easy debugging ++ Now with Extra Pre's
+	#
+	public function var_dumper_pre($input)	{
+		echo "<pre>";
+		print_r( $input );
+		echo "</pre>";
+	}
 
   #
   #   manually change page context
@@ -61,6 +79,7 @@ else require_once '../app/parsers/Twig/Extension.php';
       return $root_path.'render/w'.$max_width.'-h'.$max_height.'-c'.$ratio.'-q'.$quality.$clean_path;
     }
   }
+
 
   #
   # allow offsetting and limiting arrays
