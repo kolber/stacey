@@ -13,7 +13,7 @@ Class AssetFactory {
 
     # return any page data scoped against the asset filename
     $page_data = self::$store[$page_path];
-    return $page_data[$file_name];
+    return isset($page_data[$file_name]) ? $page_data[$file_name] : array();
   }
 
   static function &create($file_path) {
