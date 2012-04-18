@@ -213,7 +213,7 @@ Class PageData {
       # set a variable with a name of 'key' on the page with a value of 'value'
       # if the template type is xml or html & the 'value' contains a newline character, parse it as markdown
       if (!is_string($value)) {
-        return;
+        $page->$key = $value;
       } else if ($markdown_compatible && strpos($value, "\n") !== false) {
         $page->$key = Markdown(trim($value));
       } else {
