@@ -16,6 +16,7 @@ else require_once '../app/parsers/Twig/Extension.php';
   public function getFilters() {
     # custom twig filters
     return array(
+      'absolute' => new Twig_Filter_Method($this, 'absolute'),
       'context' => new Twig_Filter_Method($this, 'context')
     );
   }
@@ -129,6 +130,14 @@ else require_once '../app/parsers/Twig/Extension.php';
     # sort the array
     uasort($sorted, array($this, 'custom_str_sort'));
     return $sorted;
+  }
+  
+  #
+  #   transforms relative path to absolute
+  #
+  function absolute($relative_path) {
+    # assume that all content lies in http://something.com/content/
+    return (($_SERVER['HTTPS'] ? 'https://' : 'http://')).$_SERVER['HTTP_HOST'].strstr($relative_path, '/content');
   }
 
 }
