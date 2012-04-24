@@ -11,6 +11,8 @@ if(phpversion() < 5.2) {
   require_once './app/helpers.inc.php';
   # require the yaml parser
   require_once './app/parsers/yaml/sfYaml.php';
+  # require the html minifier
+  require_once './app/parsers/html-minifier/HTML.php';
   # include any php files which sit in the app folder
   foreach(Helpers::rglob('./app/**.inc.php') as $include) include_once $include;
   # include any custom extensions

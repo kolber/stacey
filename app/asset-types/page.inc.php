@@ -37,9 +37,17 @@ Class Page {
 
   function parse_template() {
     $data = TemplateParser::parse($this->data, $this->template_file);
-    # post-parse JSON
-    if (strtolower($this->template_type) == 'json') {
-      $data = $this->clean_json($data);
+    # post-parse
+    switch (strtolower($this->template_type)) {
+      case 'json':
+        $data = $this->clean_json($data);
+        break;
+      case 'html':
+      case 'htm':
+        $data = Minify_HTML::minify($data);
+        break;
+      default:
+        break;
     }
     return $data;
   }
