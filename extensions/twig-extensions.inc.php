@@ -16,6 +16,7 @@ else require_once '../app/parsers/Twig/Extension.php';
   public function getFilters() {
     # custom twig filters
     return array(
+      'absolute' => new Twig_Filter_Method($this, 'absolute'),
       'context' => new Twig_Filter_Method($this, 'context')
     );
   }
@@ -39,7 +40,7 @@ else require_once '../app/parsers/Twig/Extension.php';
 	public function var_dumper($input) {
 		var_dump( $input );
 	}
-	
+
 	#
 	#  dump out our var for easy debugging ++ Now with Extra Pre's
 	#
@@ -129,6 +130,14 @@ else require_once '../app/parsers/Twig/Extension.php';
     # sort the array
     uasort($sorted, array($this, 'custom_str_sort'));
     return $sorted;
+  }
+
+  #
+  #   transforms relative path to absolute
+  #
+  function absolute($relative_path) {
+    $server_name = (($_SERVER['HTTPS'] ? 'https://' : 'http://')).$_SERVER['HTTP_HOST'];
+    return $server_name.str_replace('/index.php', strstr($relative_path, '/content'), $_SERVER['SCRIPT_NAME']);
   }
 
 }
