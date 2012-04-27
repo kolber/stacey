@@ -40,7 +40,7 @@ else require_once '../app/parsers/Twig/Extension.php';
 	public function var_dumper($input) {
 		var_dump( $input );
 	}
-	
+
 	#
 	#  dump out our var for easy debugging ++ Now with Extra Pre's
 	#
@@ -131,13 +131,13 @@ else require_once '../app/parsers/Twig/Extension.php';
     uasort($sorted, array($this, 'custom_str_sort'));
     return $sorted;
   }
-  
+
   #
   #   transforms relative path to absolute
   #
   function absolute($relative_path) {
-    # assume that all content lies in http://something.com/content/
-    return (($_SERVER['HTTPS'] ? 'https://' : 'http://')).$_SERVER['HTTP_HOST'].strstr($relative_path, '/content');
+    $server_name = (($_SERVER['HTTPS'] ? 'https://' : 'http://')).$_SERVER['HTTP_HOST'];
+    return $server_name.str_replace('/index.php', strstr($relative_path, '/content'), $_SERVER['SCRIPT_NAME']);
   }
 
 }
