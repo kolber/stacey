@@ -5,12 +5,12 @@ else require_once '../app/parsers/Twig/ExtensionInterface.php';
 if (file_exists('app/parsers/Twig/Extension.php')) require_once 'app/parsers/Twig/Extension.php';
 else require_once '../app/parsers/Twig/Extension.php';
 
- class Stacey_Twig_Extension extends Twig_Extension {
+class Stacey_Twig_Extension extends Twig_Extension {
 
-   var $sortby_value;
+  var $sortby_value;
 
-   public function getName() {
-     return 'Stacey';
+  public function getName() {
+    return 'Stacey';
   }
 
   public function getFilters() {
@@ -34,21 +34,21 @@ else require_once '../app/parsers/Twig/Extension.php';
     );
   }
 
-	#
-	#		dump out our var for easy debugging
-	#
-	public function var_dumper($input) {
-		var_dump( $input );
-	}
-
-	#
-	#  dump out our var for easy debugging ++ Now with Extra Pre's
-	#
-	public function var_dumper_pre($input)	{
-		echo "<pre>";
-		print_r( $input );
-		echo "</pre>";
-	}
+  #
+  #   dump out our var for easy debugging
+  #
+  public function var_dumper($input) {
+    var_dump( $input );
+  }
+  
+  #
+  #   dump out our var for easy debugging ++ Now with Extra Pre's
+  #
+  public function var_dumper_pre($input) {
+    echo "<pre>";
+    print_r( $input );
+    echo "</pre>";
+  }
 
   #
   #   manually change page context
@@ -81,7 +81,6 @@ else require_once '../app/parsers/Twig/Extension.php';
     }
   }
 
-
   #
   # allow offsetting and limiting arrays
   #
@@ -113,7 +112,6 @@ else require_once '../app/parsers/Twig/Extension.php';
   #
   #   sort by subvalue using natural string comparison
   #
-
   public function custom_str_sort($a, $b) {
     return strnatcmp($a[$this->sortby_value], $b[$this->sortby_value]);
   }
