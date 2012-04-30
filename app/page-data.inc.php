@@ -139,6 +139,8 @@ Class PageData {
 	  # page.cache_page
     $page->bypass_cache = isset($page->data['bypass_cache']) && $page->data['bypass_cache'] !== 'false' ? $page->data['bypass_cache'] : false;
 
+    # page.minify
+    $page->minify = isset($page->data['minify']) && $page->data['minify'] !== 'false' ? $page->data['minify'] : false;
   }
 
   static function create_collections($page) {
