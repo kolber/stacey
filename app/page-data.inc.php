@@ -2,6 +2,8 @@
 
 Class PageData {
 
+  static $shared = false;
+
   static function extract_closest_siblings($siblings, $file_path) {
     $neighbors = array();
     # flip keys/values
@@ -186,6 +188,16 @@ Class PageData {
     }
   }
 
+  static function get_shared_data() {
+    if (self::$shared) return self::$shared;
+    $shared_file_path = file_exists(Config::$content_folder.'/_shared.yml') ? Config::$content_folder.'/_shared.yml' : Config::$content_folder.'/_shared.txt';
+    if (file_exists($shared_file_path)) {
+      return self::$shared = sfYaml::load($shared_file_path);
+    } else {
+      return array();
+    }
+  }
+
   static function create_textfile_vars($page) {
     # store contents of content file (if it exists, otherwise, pass back an empty string)
     $content_file = sprintf('%s/%s', $page->file_path, $page->template_name);
@@ -194,15 +206,9 @@ Class PageData {
     $vars = sfYaml::load($content_file_path);
 
     # include shared variables for each page
-    $shared_file_path = file_exists('./content/_shared.yml') ? './content/_shared.yml' : './content/_shared.txt';
-    if (file_exists($shared_file_path)) {
-      if ($shared_vars = sfYaml::load($shared_file_path)) {
-        $vars = array_merge($shared_vars, $vars ? $vars : array());
-      }
-    }
-    if (empty($vars)) {
-      return;
-    }
+    $vars = array_merge(self::get_shared_data(), $vars ? $vars : array());
+    if (empty($vars)) return;
+
     global $current_page_template_file;
     if (!$current_page_template_file) {
       $current_page_template_file = $page->template_file;
