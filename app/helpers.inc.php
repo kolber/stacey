@@ -31,7 +31,7 @@ Class Helpers {
     # if the url is empty, we're looking for the index page
     $url = empty($url) ? 'index': $url;
 
-    $file_path = './content';
+    $file_path = Config::$content_folder;
     # Split the url and recursively unclean the parts into folder names
     $url_parts = explode('/', $url);
     foreach($url_parts as $u) {
@@ -53,9 +53,9 @@ Class Helpers {
   static function file_cache($dir = false) {
     if(!self::$file_cache) {
       # build file cache
-      self::build_file_cache('./app');
-      self::build_file_cache('./content');
-      self::build_file_cache('./templates');
+      self::build_file_cache(Config::$app_folder);
+      self::build_file_cache(Config::$content_folder);
+      self::build_file_cache(Config::$templates_folder);
     }
     if($dir && !isset(self::$file_cache[$dir])) return array();
     return $dir ? self::$file_cache[$dir] : self::$file_cache;
@@ -133,7 +133,8 @@ Class Helpers {
     return $last_modified;
   }
 
-  static function site_last_modified($dir = './content') {
+  static function site_last_modified($dir = false) {
+    if (!$dir) $dir = Config::$content_folder;
     $last_updated = 0;
     foreach(Helpers::list_files($dir, '/.*/', false) as $file) {
       if(filemtime($file) > $last_updated) $last_updated = filemtime($file);

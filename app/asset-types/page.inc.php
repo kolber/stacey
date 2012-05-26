@@ -62,9 +62,9 @@ Class Page {
 
   static function template_file($template_name) {
     $template_name = preg_replace('/([^.]*\.)?([^.]*)$/', '\\2', $template_name);
-    $template_file = glob('./templates/'.$template_name.'.*');
+    $template_file = glob(Config::$templates_folder.'/'.$template_name.'.*');
     # return template if one exists
-    return isset($template_file[0]) ? $template_file[0] : './templates/default.html';
+    return isset($template_file[0]) ? $template_file[0] : Config::$templates_folder.'/default.html';
   }
 
 }

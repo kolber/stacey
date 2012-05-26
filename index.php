@@ -7,6 +7,8 @@ if(phpversion() < 5.2) {
 
 } else {
 
+  # require config
+  require_once './extensions/config.php';
   # require helpers class so we can use rglob
   require_once './app/helpers.inc.php';
   # require the yaml parser

@@ -28,7 +28,7 @@ Class PageData {
     array_pop($split_path);
     $parent_path = array(implode('/', $split_path));
 
-    return $parent_path[0] == './content' ? array() : $parent_path;
+    return $parent_path[0] == Config::$content_folder ? array() : $parent_path;
   }
 
   static function get_parents($file_path, $url) {
@@ -143,7 +143,7 @@ Class PageData {
 
   static function create_collections($page) {
     # page.root
-    $page->root = Helpers::list_files('./content', '/^\d+?\./', true);
+    $page->root = Helpers::list_files(Config::$content_folder, '/^\d+?\./', true);
     # page.query
     $page->query = $_GET;
     # page.parent
@@ -152,7 +152,7 @@ Class PageData {
     # page.parents
     $page->parents = self::get_parents($page->file_path, $page->url_path);
     # page.siblings
-    $parent_path = !empty($parent_path[0]) ? $parent_path[0] : './content';
+    $parent_path = !empty($parent_path[0]) ? $parent_path[0] : Config::$content_folder;
     $split_url = explode("/", $page->url_path);
     $page->siblings = Helpers::list_files($parent_path, '/^\d+?\.(?!'.$split_url[(count($split_url) - 1)].')/', true);
     # page.siblings_and_self

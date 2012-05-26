@@ -11,11 +11,11 @@ Class Cache {
     # generate an md5 hash from the file_path
     $this->path_hash = $this->generate_hash($file_path);
     # generate an md5 hash from the current state of the site content
-    $htaccess = file_exists('./.htaccess') ? '.htaccess:'.filemtime('./.htaccess') : '';
+    $htaccess = file_exists($root_folder.'.htaccess') ? '.htaccess:'.filemtime($root_folder.'.htaccess') : '';
     $file_cache = serialize(Helpers::file_cache());
     $content_hash = $this->generate_hash($htaccess.$file_cache);
     # combine the two hashes to create a cachefile name
-    $this->cachefile = './app/_cache/pages/'.$this->cache_prefix.$this->path_hash.'-'.$content_hash;
+    $this->cachefile = Config::$cache_folder.'/pages/'.$this->cache_prefix.$this->path_hash.'-'.$content_hash;
     # store the hash
     $this->hash = $this->cache_prefix.$this->path_hash.'-'.$content_hash;
   }
@@ -32,7 +32,7 @@ Class Cache {
 
   function delete_old_caches() {
     # collect a list of all cache files matching the same file_path hash and delete them
-    $old_caches = glob('./app/_cache/pages/'.$this->cache_prefix.$this->path_hash.'-*');
+    $old_caches = glob(Config::$cache_folder.'/pages/'.$this->cache_prefix.$this->path_hash.'-*');
     foreach($old_caches as $file) unlink($file);
   }
 
@@ -45,7 +45,7 @@ Class Cache {
     ob_start();
       echo $page->parse_template();
       # if cache folder is writable, write to it
-      if(is_writable('./app/_cache/pages') && !$page->data['bypass_cache']) $this->write_cache();
+      if(is_writable(Config::$cache_folder.'/pages') && !$page->data['bypass_cache']) $this->write_cache();
     # end buffer
     ob_end_flush();
     return '';

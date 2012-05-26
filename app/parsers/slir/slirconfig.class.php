@@ -26,6 +26,7 @@
 /* $Id: slirconfig-sample.class.php 123 2010-12-21 18:58:03Z joe.lencioni $ */
 
 require_once 'slirconfigdefaults.class.php';
+require_once '../../../extensions/config.php';
 
 /**
  * SLIR Config Class
@@ -44,7 +45,7 @@ class SLIRConfig extends SLIRConfigDefaults
 
 	public static function init()
 	{
-    self::$cacheDir = '../../_cache/images';
+    self::$cacheDir = '../../../'.Config::$cache_folder.'/images';
     self::$documentRoot	= '../../..';
 		// This must be the last line of this function
 		parent::init();
