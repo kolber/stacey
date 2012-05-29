@@ -193,17 +193,19 @@ Class PageData {
     $shared_file_path = file_exists(Config::$content_folder.'/_shared.yml') ? Config::$content_folder.'/_shared.yml' : Config::$content_folder.'/_shared.txt';
     if (file_exists($shared_file_path)) {
       return self::$shared = sfYaml::load($shared_file_path);
-    } else {
-      return array();
     }
   }
 
-  static function create_textfile_vars($page) {
+  static function create_textfile_vars($page, $content = false) {
     # store contents of content file (if it exists, otherwise, pass back an empty string)
-    $content_file = sprintf('%s/%s', $page->file_path, $page->template_name);
-    $content_file_path = file_exists($content_file.'.yml') ? $content_file.'.yml' : $content_file.'.txt' ;
-    if (!file_exists($content_file_path)) return;
-    $vars = sfYaml::load($content_file_path);
+    if ($content) {
+      $vars = sfYaml::load($content);
+    } else {
+      $content_file = sprintf('%s/%s', $page->file_path, $page->template_name);
+      $content_file_path = file_exists($content_file.'.yml') ? $content_file.'.yml' : $content_file.'.txt' ;
+      if (!file_exists($content_file_path)) return;
+      $vars = sfYaml::load($content_file_path);
+    }
 
     # include shared variables for each page
     $vars = array_merge(self::get_shared_data(), $vars ? $vars : array());
@@ -248,9 +250,9 @@ Class PageData {
     return addslashes($value);
   }
 
-  static function create($page) {
+  static function create($page, $content = false) {
     # set vars created within the text file
-    self::create_textfile_vars($page);
+    self::create_textfile_vars($page, $content);
     # create each of the page-specfic helper variables
     self::create_collections($page);
     self::create_vars($page);
