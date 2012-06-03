@@ -11,7 +11,7 @@ Class Cache {
     # generate an md5 hash from the file_path
     $this->path_hash = $this->generate_hash($file_path);
     # generate an md5 hash from the current state of the site content
-    $htaccess = file_exists($root_folder.'.htaccess') ? '.htaccess:'.filemtime($root_folder.'.htaccess') : '';
+    $htaccess = file_exists(Config::$root_folder.'.htaccess') ? '.htaccess:'.filemtime(Config::$root_folder.'.htaccess') : '';
     $file_cache = serialize(Helpers::file_cache());
     $content_hash = $this->generate_hash($htaccess.$file_cache);
     # combine the two hashes to create a cachefile name
