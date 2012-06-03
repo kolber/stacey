@@ -73,7 +73,7 @@ class Stacey_Twig_Extension extends Twig_Extension {
     $root_path = preg_replace('/content\/.*/', '', $img_path);
     $clean_path = preg_replace('/^(\.+\/)*content/', '', $img_path);
 
-    if(!file_exists('.htaccess')) {
+    if(!file_exists(Config::$root_folder.'.htaccess')) {
       return $root_path.'app/parsers/slir/index.php?w='.$max_width.'&h='.$max_height.'&c='.$ratio.'&q='.$quality.'&i='.$clean_path;
     } else {
       return $root_path.'render/w'.$max_width.'-h'.$max_height.'-c'.$ratio.'-q'.$quality.$clean_path;

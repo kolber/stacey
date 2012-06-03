@@ -99,7 +99,7 @@ Class Helpers {
 
   static function modrewrite_parse($url) {
     # if the .htaccess file is missing or mod_rewrite is disabled, overwrite the clean urls
-    if(!file_exists('.htaccess') && preg_match('/\/$/', $url)) {
+    if(!file_exists(Config::$root_folder.'.htaccess') && preg_match('/\/$/', $url)) {
       $url = '?/'.$url;
     }
     $url = preg_replace('/^(\?\/)?index\/$/', '', $url);
