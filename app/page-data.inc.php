@@ -220,7 +220,7 @@ Class PageData {
 
     foreach ($vars as $key => $value) {
       # replace the only var in your content - page.path for your inline html with images and stuff
-      $value = preg_replace('/{{\s*path\s*}}/', $relative_path . '/', $value);
+      if (is_string($value)) $value = preg_replace('/{{\s*path\s*}}/', $relative_path . '/', $value);
 
       # set a variable with a name of 'key' on the page with a value of 'value'
       # if the template type is xml or html & the 'value' contains a newline character, parse it as markdown
