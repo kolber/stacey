@@ -84,7 +84,7 @@ Class Helpers {
     $files = array();
     foreach(self::file_cache($dir) as $file) {
       # if file matches regex, continue
-      if(preg_match($regex, $file['file_name'])) {
+      if(isset($file['file_name']) && preg_match($regex, $file['file_name'])) {
         # if $folders_only is true and the file is not a folder, skip it
         if($folders_only && !$file['is_folder']) continue;
         # otherwise, add file to results list
