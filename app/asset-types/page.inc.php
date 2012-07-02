@@ -10,7 +10,7 @@ Class Page {
   var $data;
   var $all_pages;
 
-  function __construct($url) {
+  function __construct($url, $content = false) {
     # store url and converted file path
     $this->file_path = Helpers::url_to_file_path($url);
     $this->url_path = $url;
@@ -18,9 +18,8 @@ Class Page {
     $this->template_name = self::template_name($this->file_path);
     $this->template_file = self::template_file($this->template_name);
     $this->template_type = self::template_type($this->template_file);
-
     # create/set all content variables
-    PageData::create($this);
+    PageData::create($this, $content);
   }
 
   function clean_json($data) {
@@ -62,9 +61,9 @@ Class Page {
 
   static function template_file($template_name) {
     $template_name = preg_replace('/([^.]*\.)?([^.]*)$/', '\\2', $template_name);
-    $template_file = glob('./templates/'.$template_name.'.*');
+    $template_file = glob(Config::$templates_folder.'/'.$template_name.'.*');
     # return template if one exists
-    return isset($template_file[0]) ? $template_file[0] : './templates/default.html';
+    return isset($template_file[0]) ? $template_file[0] : Config::$templates_folder.'/default.html';
   }
 
 }

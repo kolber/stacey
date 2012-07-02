@@ -1,16 +1,13 @@
 <?php
+require_once Config::$app_folder.'/parsers/Twig/ExtensionInterface.php';
+require_once Config::$app_folder.'/parsers/Twig/Extension.php';
 
-if (file_exists('app/parsers/Twig/ExtensionInterface.php')) require_once 'app/parsers/Twig/ExtensionInterface.php';
-else require_once '../app/parsers/Twig/ExtensionInterface.php';
-if (file_exists('app/parsers/Twig/Extension.php')) require_once 'app/parsers/Twig/Extension.php';
-else require_once '../app/parsers/Twig/Extension.php';
+class Stacey_Twig_Extension extends Twig_Extension {
 
- class Stacey_Twig_Extension extends Twig_Extension {
+  var $sortby_value;
 
-   var $sortby_value;
-
-   public function getName() {
-     return 'Stacey';
+  public function getName() {
+    return 'Stacey';
   }
 
   public function getFilters() {
@@ -34,21 +31,21 @@ else require_once '../app/parsers/Twig/Extension.php';
     );
   }
 
-	#
-	#		dump out our var for easy debugging
-	#
-	public function var_dumper($input) {
-		var_dump( $input );
-	}
-
-	#
-	#  dump out our var for easy debugging ++ Now with Extra Pre's
-	#
-	public function var_dumper_pre($input)	{
-		echo "<pre>";
-		print_r( $input );
-		echo "</pre>";
-	}
+  #
+  #   dump out our var for easy debugging
+  #
+  public function var_dumper($input) {
+    var_dump( $input );
+  }
+  
+  #
+  #   dump out our var for easy debugging ++ Now with Extra Pre's
+  #
+  public function var_dumper_pre($input) {
+    echo "<pre>";
+    print_r( $input );
+    echo "</pre>";
+  }
 
   #
   #   manually change page context
@@ -71,16 +68,17 @@ else require_once '../app/parsers/Twig/Extension.php';
   #
   # shortcut to generate the image resize path from a full image path
   #
-  function resize_path($img_path, $max_width = '100', $max_height = '100', $ratio = '1:1', $quality = 100) {
+  function resize_path($img_path, $max_width = '100', $max_height = '100', $ratio = 0, $quality = 100) {
+
+    $root_path = preg_replace('/content\/.*/', '', $img_path);
     $clean_path = preg_replace('/^(\.+\/)*content/', '', $img_path);
-    $root_path = Helpers::relative_root_path();
-    if(!file_exists('.htaccess')) {
+
+    if(!file_exists(Config::$root_folder.'.htaccess')) {
       return $root_path.'app/parsers/slir/index.php?w='.$max_width.'&h='.$max_height.'&c='.$ratio.'&q='.$quality.'&i='.$clean_path;
     } else {
       return $root_path.'render/w'.$max_width.'-h'.$max_height.'-c'.$ratio.'-q'.$quality.$clean_path;
     }
   }
-
 
   #
   # allow offsetting and limiting arrays
@@ -113,7 +111,6 @@ else require_once '../app/parsers/Twig/Extension.php';
   #
   #   sort by subvalue using natural string comparison
   #
-
   public function custom_str_sort($a, $b) {
     return strnatcmp($a[$this->sortby_value], $b[$this->sortby_value]);
   }

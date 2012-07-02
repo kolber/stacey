@@ -2,6 +2,8 @@
 
 Class PageData {
 
+  static $shared = false;
+
   static function extract_closest_siblings($siblings, $file_path) {
     $neighbors = array();
     # flip keys/values
@@ -28,7 +30,7 @@ Class PageData {
     array_pop($split_path);
     $parent_path = array(implode('/', $split_path));
 
-    return $parent_path[0] == './content' ? array() : $parent_path;
+    return $parent_path[0] == Config::$content_folder ? array() : $parent_path;
   }
 
   static function get_parents($file_path, $url) {
@@ -143,7 +145,7 @@ Class PageData {
 
   static function create_collections($page) {
     # page.root
-    $page->root = Helpers::list_files('./content', '/^\d+?\./', true);
+    $page->root = Helpers::list_files(Config::$content_folder, '/^\d+?\./', true);
     # page.query
     $page->query = $_GET;
     # page.parent
@@ -152,7 +154,7 @@ Class PageData {
     # page.parents
     $page->parents = self::get_parents($page->file_path, $page->url_path);
     # page.siblings
-    $parent_path = !empty($parent_path[0]) ? $parent_path[0] : './content';
+    $parent_path = !empty($parent_path[0]) ? $parent_path[0] : Config::$content_folder;
     $split_url = explode("/", $page->url_path);
     $page->siblings = Helpers::list_files($parent_path, '/^\d+?\.(?!'.$split_url[(count($split_url) - 1)].')/', true);
     # page.siblings_and_self
@@ -186,23 +188,29 @@ Class PageData {
     }
   }
 
-  static function create_textfile_vars($page) {
+  static function get_shared_data() {
+    if (self::$shared) return self::$shared;
+    $shared_file_path = file_exists(Config::$content_folder.'/_shared.yml') ? Config::$content_folder.'/_shared.yml' : Config::$content_folder.'/_shared.txt';
+    if (file_exists($shared_file_path)) {
+      return self::$shared = sfYaml::load($shared_file_path);
+    }
+  }
+
+  static function create_textfile_vars($page, $content = false) {
     # store contents of content file (if it exists, otherwise, pass back an empty string)
-    $content_file = sprintf('%s/%s', $page->file_path, $page->template_name);
-    $content_file_path = file_exists($content_file.'.yml') ? $content_file.'.yml' : $content_file.'.txt' ;
-    if (!file_exists($content_file_path)) return;
-    $vars = sfYaml::load($content_file_path);
+    if ($content) {
+      $vars = sfYaml::load($content);
+    } else {
+      $content_file = sprintf('%s/%s', $page->file_path, $page->template_name);
+      $content_file_path = file_exists($content_file.'.yml') ? $content_file.'.yml' : $content_file.'.txt' ;
+      if (!file_exists($content_file_path)) return;
+      $vars = sfYaml::load($content_file_path);
+    }
 
     # include shared variables for each page
-    $shared_file_path = file_exists('./content/_shared.yml') ? './content/_shared.yml' : './content/_shared.txt';
-    if (file_exists($shared_file_path)) {
-      if ($shared_vars = sfYaml::load($shared_file_path)) {
-        $vars = array_merge($shared_vars, $vars ? $vars : array());
-      }
-    }
-    if (empty($vars)) {
-      return;
-    }
+    $vars = array_merge(self::get_shared_data(), $vars ? $vars : array());
+    if (empty($vars)) return;
+
     global $current_page_template_file;
     if (!$current_page_template_file) {
       $current_page_template_file = $page->template_file;
@@ -212,7 +220,7 @@ Class PageData {
 
     foreach ($vars as $key => $value) {
       # replace the only var in your content - page.path for your inline html with images and stuff
-      $value = preg_replace('/{{\s*path\s*}}/', $relative_path . '/', $value);
+      if (is_string($value)) $value = preg_replace('/{{\s*path\s*}}/', $relative_path . '/', $value);
 
       # set a variable with a name of 'key' on the page with a value of 'value'
       # if the template type is xml or html & the 'value' contains a newline character, parse it as markdown
@@ -242,9 +250,9 @@ Class PageData {
     return addslashes($value);
   }
 
-  static function create($page) {
+  static function create($page, $content = false) {
     # set vars created within the text file
-    self::create_textfile_vars($page);
+    self::create_textfile_vars($page, $content);
     # create each of the page-specfic helper variables
     self::create_collections($page);
     self::create_vars($page);
