@@ -179,6 +179,8 @@ Class PageData {
     $page->images = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(gif|jpg|png|jpeg)$/i', false);
     # page.video
     $page->video = Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)$/i', false);
+    # page.txt
+    $page->txt = Helpers::list_files($page->file_path, '/\.(txt)$/i', false);
 
     # page.swf, page.html, page.doc, page.pdf, page.mp3, etc.
     # create a variable for each file type included within the page's folder (excluding .yml files)
@@ -232,6 +234,22 @@ Class PageData {
         $page->$key = trim($value);
       }
     }
+
+    $txt_files = Helpers::list_files($page->file_path, '/\.(txt)$/i', false);
+
+    # Save each txt file as page variable
+    foreach ($txt_files as $filename => $file_path) {
+      $var_name = preg_replace('/\.(txt)/', '', $filename);
+      if(is_readable($file_path)) {
+        ob_start();
+        include $file_path;
+        $page->$var_name = Markdown(ob_get_contents());
+        ob_end_clean();
+      } else {
+        $page->$var_name = '';
+      }
+    }
+
   }
 
   static function html_to_xhtml(&$value) {

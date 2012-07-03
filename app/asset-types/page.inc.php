@@ -54,9 +54,9 @@ Class Page {
   }
 
   static function template_name($file_path) {
-    $txts = array_keys(Helpers::list_files($file_path, '/\.(yml|txt)/'));
+    $txts = array_keys(Helpers::list_files($file_path, '/\.(yml)/'));
     # return first matched .yml file
-    return (!empty($txts)) ? preg_replace('/\.(yml|txt)/', '', $txts[0]) : false;
+    return (!empty($txts)) ? preg_replace('/\.(yml)/', '', $txts[0]) : false;
   }
 
   static function template_file($template_name) {
