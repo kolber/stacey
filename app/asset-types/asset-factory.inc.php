@@ -13,6 +13,14 @@ Class AssetFactory {
 
     # return any page data scoped against the asset filename
     $page_data = self::$store[$page_path];
+
+    foreach ($page_data[$file_name] as $key => $value) {
+      # Parse markdown is newline is found
+      if (strpos($value, "\n") !== false) {
+        $page_data[$file_name][$key] = Markdown( trim( $value ) ); 
+      }
+    }
+    
     return isset($page_data[$file_name]) ? $page_data[$file_name] : false;
   }
 

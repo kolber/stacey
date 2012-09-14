@@ -21,6 +21,17 @@
         <div class="description col six">
           <h2 class="col six"><a href="{{ page.root_path }}">{{ page.title }}</a></h2>
           {{ page.content }}
+
+          {% for md in page.md %}
+            <div class="{{ md.name|lower }}">{{ md.content }}</div>
+          {% endfor %}
+
+          {% for txt in page.txt %}
+            <div class="{{ txt.name|lower }}">{{ txt.content }}</div>
+          {% endfor %}
+
+          {{ pebug(page) }}
+
         </div>
         <hr>
         <p id="project-count" class="col one"><em>&#8470;</em> {{ page.index }}/{{ page.siblings_count }}</p>
