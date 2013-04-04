@@ -21,6 +21,7 @@ class Stacey_Twig_Extension extends Twig_Extension {
   public function getFunctions() {
     # custom Twig functions
     return array(
+      'search' => new Twig_Function_Method($this, 'search'),
       'sortbydate' => new Twig_Function_Method($this, 'sortbydate'),
       'sortby' => new Twig_Function_Method($this, 'sortby'),
       'debug' => new Twig_Function_Method($this, 'var_dumper'),
@@ -29,6 +30,36 @@ class Stacey_Twig_Extension extends Twig_Extension {
       'slice' => new Twig_Filter_Method($this, 'slice'),
       'resize_path' => new Twig_Filter_Method($this, 'resize_path'),
     );
+  }
+
+  #
+  #   search
+  #
+
+  public function search($search, $limit = false) {
+    $result = Cache::get_full_cache();
+
+    if (preg_match('/^\s*$/', $search)) return array();
+    $search = preg_replace(array('/\//', '/\s+/'), array('\/', '.+?'), $search);
+    // $search = preg_replace(array('/o/i', '/a/i'), array('(o|ø|ö)', '(a|æ|å|ä)'), $search);
+    $json = json_decode($result, true);
+
+    $results = array();
+    foreach ($json as $page) {
+      foreach ($page as $key => $value) {
+        if ($key == 'file_path' || $key == 'url' ) continue;
+        $clean_value = (is_string($value)) ? strip_tags($value) : '';
+        if (preg_match('/.{0,90}'.$search.'.{0,90}/i', $clean_value, $matches)) {
+          if (isset($matches[0])) {
+            $page['search_match'] = '...'.preg_replace('/('.$search.')/ui', '<mark>$1</mark>', $matches[0]).'...';
+            $results[] = $page;
+            if ($limit && count($results) >= $limit) return $results;
+            break;
+          }
+        }
+      }
+    }
+    return $results;
   }
 
   #
