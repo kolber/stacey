@@ -14,7 +14,8 @@ class Stacey_Twig_Extension extends Twig_Extension {
     # custom twig filters
     return array(
       'absolute' => new Twig_Filter_Method($this, 'absolute'),
-      'context' => new Twig_Filter_Method($this, 'context')
+      'context' => new Twig_Filter_Method($this, 'context'),
+      'truncate' => new Twig_Filter_Method($this, 'truncate')
     );
   }
 
@@ -167,6 +168,18 @@ class Stacey_Twig_Extension extends Twig_Extension {
     $server_name = (($_SERVER['HTTPS'] ? 'https://' : 'http://')).$_SERVER['HTTP_HOST'];
     $relative_path = preg_replace(array('/^\/content/', '/^(\.+\/)*/'), '', $relative_path);
     return $server_name.str_replace('/index.php', $relative_path, $_SERVER['SCRIPT_NAME']);
+  }
+
+  function truncate($value, $length = 30, $preserve = false, $separator = '...') {
+    if (strlen($value) > $length) {
+      if ($preserve) {
+        if (false !== ($breakpoint = strpos($value, ' ', $length))) {
+          $length = $breakpoint;
+        }
+      }
+      return substr($value, 0, $length) . $separator;
+    }
+    return $value;
   }
 
 }
