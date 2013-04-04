@@ -42,8 +42,6 @@ Class PageData {
       array_pop($split_path);
       $parents[] = implode('/', $split_path);
     }
-    # reverse array to emulate anchestor structure
-    $parents = array_reverse($parents);
 
     return (count($parents) < 1) ? array() : $parents;
   }
