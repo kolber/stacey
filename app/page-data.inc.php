@@ -198,6 +198,13 @@ Class PageData {
     }
   }
 
+  static function preparse_text($text) {
+    $content = preg_replace_callback('/:\s*(\n)?\+{3,}([\S\s]*?)\+{3,}/', create_function('$match',
+      'return ": |\n  ".preg_replace("/\n/", "\n  ", $match[2]);'
+    ), $text);
+    return $content;
+  }
+
   static function create_textfile_vars($page, $content = false) {
     # store contents of content file (if it exists, otherwise, pass back an empty string)
     if ($content) {
@@ -206,7 +213,10 @@ Class PageData {
       $content_file = sprintf('%s/%s', $page->file_path, $page->template_name);
       $content_file_path = file_exists($content_file.'.yml') ? $content_file.'.yml' : $content_file.'.txt' ;
       if (!file_exists($content_file_path)) return;
-      $vars = sfYaml::load($content_file_path);
+      # Correct formatting of fenced content
+      $content = file_get_contents($content_file_path);
+      $content = self::preparse_text($content);
+      $vars = sfYaml::load($content);
     }
 
     # include shared variables for each page
