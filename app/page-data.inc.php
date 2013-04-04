@@ -161,7 +161,7 @@ Class PageData {
     $page->siblings_and_self = Helpers::list_files($parent_path, '/^\d+?\./', true);
     # page.next_siblings / page.previous_siblings
     $index = self::get_index($page->data['siblings_and_self'], $page->file_path);
-    $page->previous_siblings = array_slice($page->data['siblings_and_self'], 0, $index, true);
+    $page->previous_siblings = array_slice($page->data['siblings_and_self'], 0, $index - 1, true);
     $page->next_siblings = array_slice($page->data['siblings_and_self'], $index, count($page->data['siblings_and_self']), true);
     # page.next_sibling / page.previous_sibling
     $neighboring_siblings = self::extract_closest_siblings($page->data['siblings_and_self'], $page->file_path);
