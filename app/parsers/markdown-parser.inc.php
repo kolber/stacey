@@ -6,6 +6,9 @@
 # Copyright (c) 2004-2009 Michel Fortin  
 # <http://michelf.com/projects/php-markdown/>
 #
+# Modified to preserve line breaks, line #667
+# <http://stackoverflow.com/questions/2092966/how-to-treat-single-newline-as-real-line-break-in-php-markdown>
+#
 # Original Markdown
 # Copyright (c) 2004-2006 John Gruber  
 # <http://daringfireball.net/projects/markdown/>
@@ -661,7 +664,7 @@ class Markdown_Parser {
   
   function doHardBreaks($text) {
     # Do hard breaks:
-    return preg_replace_callback('/ {2,}\n/', 
+    return preg_replace_callback('/ {2,}\n|\n{1}/',
       array(&$this, '_doHardBreaks_callback'), $text);
   }
   function _doHardBreaks_callback($matches) {
