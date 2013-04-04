@@ -127,6 +127,9 @@ Class Stacey {
     $key = preg_replace(array('/\/$/', '/^\//'), '', $key);
     # store file path for this current page
     $this->route = isset($key) ? $key : 'index';
+    # TODO: Relative root path is set incorrectly (missing an extra ../)
+    # strip any trailing extensions from the url
+    $this->route = preg_replace('/[\._][\w\d]+?$/', '', $this->route);
     $file_path = Helpers::url_to_file_path($this->route);
 
     try {
