@@ -60,8 +60,11 @@ Class Page {
   }
 
   static function template_file($template_name) {
+    preg_match('/(\.[\w\d]+?)$/', $_SERVER["REQUEST_URI"], $ext);
+    $extension = isset($ext[1]) ? $ext[1] : '.*';
     $template_name = preg_replace('/([^.]*\.)?([^.]*)$/', '\\2', $template_name);
-    $template_file = glob(Config::$templates_folder.'/'.$template_name.'.*');
+    $template_file = glob(Config::$templates_folder.'/'.$template_name.$extension);
+    if (!isset($template_file[0])) $template_file = glob(Config::$templates_folder.'/'.$template_name.'.*');
     # return template if one exists
     return isset($template_file[0]) ? $template_file[0] : Config::$templates_folder.'/default.html';
   }

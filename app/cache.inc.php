@@ -9,7 +9,7 @@ Class Cache {
 
   function __construct($file_path, $template_file) {
     # generate an md5 hash from the file_path
-    $this->path_hash = $this->generate_hash($file_path);
+    $this->path_hash = $this->generate_hash($file_path.':'.$template_file);
     # generate an md5 hash from the current state of the site content
     $htaccess = file_exists(Config::$root_folder.'.htaccess') ? '.htaccess:'.filemtime(Config::$root_folder.'.htaccess') : '';
     $file_cache = serialize(Helpers::file_cache());
