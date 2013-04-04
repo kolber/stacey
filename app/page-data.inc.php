@@ -248,8 +248,8 @@ Class PageData {
   }
 
   static function clean_json($value) {
-    # escape inner quotes
-    return addslashes($value);
+    # escape inner double quotes
+    return preg_replace('/\"/', '\"', $value);
   }
 
   static function create($page, $content = false) {
