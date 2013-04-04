@@ -217,7 +217,7 @@ Class PageData {
     if (!$current_page_template_file) {
       $current_page_template_file = $page->template_file;
     }
-    $markdown_compatible = preg_match('/\.(xml|html?|rss|rdf|atom)$/', $current_page_template_file);
+    $markdown_compatible = preg_match('/\.(xml|html?|rss|rdf|atom|js|json)$/', $current_page_template_file);
     $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
 
     foreach ($vars as $key => $value) {
