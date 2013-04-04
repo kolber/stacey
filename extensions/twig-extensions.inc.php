@@ -100,7 +100,7 @@ class Stacey_Twig_Extension extends Twig_Extension {
   #
   # shortcut to generate the image resize path from a full image path
   #
-  function resize_path($img_path, $max_width = '100', $max_height = '100', $ratio = 0, $quality = 100) {
+  function resize_path($img_path, $max_width = '100', $max_height = '100', $ratio = '1:1', $quality = '100') {
 
     $root_path = preg_replace('/content\/.*/', '', $img_path);
     $clean_path = preg_replace('/^(\.+\/)*content/', '', $img_path);
