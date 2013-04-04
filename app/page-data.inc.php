@@ -174,6 +174,8 @@ Class PageData {
     $page->files = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(?!yml)([\w\d]+?)$/i', false);
     # page.images
     $page->images = Helpers::list_files($page->file_path, '/(?<!thumb|_lge|_sml)\.(gif|jpg|png|jpeg)$/i', false);
+    # page.numbered_images
+    $page->numbered_images = Helpers::list_files($page->file_path, '/^\d+[^\/]*(?<!thumb|_lge|_sml)\.(gif|jpg|png|jpeg)$/i', false);
     # page.video
     $page->video = Helpers::list_files($page->file_path, '/\.(mov|mp4|m4v)$/i', false);
 
