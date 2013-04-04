@@ -193,6 +193,8 @@ Class PageData {
     $shared_file_path = file_exists(Config::$content_folder.'/_shared.yml') ? Config::$content_folder.'/_shared.yml' : Config::$content_folder.'/_shared.txt';
     if (file_exists($shared_file_path)) {
       return self::$shared = sfYaml::load($shared_file_path);
+    } else {
+      return array();
     }
   }
 
