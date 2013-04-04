@@ -15,10 +15,10 @@ Class PageData {
     if(!empty($siblings) && isset($siblings[$file_path])) {
       # previous sibling
       if(isset($keys[$keyIndexes[$file_path] - 1])) $neighbors[] = $keys[$keyIndexes[$file_path] - 1];
-      else $neighbors[] = $keys[count($keys) - 1];
+      else $neighbors[] = false;
       # next sibling
       if(isset($keys[$keyIndexes[$file_path] + 1])) $neighbors[] = $keys[$keyIndexes[$file_path] + 1];
-      else $neighbors[] = $keys[0];
+      else $neighbors[] = false;
     }
     return !empty($neighbors) ? $neighbors : array(false, false);
   }
