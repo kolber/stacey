@@ -165,7 +165,8 @@ class Stacey_Twig_Extension extends Twig_Extension {
   #
   function absolute($relative_path) {
     $server_name = (($_SERVER['HTTPS'] ? 'https://' : 'http://')).$_SERVER['HTTP_HOST'];
-    return $server_name.str_replace('/index.php', strstr($relative_path, '/content'), $_SERVER['SCRIPT_NAME']);
+    $relative_path = preg_replace(array('/^\/content/', '/^(\.+\/)*/'), '', $relative_path);
+    return $server_name.str_replace('/index.php', $relative_path, $_SERVER['SCRIPT_NAME']);
   }
 
 }
