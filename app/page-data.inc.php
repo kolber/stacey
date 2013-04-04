@@ -29,7 +29,6 @@ Class PageData {
     # drop the last folder from the file path
     array_pop($split_path);
     $parent_path = array(implode('/', $split_path));
-
     return $parent_path[0] == Config::$content_folder ? array() : $parent_path;
   }
 
@@ -136,7 +135,7 @@ Class PageData {
     # page.is_first
     $page->is_first = $page->data['index'] == 1;
 
-	  # page.cache_page
+    # page.cache_page
     $page->bypass_cache = isset($page->data['bypass_cache']) && $page->data['bypass_cache'] !== 'false' ? $page->data['bypass_cache'] : false;
 
   }
