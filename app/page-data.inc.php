@@ -135,6 +135,9 @@ Class PageData {
     # page.is_first
     $page->is_first = $page->data['index'] == 1;
 
+    # page.template_name
+    $page->data['template_name'] = $page->template_name;
+
     # page.cache_page
     $page->bypass_cache = isset($page->data['bypass_cache']) && $page->data['bypass_cache'] !== 'false' ? $page->data['bypass_cache'] : false;
 
