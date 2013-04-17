@@ -232,20 +232,28 @@ Class PageData {
     $markdown_compatible = preg_match('/\.(xml|html?|rss|rdf|atom|js|json)$/', $current_page_template_file);
     $relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
 
+    $vars = self::parse_vars($vars, $markdown_compatible, $relative_path);
+    foreach ($vars as $key => $value) {
+      # set a variable with a name of 'key' on the page with a value of 'value'
+      $page->$key = $value;
+    }
+  }
+
+  static function parse_vars($vars, $markdown_compatible, $relative_path) {
     foreach ($vars as $key => $value) {
       # replace the only var in your content - page.path for your inline html with images and stuff
       if (is_string($value)) $value = preg_replace('/{{\s*path\s*}}/', $relative_path . '/', $value);
 
-      # set a variable with a name of 'key' on the page with a value of 'value'
       # if the template type is markdown-compatible & the 'value' contains a newline character, parse it as markdown
       if (!is_string($value)) {
-        $page->$key = $value;
+        $vars[$key] = $value;
       } else if ($markdown_compatible && strpos($value, "\n") !== false) {
-        $page->$key = Markdown(trim($value));
+        $vars[$key] = Markdown(trim($value));
       } else {
-        $page->$key = trim($value);
+        $vars[$key] = trim($value);
       }
     }
+    return $vars;
   }
 
   static function html_to_xhtml(&$value) {
