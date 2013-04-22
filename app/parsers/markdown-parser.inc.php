@@ -6,13 +6,20 @@
 # Copyright (c) 2004-2009 Michel Fortin  
 # <http://michelf.com/projects/php-markdown/>
 #
-# Modified to preserve line breaks, line #667
+# Modified to preserve line breaks, line #675
 # <http://stackoverflow.com/questions/2092966/how-to-treat-single-newline-as-real-line-break-in-php-markdown>
+#
+# Modified to allow user to choose preference (set in extensions/config.php
+# file), line #674-#679
+# <https://github.com/kolber/stacey/issues/82>
 #
 # Original Markdown
 # Copyright (c) 2004-2006 John Gruber  
 # <http://daringfireball.net/projects/markdown/>
 #
+
+# Require Stacey configs
+require_once(dirname(dirname(dirname(__FILE__))).'/extensions/config.php');
 
 
 define( 'MARKDOWN_VERSION',  "1.0.1n" ); # Sat 10 Oct 2009
@@ -664,8 +671,12 @@ class Markdown_Parser {
   
   function doHardBreaks($text) {
     # Do hard breaks:
-    return preg_replace_callback('/ {2,}\n|\n{1}/',
-      array(&$this, '_doHardBreaks_callback'), $text);
+    if (Config::$md_gfm_style_linebreaks) {
+      return preg_replace_callback('/ {2,}\n|\n{1}/',array(&$this, '_doHardBreaks_callback'), $text);
+    }
+    else {
+      return preg_replace_callback('/ {2,}\n/',array(&$this, '_doHardBreaks_callback'), $text);
+    }  
   }
   function _doHardBreaks_callback($matches) {
     return $this->hashPart("<br$this->empty_element_suffix\n");
