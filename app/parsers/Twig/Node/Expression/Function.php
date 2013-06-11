@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-class Twig_Node_Expression_Function extends Twig_Node_Expression
+class Twig_Node_Expression_Function extends Twig_Node_Expression_Call
 {
     public function __construct($name, Twig_NodeInterface $arguments, $lineno)
     {
@@ -17,33 +17,19 @@ class Twig_Node_Expression_Function extends Twig_Node_Expression
 
     public function compile(Twig_Compiler $compiler)
     {
-        $function = $compiler->getEnvironment()->getFunction($this->getAttribute('name'));
-        if (false === $function) {
-            throw new Twig_Error_Syntax(sprintf('The function "%s" does not exist', $this->getAttribute('name')), $this->getLine());
+        $name = $this->getAttribute('name');
+        $function = $compiler->getEnvironment()->getFunction($name);
+
+        $this->setAttribute('name', $name);
+        $this->setAttribute('type', 'function');
+        $this->setAttribute('thing', $function);
+        $this->setAttribute('needs_environment', $function->needsEnvironment());
+        $this->setAttribute('needs_context', $function->needsContext());
+        $this->setAttribute('arguments', $function->getArguments());
+        if ($function instanceof Twig_FunctionCallableInterface || $function instanceof Twig_SimpleFunction) {
+            $this->setAttribute('callable', $function->getCallable());
         }
 
-        $compiler
-            ->raw($function->compile().'(')
-            ->raw($function->needsEnvironment() ? '$this->env' : '')
-        ;
-
-        if ($function->needsContext()) {
-            $compiler->raw($function->needsEnvironment() ? ', $context' : '$context');
-        }
-
-        $first = true;
-        foreach ($this->getNode('arguments') as $node) {
-            if (!$first) {
-                $compiler->raw(', ');
-            } else {
-                if ($function->needsEnvironment() || $function->needsContext()) {
-                    $compiler->raw(', ');
-                }
-                $first = false;
-            }
-            $compiler->subcompile($node);
-        }
-
-        $compiler->raw(')');
+        $this->compileCallable($compiler);
     }
 }

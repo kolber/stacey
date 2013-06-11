@@ -10,11 +10,11 @@
  */
 class Twig_Extension_Escaper extends Twig_Extension
 {
-    protected $autoescape;
+    protected $defaultStrategy;
 
-    public function __construct($autoescape = true)
+    public function __construct($defaultStrategy = 'html')
     {
-        $this->autoescape = $autoescape;
+        $this->setDefaultStrategy($defaultStrategy);
     }
 
     /**
@@ -45,13 +45,44 @@ class Twig_Extension_Escaper extends Twig_Extension
     public function getFilters()
     {
         return array(
-            'raw' => new Twig_Filter_Function('twig_raw_filter', array('is_safe' => array('all'))),
+            new Twig_SimpleFilter('raw', 'twig_raw_filter', array('is_safe' => array('all'))),
         );
     }
 
-    public function isGlobal()
+    /**
+     * Sets the default strategy to use when not defined by the user.
+     *
+     * The strategy can be a valid PHP callback that takes the template
+     * "filename" as an argument and returns the strategy to use.
+     *
+     * @param mixed $defaultStrategy An escaping strategy
+     */
+    public function setDefaultStrategy($defaultStrategy)
     {
-        return $this->autoescape;
+        // for BC
+        if (true === $defaultStrategy) {
+            $defaultStrategy = 'html';
+        }
+
+        $this->defaultStrategy = $defaultStrategy;
+    }
+
+    /**
+     * Gets the default strategy to use when not defined by the user.
+     *
+     * @param string $filename The template "filename"
+     *
+     * @return string The default strategy to use for the template
+     */
+    public function getDefaultStrategy($filename)
+    {
+        // disable string callables to avoid calling a function named html or js,
+        // or any other upcoming escaping strategy
+        if (!is_string($this->defaultStrategy) && is_callable($this->defaultStrategy)) {
+            return call_user_func($this->defaultStrategy, $filename);
+        }
+
+        return $this->defaultStrategy;
     }
 
     /**
@@ -74,4 +105,3 @@ function twig_raw_filter($string)
 {
     return $string;
 }
-

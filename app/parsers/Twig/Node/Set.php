@@ -12,8 +12,7 @@
 /**
  * Represents a set node.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class Twig_Node_Set extends Twig_Node
 {
@@ -67,7 +66,7 @@ class Twig_Node_Set extends Twig_Node
             $compiler->subcompile($this->getNode('names'), false);
 
             if ($this->getAttribute('capture')) {
-                $compiler->raw(" = new Twig_Markup(ob_get_clean())");
+                $compiler->raw(" = ('' === \$tmp = ob_get_clean()) ? '' : new Twig_Markup(\$tmp, \$this->env->getCharset())");
             }
         }
 
@@ -87,9 +86,9 @@ class Twig_Node_Set extends Twig_Node
             } else {
                 if ($this->getAttribute('safe')) {
                     $compiler
-                        ->raw("new Twig_Markup(")
+                        ->raw("('' === \$tmp = ")
                         ->subcompile($this->getNode('values'))
-                        ->raw(")")
+                        ->raw(") ? '' : new Twig_Markup(\$tmp, \$this->env->getCharset())")
                     ;
                 } else {
                     $compiler->subcompile($this->getNode('values'));

@@ -12,8 +12,24 @@
 /**
  * Twig base exception.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * This exception class and its children must only be used when
+ * an error occurs during the loading of a template, when a syntax error
+ * is detected in a template, or when rendering a template. Other
+ * errors must use regular PHP exception classes (like when the template
+ * cache directory is not writable for instance).
+ *
+ * To help debugging template issues, this class tracks the original template
+ * name and line where the error occurred.
+ *
+ * Whenever possible, you must set these information (original template name
+ * and line number) yourself by passing them to the constructor. If some or all
+ * these information are not available from where you throw the exception, then
+ * this class will guess them automatically (when the line number is set to -1
+ * and/or the filename is set to null). As this is a costly operation, this
+ * can be disabled by passing false for both the filename and the line number
+ * when creating a new instance of this class.
+ *
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class Twig_Error extends Exception
 {
@@ -25,6 +41,15 @@ class Twig_Error extends Exception
     /**
      * Constructor.
      *
+     * Set both the line number and the filename to false to
+     * disable automatic guessing of the original template name
+     * and line number.
+     *
+     * Set the line number to -1 to enable its automatic guessing.
+     * Set the filename to null to enable its automatic guessing.
+     *
+     * By default, automatic guessing is enabled.
+     *
      * @param string    $message  The error message
      * @param integer   $lineno   The template line where the error occurred
      * @param string    $filename The template file name where the error occurred
@@ -32,22 +57,23 @@ class Twig_Error extends Exception
      */
     public function __construct($message, $lineno = -1, $filename = null, Exception $previous = null)
     {
-        if (-1 === $lineno || null === $filename) {
-            list($lineno, $filename) = $this->findTemplateInfo(null !== $previous ? $previous : $this, $lineno, $filename);
+        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            $this->previous = $previous;
+            parent::__construct('');
+        } else {
+            parent::__construct('', 0, $previous);
         }
 
         $this->lineno = $lineno;
         $this->filename = $filename;
+
+        if (-1 === $this->lineno || null === $this->filename) {
+            $this->guessTemplateInfo();
+        }
+
         $this->rawMessage = $message;
 
         $this->updateRepr();
-
-        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
-            $this->previous = $previous;
-            parent::__construct($this->message);
-        } else {
-            parent::__construct($this->message, 0, $previous);
-        }
     }
 
     /**
@@ -104,13 +130,21 @@ class Twig_Error extends Exception
         $this->updateRepr();
     }
 
+    public function guess()
+    {
+        $this->guessTemplateInfo();
+        $this->updateRepr();
+    }
+
     /**
      * For PHP < 5.3.0, provides access to the getPrevious() method.
      *
-     * @param  string $method    The method name
-     * @param  array  $arguments The parameters to be passed to the method
+     * @param string $method    The method name
+     * @param array  $arguments The parameters to be passed to the method
      *
      * @return Exception The previous exception or null
+     *
+     * @throws BadMethodCallException
      */
     public function __call($method, $arguments)
     {
@@ -131,11 +165,16 @@ class Twig_Error extends Exception
             $dot = true;
         }
 
-        if (null !== $this->filename) {
-            $this->message .= sprintf(' in %s', is_string($this->filename) ? '"'.$this->filename.'"' : json_encode($this->filename));
+        if ($this->filename) {
+            if (is_string($this->filename) || (is_object($this->filename) && method_exists($this->filename, '__toString'))) {
+                $filename = sprintf('"%s"', $this->filename);
+            } else {
+                $filename = json_encode($this->filename);
+            }
+            $this->message .= sprintf(' in %s', $filename);
         }
 
-        if ($this->lineno >= 0) {
+        if ($this->lineno && $this->lineno >= 0) {
             $this->message .= sprintf(' at line %d', $this->lineno);
         }
 
@@ -144,52 +183,57 @@ class Twig_Error extends Exception
         }
     }
 
-    protected function findTemplateInfo(Exception $e, $currentLine, $currentFile)
+    protected function guessTemplateInfo()
     {
-        if (!function_exists('token_get_all')) {
-            return array($currentLine, $currentFile);
+        $template = null;
+
+        if (version_compare(phpversion(), '5.3.6', '>=')) {
+            $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT);
+        } else {
+            $backtrace = debug_backtrace();
         }
 
-        $traces = $e->getTrace();
-        foreach ($traces as $i => $trace) {
-            if (!isset($trace['class']) || 'Twig_Template' === $trace['class']) {
-                continue;
-            }
-
-            $r = new ReflectionClass($trace['class']);
-            if (!$r->implementsInterface('Twig_TemplateInterface')) {
-                continue;
-            }
-
-            if (!is_file($r->getFilename())) {
-                // probably an eval()'d code
-                return array($currentLine, $currentFile);
-            }
-
-            if (0 === $i) {
-                $line = $e->getLine();
-            } else {
-                $line = isset($traces[$i - 1]['line']) ? $traces[$i - 1]['line'] : -log(0);
-            }
-
-            $tokens = token_get_all(file_get_contents($r->getFilename()));
-            $templateline = -1;
-            $template = null;
-            foreach ($tokens as $token) {
-                if (isset($token[2]) && $token[2] >= $line) {
-                    return array($templateline, $template);
-                }
-
-                if (T_COMMENT === $token[0] && null === $template && preg_match('#/\* +(.+) +\*/#', $token[1], $match)) {
-                    $template = $match[1];
-                } elseif (T_COMMENT === $token[0] && preg_match('#^//\s*line (\d+)\s*$#', $token[1], $match)) {
-                    $templateline = $match[1];
+        foreach ($backtrace as $trace) {
+            if (isset($trace['object']) && $trace['object'] instanceof Twig_Template && 'Twig_Template' !== get_class($trace['object'])) {
+                if (null === $this->filename || $this->filename == $trace['object']->getTemplateName()) {
+                    $template = $trace['object'];
                 }
             }
-
-            return array($currentLine, $template);
         }
 
-        return array($currentLine, $currentFile);
+        // update template filename
+        if (null !== $template && null === $this->filename) {
+            $this->filename = $template->getTemplateName();
+        }
+
+        if (null === $template || $this->lineno > -1) {
+            return;
+        }
+
+        $r = new ReflectionObject($template);
+        $file = $r->getFileName();
+
+        $exceptions = array($e = $this);
+        while (($e instanceof self || method_exists($e, 'getPrevious')) && $e = $e->getPrevious()) {
+            $exceptions[] = $e;
+        }
+
+        while ($e = array_pop($exceptions)) {
+            $traces = $e->getTrace();
+            while ($trace = array_shift($traces)) {
+                if (!isset($trace['file']) || !isset($trace['line']) || $file != $trace['file']) {
+                    continue;
+                }
+
+                foreach ($template->getDebugInfo() as $codeLine => $templateLine) {
+                    if ($codeLine <= $trace['line']) {
+                        // update template line
+                        $this->lineno = $templateLine;
+
+                        return;
+                    }
+                }
+            }
+        }
     }
 }

@@ -39,23 +39,35 @@ class Twig_TokenParser_AutoEscape extends Twig_TokenParser
     public function parse(Twig_Token $token)
     {
         $lineno = $token->getLine();
-        $value = $this->parser->getStream()->expect(Twig_Token::NAME_TYPE)->getValue();
-        if (!in_array($value, array('true', 'false'))) {
-            throw new Twig_Error_Syntax("Autoescape value must be 'true' or 'false'", $lineno);
-        }
-        $value = 'true' === $value ? 'html' : false;
+        $stream = $this->parser->getStream();
 
-        if ($this->parser->getStream()->test(Twig_Token::NAME_TYPE)) {
-            if (false === $value) {
-                throw new Twig_Error_Syntax('Unexpected escaping strategy as you set autoescaping to false.', $lineno);
+        if ($stream->test(Twig_Token::BLOCK_END_TYPE)) {
+            $value = 'html';
+        } else {
+            $expr = $this->parser->getExpressionParser()->parseExpression();
+            if (!$expr instanceof Twig_Node_Expression_Constant) {
+                throw new Twig_Error_Syntax('An escaping strategy must be a string or a Boolean.', $stream->getCurrent()->getLine(), $stream->getFilename());
+            }
+            $value = $expr->getAttribute('value');
+
+            $compat = true === $value || false === $value;
+
+            if (true === $value) {
+                $value = 'html';
             }
 
-            $value = $this->parser->getStream()->next()->getValue();
+            if ($compat && $stream->test(Twig_Token::NAME_TYPE)) {
+                if (false === $value) {
+                    throw new Twig_Error_Syntax('Unexpected escaping strategy as you set autoescaping to false.', $stream->getCurrent()->getLine(), $stream->getFilename());
+                }
+
+                $value = $stream->next()->getValue();
+            }
         }
 
-        $this->parser->getStream()->expect(Twig_Token::BLOCK_END_TYPE);
+        $stream->expect(Twig_Token::BLOCK_END_TYPE);
         $body = $this->parser->subparse(array($this, 'decideBlockEnd'), true);
-        $this->parser->getStream()->expect(Twig_Token::BLOCK_END_TYPE);
+        $stream->expect(Twig_Token::BLOCK_END_TYPE);
 
         return new Twig_Node_AutoEscape($value, $body, $lineno, $this->getTag());
     }
@@ -68,7 +80,7 @@ class Twig_TokenParser_AutoEscape extends Twig_TokenParser
     /**
      * Gets the tag name associated with this token parser.
      *
-     * @param string The tag name
+     * @return string The tag name
      */
     public function getTag()
     {
