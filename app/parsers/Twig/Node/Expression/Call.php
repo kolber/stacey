@@ -12,7 +12,18 @@ abstract class Twig_Node_Expression_Call extends Twig_Node_Expression
 {
     protected function compileCallable(Twig_Compiler $compiler)
     {
-        $callable = $this->getAttribute('callable');
+        // Stacey-specific
+        // $callable = $this->getAttribute('callable'); causes the error ...
+        //
+        // An exception has been thrown during the compilation of a template
+        // ("Attribute "callable" does not exist for Node
+        // "Twig_Node_Expression_Function".")
+        //
+        // ... to be thrown. Original line is ...
+        //
+        // $callable = $this->getAttribute('callable');
+        //
+        $callable = true;
 
         $closingParenthesis = false;
         if ($callable) {
