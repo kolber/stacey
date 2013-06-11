@@ -336,6 +336,11 @@ abstract class Twig_Template implements Twig_TemplateInterface
      */
     protected function getAttribute($object, $item, array $arguments = array(), $type = Twig_TemplateInterface::ANY_CALL, $isDefinedTest = false, $ignoreStrictCheck = false)
     {
+
+        // Stacey-specific
+        // If the attribute is a string path, then we need to pass it through the asset factory to create its page variables
+        if (is_string($object)) $object =& AssetFactory::get($object);
+
         // array
         if (Twig_TemplateInterface::METHOD_CALL !== $type) {
             $arrayItem = is_bool($item) || is_float($item) ? (int) $item : $item;
