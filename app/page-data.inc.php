@@ -100,7 +100,9 @@ Class PageData {
     $split_url = explode("/", $page->url_path);
     $page->slug = $split_url[count($split_url) - 1];
     # page.page_name
-    $page->page_name = ucfirst(preg_replace('/[-_](.)/e', "' '.strtoupper('\\1')", $page->data['slug']));
+    $page->page_name = ucfirst(preg_replace_callback('/[-_](.)/', function ($matches) {
+      return "' '.strtoupper('\\1')";
+    }, $page->data['slug']));
     # page.root_path
     $page->root_path = Helpers::relative_root_path();
     # page.thumb
