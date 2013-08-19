@@ -24,8 +24,7 @@ Class Stacey {
 
   function php_fixes() {
     # in PHP/5.3.0 they added a requisite for setting a default timezone, this should be handled via the php.ini, but as we cannot rely on this, we have to set a default timezone ourselves
-    # date_default_timezone_get returns UTC if it can't find anything else
-    if(function_exists('date_default_timezone_set') && function_exists('date_default_timezone_get')) date_default_timezone_set(date_default_timezone_get());
+    if(function_exists('date_default_timezone_set')) date_default_timezone_set('Australia/Melbourne');
   }
 
   function set_content_type($template_file) {
