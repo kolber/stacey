@@ -18,10 +18,6 @@
 # <http://daringfireball.net/projects/markdown/>
 #
 
-# Require Stacey configs
-require_once(dirname(dirname(dirname(__FILE__))).'/extensions/config.php');
-
-
 define( 'MARKDOWN_VERSION',  "1.0.1n" ); # Sat 10 Oct 2009
 define( 'MARKDOWNEXTRA_VERSION',  "1.2.4" ); # Sat 10 Oct 2009
 
