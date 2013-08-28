@@ -75,7 +75,7 @@ Class Cache {
       if ($page['is_folder']) {
         $current_page = AssetFactory::get($page['path']);
         # Skip for password protected pages
-        if ($current_page['password_protect'] || $current_page['hide_from_search']) continue;
+        if (isset($current_page['password_protect']) || isset($current_page['hide_from_search'])) continue;
         # Only save search field data
         foreach ($current_page as $key => $value) {
           if (!in_array($key, $search_fields)) unset($current_page[$key]);
