@@ -48,7 +48,8 @@ class Stacey_Twig_Extension extends Twig_Extension {
     $results = array();
     foreach ($json as $page) {
       foreach ($page as $key => $value) {
-        if ($key == 'file_path' || $key == 'url' ) continue;
+        if (preg_match('/\/404\//', $page['url'])) continue;
+        if ($key == 'file_path' || $key == 'url') continue;
         $clean_value = (is_string($value)) ? strip_tags($value) : '';
         if (preg_match('/.{0,90}'.$search.'.{0,90}/i', $clean_value, $matches)) {
           if (isset($matches[0])) {
