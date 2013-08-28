@@ -93,6 +93,9 @@ Class Cache {
     $this->delete_old_caches();
 
     $page = new Page($route);
+    # Basic Authentication
+    if (isset($page->data['password_protect'])) new BasicAuth($page->data['password_protect']);
+
     # start output buffer
     ob_start();
       echo $page->parse_template();
