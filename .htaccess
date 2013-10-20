@@ -37,7 +37,7 @@ RewriteCond %{REQUEST_URI} !public/
 RewriteRule ^(.+)$ public/$1 [L]
 
 # Allow basic authentication
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 # Prevent access to .txt files
 <Files ~ "\.txt$">
