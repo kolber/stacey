@@ -12,8 +12,7 @@
 /**
  * Twig_NodeVisitor_Sandbox implements sandboxing.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class Twig_NodeVisitor_Sandbox implements Twig_NodeVisitorInterface
 {
@@ -28,7 +27,7 @@ class Twig_NodeVisitor_Sandbox implements Twig_NodeVisitorInterface
      * @param Twig_NodeInterface $node The node to visit
      * @param Twig_Environment   $env  The Twig environment instance
      *
-     * @param Twig_NodeInterface The modified node
+     * @return Twig_NodeInterface The modified node
      */
     public function enterNode(Twig_NodeInterface $node, Twig_Environment $env)
     {
@@ -70,7 +69,7 @@ class Twig_NodeVisitor_Sandbox implements Twig_NodeVisitorInterface
      * @param Twig_NodeInterface $node The node to visit
      * @param Twig_Environment   $env  The Twig environment instance
      *
-     * @param Twig_NodeInterface The modified node
+     * @return Twig_NodeInterface The modified node
      */
     public function leaveNode(Twig_NodeInterface $node, Twig_Environment $env)
     {
