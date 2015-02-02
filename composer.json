@@ -1,0 +1,18 @@
+{
+  "name": "kolber/stacey",
+  "description": "Stacey is a no-database, dynamic website generator.",
+  "keywords": ["php", "yml", "generator"],
+  "homepage": "https://github.com/kolber/stacey",
+  "license": ["GPL-1.0+"],
+  "authors": [
+    {
+      "name": "Anthony Kolber"
+    }
+  ],
+  "require": {
+    "php": ">=5.3"
+  },
+  "autoload": {
+    "index": "index.php"
+  }
+}
