@@ -46,6 +46,44 @@ Class Image extends Asset {
       if(isset($iptc["2#025"][0]))
         $this->data['keywords'] = $iptc["2#025"][0];
     }
+    
+    ###### USING AN EXTERNAL DATA FILE FOR METADATA (TITLE, DESCRIPTION, KEYWORDS)
+    ### Since IPTC data is a bit old fashioned I implemented a way to store the metadata
+    ### in an external text file.
+    ### This uses a .dat file named like this:
+    ### If the image name is "2001_23.jpg",
+    ### the datfile name is "2001_23.jpg.dat"
+    ###
+    ### The Datfile may have up three lines:
+    ### Line 1: Title
+    ### Line 2: Description
+    ### Line 3: Keywords
+    ###
+    ### Example:
+    ### -------file-------
+    ### Portrait Of Foo's Mother
+    ### Oil on drywall, 2015
+    ### painting grafitti
+    ### ------------------
+	
+  	$file_data_path = "{$file_path}.dat";
+  	if(file_exists($file_data_path)) {
+	  	$file_pointer = fopen($file_data_path, "r");
+		  if ($file_pointer) {
+			  if (($line = fgets($file_pointer)) !== false) {
+				  $this->data['@title'] = $line;
+			  }
+			  if (($line = fgets($file_pointer)) !== false) {
+				  $this->data['@description'] = $line;
+			  }
+			  if (($line = fgets($file_pointer)) !== false) {
+				  $this->data['@keywords'] = $line;
+			  }
+			  fclose($file_pointer);
+		  } else {
+  			// error opening the file.
+	  	} 
+	}
 
   }
 
