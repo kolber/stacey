@@ -92,6 +92,8 @@ Class PageData {
   static function create_vars($page) {
     # page.file_path
     $page->data['file_path'] = $page->file_path;
+    # page.template
+    $page->data['template'] = Page::template_name($page->file_path);
     # page.url
     $page->url = Helpers::relative_root_path($page->url_path.'/');
     # page.permalink
