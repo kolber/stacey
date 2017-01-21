@@ -70,7 +70,7 @@ Class PageData {
 
   static function is_current($base_url, $permalink) {
     $base_path = preg_replace('/^[^\/]+/', '', $base_url);
-    if($permalink == 'index') {
+    if(preg_match("/^(\?\/)?index\/?$/i", $permalink)) {
       return ('/' == $_SERVER['REQUEST_URI']);
     } else {
       return ($base_path.'/'.$permalink == $_SERVER['REQUEST_URI']);
